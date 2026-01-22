@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charles Academy - WhatsApp Bot QR Code</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .qr-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px dashed #dee2e6;
+        }
+        
+        #qrCode {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .status.waiting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">CA</div>
+            <h1>Charles Academy Bot</h1>
+            <div class="subtitle">Scan QR code to connect WhatsApp</div>
+        </div>
+        
+        <div class="qr-container">
+            <img id="qrCode" src="" alt="QR Code">
+        </div>
+        
+        <div id="status" class="status waiting">
+            ⏳ Waiting for QR code...
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to connect:</h3>
+            <ol>
+                <li>Open WhatsApp on your phone</li>
+                <li>Tap ⋮ (three dots) → Linked Devices</li>
+                <li>Tap "Link a Device"</li>
+                <li>Scan the QR code above</li>
+                <li>Wait for connection confirmation</li>
+            </ol>
+        </div>
+        
+        <div class="features">
+            <div class="feature">📝 Test System</div>
+            <div class="feature">🎓 Exam System</div>
+            <div class="feature">🌍 Multi-language</div>
+            <div class="feature">📊 Progress Tracking</div>
+        </div>
+        
+        <div class="footer">
+            Charles Academy © 2024 | Bot Version 2.6.0
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const qrCodeImg = document.getElementById('qrCode');
+        const statusDiv = document.getElementById('status');
+        
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            statusDiv.innerHTML = '🔗 Connected to server...';
+        });
+        
+        socket.on('qrCodeUpdate', (data) => {
+            if (data.qrCode) {
+                qrCodeImg.src = data.qrCode;
+                statusDiv.className = 'status waiting';
+                statusDiv.innerHTML = '📱 QR Code ready - Scan with WhatsApp';
+            } else if (data.connected) {
+                statusDiv.className = 'status connected';
+                statusDiv.innerHTML = '✅ Connected to WhatsApp! Bot is ready.';
+                qrCodeImg.src = '';
+                document.querySelector('.qr-container').style.display = 'none';
+            } else {
+                statusDiv.className = 'status waiting';
+                statusDiv.innerHTML = '⏳ Generating new QR code...';
+                qrCodeImg.src = '';
+            }
+        });
+        
+        socket.on('disconnect', () => {
+            statusDiv.className = 'status error';
+            statusDiv.innerHTML = '❌ Disconnected from server. Reconnecting...';
+        });
+        
+        // Load initial QR code if exists
+        fetch('/qrcode')
+            .then(response => response.json())
+            .then(data => {
+                if (data.qrCode) {
+                    qrCodeImg.src = data.qrCode;
+                    statusDiv.innerHTML = '📱 QR Code ready - Scan with WhatsApp';
+                }
+            });
+    </script>
+</body>
+</html>
