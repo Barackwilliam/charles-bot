@@ -1,6 +1,6 @@
 module.exports = {
     academyName: "Charles Academy",
-    supportPhone: "255750910158",
+    supportPhone: "255776831991",
     languages: {
         en: { name: "English", flag: "🇬🇧", code: "en" },
         sw: { name: "Kiswahili", flag: "🇹🇿", code: "sw" },

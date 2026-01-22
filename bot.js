@@ -12,7 +12,7 @@ async function startBot() {
     console.log('📚 Version: 2.5.0'); // Updated version
     console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
-    console.log('📞 Test Number: 0750910158');
+    console.log('📞 Test Number: 0776831991');
     console.log('🎯 New Feature: Advanced Exam System');
     
     try {

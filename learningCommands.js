@@ -504,8 +504,8 @@ module.exports = {
         async execute(sock, msg, args, db, helpers) {
             return `❓ *Help & Support*\n\n` +
                    `For any assistance, contact us:\n\n` +
-                   `📞 *Support:* +${config.supportPhone || '255750910158'}\n` +
-                   `📧 *Email:* support@charlesacademy.com\n\n` +
+                   `📞 *Support:* +${config.supportPhone || '255776831991'}\n` +
+                   `📧 *Email:* support@charlesacademy.co.tz\n\n` +
                    `🕒 *Available:* Mon-Fri, 8AM-6PM\n\n` +
                    `*Common Commands:*\n` +
                    `.menu - Main menu\n` +
