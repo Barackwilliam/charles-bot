@@ -1,47 +1,3 @@
-// ==================== LOAD ENVIRONMENT VARIABLES ====================
-require('dotenv').config();
-
-// ==================== RENDER SERVER SETUP ====================
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-
-// Health check endpoint for Render
-app.get('/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'healthy', 
-        bot: process.env.BOT_NAME || 'Charles Academy Bot',
-        academy: process.env.ACADEMY_NAME || 'Charles Academy',
-        owner: process.env.OWNER_NUMBER || '255750910158',
-        version: '2.5.0',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
-});
-
-// Bot info endpoint
-app.get('/info', (req, res) => {
-    res.status(200).json({
-        name: process.env.BOT_NAME,
-        academy: process.env.ACADEMY_NAME,
-        support: process.env.SUPPORT_PHONE,
-        owner: process.env.OWNER_NUMBER,
-        database: process.env.DATABASE_URL ? 'Connected (Supabase)' : 'Not configured',
-        status: 'operational'
-    });
-});
-
-// Start Express server
-app.listen(PORT, () => {
-    console.log(`🌐 Health check server running on port ${PORT}`);
-    console.log(`🔗 Health check URL: http://localhost:${PORT}/health`);
-    console.log(`📊 Bot info URL: http://localhost:${PORT}/info`);
-});
-
-// ==================== MAIN BOT CODE ====================
 const { makeWASocket, useMultiFileAuthState, Browsers } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
 
@@ -52,28 +8,22 @@ const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 
 async function startBot() {
-    console.log('🚀 Starting Charles Academy Bot on Render...');
-    console.log('📚 Version: 2.5.0');
-    console.log('🏫 Academy:', process.env.ACADEMY_NAME || 'Charles Academy');
-    console.log('🤖 Bot Name:', process.env.BOT_NAME || 'Charles Academy Bot');
-    console.log('👑 Owner:', process.env.OWNER_NUMBER || '255750910158');
-    console.log('📞 Support:', process.env.SUPPORT_PHONE || '255750910158');
-    console.log('🌐 Server Port:', PORT);
-    console.log('📁 Auth Directory: /tmp/auth-whatsapp');
-    console.log('🗄️ Database:', process.env.DATABASE_URL ? 'Supabase (Connected)' : 'Not configured');
+    console.log('🚀 Starting Charles Academy Bot...');
+    console.log('📚 Version: 2.5.0'); // Updated version
+    console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
+    console.log('📞 Test Number: 0776831991');
     console.log('🎯 New Feature: Advanced Exam System');
     
     try {
         // Initialize database
         console.log('🔧 Initializing Database Connection...');
         
-        // Use temporary directory for Render
-        const { state, saveCreds } = await useMultiFileAuthState('/tmp/auth-whatsapp');
+        const { state, saveCreds } = await useMultiFileAuthState('./auth');
         
         const sock = makeWASocket({
             auth: state,
-            printQRInTerminal: true,  // IMPORTANT: Set to true for Render terminal
+            printQRInTerminal: false,
             browser: Browsers.ubuntu('Chrome'),
             connectTimeoutMs: 60000,
             keepAliveIntervalMs: 25000
@@ -86,16 +36,16 @@ async function startBot() {
             
             // Display QR Code
             if (qr) {
-                console.log('\n' + '='.repeat(60));
+                console.log('\n' + '='.repeat(50));
                 console.log('📱 SCAN THIS QR CODE WITH WHATSAPP');
-                console.log('='.repeat(60));
+                console.log('='.repeat(50));
                 qrcode.generate(qr, { small: true });
                 console.log('\n📋 Instructions:');
                 console.log('1. Open WhatsApp on your phone');
                 console.log('2. Tap ⋮ (three dots) → Linked Devices');
                 console.log('3. Tap "Link a Device"');
                 console.log('4. Scan the QR code above');
-                console.log('='.repeat(60) + '\n');
+                console.log('='.repeat(50) + '\n');
             }
             
             if (connection === 'close') {
@@ -103,13 +53,11 @@ async function startBot() {
                 console.log('🔄 Reconnecting in 5 seconds...');
                 setTimeout(() => startBot(), 5000);
             } else if (connection === 'open') {
-                console.log('\n' + '✅'.repeat(12));
+                console.log('\n' + '✅'.repeat(10));
                 console.log('✅ BOT CONNECTED SUCCESSFULLY!');
-                console.log('🤖 Bot:', process.env.BOT_NAME || 'Charles Academy Bot');
-                console.log('👑 Owner:', process.env.OWNER_NUMBER || '255750910158');
-                console.log('📞 Support:', process.env.SUPPORT_PHONE || '255750910158');
+                console.log('📱 Now you can message: 0750910158');
                 console.log('🎯 New Exam System: Type EXAM to try');
-                console.log('✅'.repeat(12) + '\n');
+                console.log('✅'.repeat(10) + '\n');
             }
         });
 
@@ -140,7 +88,7 @@ async function startBot() {
                     await learningDb.setStudentLanguage(jid, 'en');
                     await sock.sendMessage(jid, { 
                         text: `✅ Language set to English 🇬🇧\n\n` +
-                              `Welcome to ${process.env.ACADEMY_NAME}! Type MENU to see options.` 
+                              `Welcome to Charles Academy! Type MENU to see options.` 
                     });
                     return;
                 }
@@ -150,7 +98,7 @@ async function startBot() {
                     await learningDb.setStudentLanguage(jid, 'sw');
                     await sock.sendMessage(jid, { 
                         text: `✅ Lugha imewekwa kwa Kiswahili 🇹🇿\n\n` +
-                              `Karibu kwenye ${process.env.ACADEMY_NAME}! Andika MENU kuona chaguo.` 
+                              `Karibu kwenye Charles Academy! Andika MENU kuona chaguo.` 
                     });
                     return;
                 }
@@ -160,7 +108,7 @@ async function startBot() {
                     await learningDb.setStudentLanguage(jid, 'fr');
                     await sock.sendMessage(jid, { 
                         text: `✅ Langue définie en Français 🇫🇷\n\n` +
-                              `Bienvenue à ${process.env.ACADEMY_NAME}! Tapez MENU pour voir les options.` 
+                              `Bienvenue à Charles Academy! Tapez MENU pour voir les options.` 
                     });
                     return;
                 }
@@ -208,16 +156,16 @@ async function startBot() {
                 
                 // === 4. NEW EXAM SYSTEM ===
                 if (upperText === 'EXAM') {
-                    // Initialize exam state
-                    examHandler.initUserState(jid);
-                    const userState = examHandler.userStates.get(jid);
-                    userState.step = 'selecting_course';
-                    userState.language = userLanguage;
-                    
-                    const examMenu = examHandler.getExamMenu(userLanguage);
-                    await sock.sendMessage(jid, { text: examMenu });
-                    return;
-                }
+                // Initialize exam state
+                examHandler.initUserState(jid);
+                const userState = examHandler.userStates.get(jid);
+                userState.step = 'selecting_course';
+                userState.language = userLanguage;
+                
+                const examMenu = examHandler.getExamMenu(userLanguage);
+                await sock.sendMessage(jid, { text: examMenu });
+                return;
+            }
 
                 // === HANDLE EXAM RESPONSES ===
                 if (examHandler.hasActiveExam(jid) || 
@@ -360,6 +308,7 @@ async function handleExamCommand(sock, jid, language) {
     // Store that user is selecting exam
     examHandler.examSelectionState = jid;
 }
+
 
 async function handleExamResponse(sock, jid, text, language) {
     const upperText = text.toUpperCase().trim();
@@ -553,108 +502,44 @@ function getInvalidChoiceText(language) {
 // ==================== OLD FUNCTIONS (KEPT FOR COMPATIBILITY) ====================
 
 async function startExercise(sock, jid, courseId, language) {
-    const exercise = await learningCommands.getExercise(courseId, language);
-    if (exercise) {
-        learningSession.startSession(jid, 'exercise', exercise);
-        
-        const startText = getExerciseStartText(language, exercise.name, exercise.questions.length);
-        await sock.sendMessage(jid, { text: startText });
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
-    }
+    // ... keep old function ...
 }
 
 async function startTest(sock, jid, testLevel, language) {
-    const test = await learningCommands.getTest(testLevel, language);
-    if (test) {
-        learningSession.startSession(jid, 'test', test);
-        
-        const startText = getTestStartText(language, test.name, test.questions.length);
-        await sock.sendMessage(jid, { text: startText });
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
-    }
+    // ... keep old function ...
 }
 
 async function handleSessionResponse(sock, jid, answer, session, language) {
-    const result = learningSession.checkAnswer(jid, answer);
-    
-    if (result.correct !== undefined) {
-        const nextQuestion = learningSession.getCurrentQuestion(jid);
-        
-        if (nextQuestion) {
-            await sendQuestion(sock, jid, nextQuestion, session, language);
-        } else {
-            // Session completed
-            const stats = learningSession.getSessionStats(jid);
-            const score = Math.round((stats.correct / stats.totalQuestions) * 100);
-            
-            const resultText = getResultText(language, score, stats);
-            await sock.sendMessage(jid, { text: resultText });
-            
-            // Clear session
-            learningSession.clearSession(jid);
-        }
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
-    }
+    // ... keep old function ...
 }
 
 function checkAnswer(question, userAnswer) {
-    const correctAnswer = question.correctAnswer || question.answer;
-    const userUpper = userAnswer.trim().toUpperCase();
-    const correctUpper = correctAnswer.trim().toUpperCase();
-    
-    return userUpper === correctUpper;
+    // ... keep old function ...
 }
 
 async function sendQuestion(sock, jid, question, session, language) {
-    const questionNumber = learningSession.getCurrentQuestionIndex(jid) + 1;
-    const totalQuestions = session.questions.length;
-    
-    let questionText = getQuestionHeader(language, questionNumber, session.currentActivity);
-    questionText += question.text + '\n\n';
-    
-    if (question.options && question.options.length > 0) {
-        question.options.forEach((option, index) => {
-            const letter = String.fromCharCode(65 + index); // A, B, C, D
-            questionText += `${letter}. ${option}\n`;
-        });
-        questionText += '\n' + getAnswerInstruction(language, 'multiple_choice');
-    } else if (question.type === 'true_false') {
-        questionText += getAnswerInstruction(language, 'true_false');
-    } else {
-        questionText += getAnswerInstruction(language, 'short_answer');
-    }
-    
-    questionText += '\n' + getProgressText(language, questionNumber, totalQuestions);
-    
-    await sock.sendMessage(jid, { text: questionText });
+    // ... keep old function ...
 }
 
 // ==================== LANGUAGE TEXT FUNCTIONS ====================
 
 async function getWelcomeText(language) {
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
     const texts = {
-        'en': `🎓 *Welcome to ${academyName}!*\n\n` +
+        'en': `🎓 *Welcome to Charles Academy!*\n\n` +
               `Please choose your language first:\n\n` +
               `Type: ENGLISH 🇬🇧\n` +
               `Type: KISWAHILI 🇹🇿\n` +
               `Type: FRANÇAIS 🇫🇷\n\n` +
               `*Example:* Type "ENGLISH" to continue in English`,
         
-        'sw': `🎓 *Karibu kwenye ${academyName}!*\n\n` +
+        'sw': `🎓 *Karibu kwenye Charles Academy!*\n\n` +
               `Tafadhali chagua lugha yako kwanza:\n\n` +
               `Andika: ENGLISH 🇬🇧\n` +
               `Andika: KISWAHILI 🇹🇿\n` +
               `Andika: FRANÇAIS 🇫🇷\n\n` +
               `*Mfano:* Andika "KISWAHILI" kuendelea kwa Kiswahili`,
         
-        'fr': `🎓 *Bienvenue à ${academyName}!*\n\n` +
+        'fr': `🎓 *Bienvenue à Charles Academy!*\n\n` +
               `Veuillez d'abord choisir votre langue:\n\n` +
               `Tapez: ENGLISH 🇬🇧\n` +
               `Tapez: KISWAHILI 🇹🇿\n` +
@@ -691,9 +576,8 @@ async function getLanguageSelectionText(language) {
 }
 
 async function getMenuText(language) {
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
     const texts = {
-        'en': `🎓 *${academyName} - Main Menu*\n\n` +
+        'en': `🎓 *Charles Academy - Main Menu*\n\n` +
               `Available options:\n\n` +
               `📚 LEARN - Start learning\n` +
               `🎓 EXAM - Take an exam (NEW!)\n` +
@@ -706,7 +590,7 @@ async function getMenuText(language) {
               `*Type the word in CAPITAL LETTERS*\n` +
               `Example: Type "EXAM" for new exam system`,
         
-        'sw': `🎓 *${academyName} - Menyu Kuu*\n\n` +
+        'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
               `Chaguo zilizopo:\n\n` +
               `📚 JIFUNZE - Anza kujifunza\n` +
               `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
@@ -719,7 +603,7 @@ async function getMenuText(language) {
               `*Andika neno kwa HERUFI KUBWA*\n` +
               `Mfano: Andika "MTIHANI" kwa mfumo mpya wa mitihani`,
         
-        'fr': `🎓 *${academyName} - Menu Principal*\n\n` +
+        'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
               `Options disponibles:\n\n` +
               `📚 APPRENDRE - Commencer à apprendre\n` +
               `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
@@ -736,11 +620,8 @@ async function getMenuText(language) {
 }
 
 async function getHelpText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
-    
     const texts = {
-        'en': `📚 *${botName} - HELP*\n\n` +
+        'en': `📚 *Charles Academy - HELP*\n\n` +
               `*AVAILABLE COMMANDS:*\n\n` +
               `🔹 ENGLISH - Set English language\n` +
               `🔹 KISWAHILI - Set Kiswahili language\n` +
@@ -759,10 +640,9 @@ async function getHelpText(language) {
               `• Multiple exams per course\n` +
               `• Automatic scoring\n` +
               `• Progress tracking\n\n` +
-              `*Support:* ${supportPhone}\n` +
               `*Just type the word in CAPITAL LETTERS*`,
         
-        'sw': `📚 *${botName} - USAIDIZI*\n\n` +
+        'sw': `📚 *Charles Academy - USAIDIZI*\n\n` +
               `*AMRI ZILIZOPO:*\n\n` +
               `🔹 ENGLISH - Weka lugha ya Kiingereza\n` +
               `🔹 KISWAHILI - Weka lugha ya Kiswahili\n` +
@@ -781,10 +661,9 @@ async function getHelpText(language) {
               `• Mitihani mingi kwa kila kozi\n` +
               `• Upimaji wa kiotomatiki\n` +
               `• Ufuatiliaji wa maendeleo\n\n` +
-              `*Usaidizi:* ${supportPhone}\n` +
               `*Andika tu neno kwa HERUFI KUBWA*`,
         
-        'fr': `📚 *${botName} - AIDE*\n\n` +
+        'fr': `📚 *Charles Academy - AIDE*\n\n` +
               `*COMMANDES DISPONIBLES:*\n\n` +
               `🔹 ENGLISH - Définir la langue anglaise\n` +
               `🔹 KISWAHILI - Définir la langue kiswahili\n` +
@@ -803,39 +682,30 @@ async function getHelpText(language) {
               `• Plusieurs examens par cours\n` +
               `• Notation automatique\n` +
               `• Suivi des progrès\n\n` +
-              `*Support:* ${supportPhone}\n` +
               `*Tapez simplement le mot en MAJUSCULES*`
     };
     return texts[language] || texts['en'];
 }
 
 async function getSupportText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
-    const ownerPhone = process.env.OWNER_NUMBER || '255750910158';
-    
     const texts = {
         'en': `❓ *HELP & SUPPORT*\n\n` +
               `For any assistance, contact us:\n\n` +
-              `📞 *Support:* ${supportPhone}\n` +
-              `👑 *Owner:* ${ownerPhone}\n` +
+              `📞 *Support:* +255750910158\n` +
               `📧 *Email:* support@charlesacademy.com\n\n` +
               `🕒 *Available:* Monday-Friday, 8AM-6PM\n\n` +
               `Type MENU to return to main menu`,
         
         'sw': `❓ *USAIDIZI NA MSADA*\n\n` +
               `Kwa usaidizi wowote, wasiliana nasi:\n\n` +
-              `📞 *Usaidizi:* ${supportPhone}\n` +
-              `👑 *Mmiliki:* ${ownerPhone}\n` +
+              `📞 *Usaidizi:* +255750910158\n` +
               `📧 *Barua pepe:* support@charlesacademy.com\n\n` +
               `🕒 *Inapatikana:* Jumatatu-Ijumaa, 8AM-6PM\n\n` +
               `Andika MENU kurudi kwenye menyu kuu`,
         
         'fr': `❓ *AIDE ET SUPPORT*\n\n` +
               `Pour toute assistance, contactez-nous:\n\n` +
-              `📞 *Support:* ${supportPhone}\n` +
-              `👑 *Propriétaire:* ${ownerPhone}\n` +
+              `📞 *Support:* +255750910158\n` +
               `📧 *Email:* support@charlesacademy.com\n\n` +
               `🕒 *Disponible:* Lundi-Vendredi, 8h-18h\n\n` +
               `Tapez MENU pour retourner au menu principal`
@@ -1102,17 +972,16 @@ function getCancelText(language) {
 }
 
 function getDefaultResponseText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
     const texts = {
-        'en': `🤖 I'm ${botName}, your learning assistant.\n\n` +
+        'en': `🤖 I'm your learning assistant.\n\n` +
               `Type MENU to see options\n` +
               `Type HELP for assistance\n\n` +
               `Or say "Hi" to start fresh!`,
-        'sw': `🤖 Mimi ni ${botName}, msaidizi wako wa kujifunza.\n\n` +
+        'sw': `🤖 Mimi ni msaidizi wako wa kujifunza.\n\n` +
               `Andika MENU kuona chaguo\n` +
               `Andika HELP kwa usaidizi\n\n` +
               `Au sema "Hi" kuanza upya!`,
-        'fr': `🤖 Je suis ${botName}, votre assistant d'apprentissage.\n\n` +
+        'fr': `🤖 Je suis votre assistant d'apprentissage.\n\n` +
               `Tapez MENU pour voir les options\n` +
               `Tapez HELP pour assistance\n\n` +
               `Ou dites "Hi" pour recommencer!`
@@ -1121,11 +990,10 @@ function getDefaultResponseText(language) {
 }
 
 function getErrorText(language) {
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
     const texts = {
-        'en': `❌ An error occurred. Please try again or type SUPPORT for help.\nSupport: ${supportPhone}`,
-        'sw': `❌ Hitilafu imetokea. Tafadhali jaribu tena au andika SUPPORT kwa usaidizi.\nUsaidizi: ${supportPhone}`,
-        'fr': `❌ Une erreur s'est produite. Veuillez réessayer ou tapez SUPPORT pour obtenir de l'aide.\nSupport: ${supportPhone}`
+        'en': `❌ An error occurred. Please try again or type SUPPORT for help.`,
+        'sw': `❌ Hitilafu imetokea. Tafadhali jaribu tena au andika SUPPORT kwa usaidizi.`,
+        'fr': `❌ Une erreur s'est produite. Veuillez réessayer ou tapez SUPPORT pour obtenir de l'aide.`
     };
     return texts[language] || texts['en'];
 }

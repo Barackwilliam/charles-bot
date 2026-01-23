@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: charles-academy-bot
+    env: node
+    region: ohio
+    buildCommand: npm run render-build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: true
+      - key: BOT_NAME
+        value: "Charles Academy Bot"
+      - key: ACADEMY_NAME
+        value: "Charles Academy"
+      - key: OWNER_NUMBER
+        value: "255776831991"
+      - key: SUPPORT_PHONE
+        value: "255776831991"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
