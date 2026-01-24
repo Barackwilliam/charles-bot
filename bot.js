@@ -1,4 +1,4 @@
-// bot.js - Updated to store WhatsApp auth in database
+// bot.js - FIXED DATABASE AUTH VERSION
 const { makeWASocket, useMultiFileAuthState, Browsers } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
 const fs = require('fs');
@@ -11,57 +11,25 @@ const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 
 // === IMPORT DATABASE AUTH MODULE ===
-const databaseAuth = require('./databaseAuth');  // New database auth storage
+const databaseAuth = require('./databaseAuth');
 
 // === IMPORT STUDENT REGISTRATION ===
 const studentRegistration = require('./studentRegistration');
 
-// Function to check if auth directory exists (for fallback)
+// Function to check if auth directory exists
 function ensureAuthDirectory() {
     const authDir = path.join(__dirname, 'auth');
     if (!fs.existsSync(authDir)) {
         fs.mkdirSync(authDir, { recursive: true });
-        console.log('📁 Created auth directory for local fallback');
+        console.log('📁 Created auth directory');
     }
 }
 
-// Function to handle credentials update
-function createCredsHandler(saveCreds, jid) {
-    return async (creds) => {
-        console.log(`💾 Creds update event received for ${jid || 'new session'}`);
-        
-        try {
-            // Save locally first (fallback)
-            await saveCreds();
-            
-            // Save to database if available
-            if (databaseAuth && typeof databaseAuth.saveAuth === 'function') {
-                const authData = {
-                    creds: creds,
-                    timestamp: new Date().toISOString(),
-                    botId: 'charles_academy'
-                };
-                
-                const result = await databaseAuth.saveAuth(authData);
-                if (result.success && !result.local) {
-                    console.log('✅ Auth saved to database');
-                } else if (result.local) {
-                    console.log('⚠️ Auth saved locally (database not available)');
-                }
-            }
-        } catch (error) {
-            console.error('❌ Error saving credentials:', error.message);
-            // Continue with local save only
-            await saveCreds();
-        }
-    };
-}
-
-// Modified useMultiFileAuthState to use database
-async function useDatabaseAuthState(botId = 'charles_academy') {
+// Modified useMultiFileAuthState to use database WITH PROPER STRUCTURE
+async function useDatabaseAuthState() {
     console.log('🔧 Initializing Database Auth System...');
     
-    // Ensure local auth directory exists for fallback
+    // Ensure local auth directory exists
     ensureAuthDirectory();
     
     try {
@@ -72,57 +40,94 @@ async function useDatabaseAuthState(botId = 'charles_academy') {
         if (savedAuth && savedAuth.creds) {
             console.log('✅ Auth loaded from database');
             
-            // Create state object similar to useMultiFileAuthState
+            // IMPORTANT: Create PROPER state structure for baileys
             const state = {
                 creds: savedAuth.creds,
                 keys: {
                     get: async (type, ids) => {
-                        // Handle key retrieval from database
-                        if (type === 'pre-key' || type === 'session' || type === 'sender-key' || type === 'app-state-sync-key') {
-                            return savedAuth.keys ? savedAuth.keys[type] : {};
+                        try {
+                            // Return empty object for all key types
+                            return {};
+                        } catch (error) {
+                            return {};
                         }
-                        return {};
                     },
                     set: async (data) => {
-                        // Save keys to database
-                        if (savedAuth.keys) {
-                            Object.assign(savedAuth.keys, data);
-                            await databaseAuth.saveAuth(savedAuth);
+                        try {
+                            // Save keys if needed
+                            console.log('📝 Keys update received');
+                        } catch (error) {
+                            console.error('Error saving keys:', error.message);
                         }
                     }
                 }
             };
             
             // Create saveCreds function
-            const saveCreds = () => databaseAuth.saveAuth(savedAuth);
+            const saveCreds = async () => {
+                try {
+                    const result = await databaseAuth.saveAuth({ creds: state.creds });
+                    if (result.success) {
+                        console.log('💾 Creds saved to database');
+                    }
+                } catch (error) {
+                    console.error('Error saving creds:', error.message);
+                }
+            };
             
             return { state, saveCreds };
         }
     } catch (error) {
         console.log('⚠️ Could not load from database:', error.message);
-        console.log('🔄 Falling back to local auth...');
     }
     
     // Fallback to local file auth
-    console.log('📁 Using local auth storage...');
+    console.log('📁 Using local auth storage (fallback)...');
     return await useMultiFileAuthState('./auth');
+}
+
+// SIMPLIFIED VERSION - Use local auth with database backup
+async function useSimpleAuthWithDatabaseBackup() {
+    console.log('🔧 Using SIMPLE auth with database backup...');
+    
+    // Always use local auth first
+    const { state, saveCreds: localSaveCreds } = await useMultiFileAuthState('./auth');
+    
+    // Create wrapper saveCreds that saves to both local and database
+    const saveCreds = async () => {
+        // Save locally first
+        await localSaveCreds();
+        
+        // Then backup to database
+        try {
+            const result = await databaseAuth.saveAuth({ creds: state.creds });
+            if (result.success && !result.local) {
+                console.log('💾 Auth backed up to database');
+            }
+        } catch (error) {
+            console.log('⚠️ Could not backup to database:', error.message);
+        }
+    };
+    
+    return { state, saveCreds };
 }
 
 async function startBot() {
     console.log('🚀 Starting Charles Academy Bot...');
-    console.log('📚 Version: 3.0.0'); // Updated version with database auth
+    console.log('📚 Version: 3.1.0'); // Updated version
     console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
     console.log('📞 Test Number: 0776831991');
-    console.log('💾 Feature: Database Auth Storage');
-    console.log('🎯 Feature: Student Registration System');
+    console.log('💾 Feature: Database Auth Backup');
     
     try {
         // Initialize database
         console.log('🔧 Initializing Database Connection...');
         
-        // Use database auth state
-        const { state, saveCreds } = await useDatabaseAuthState();
+        // Use SIMPLE auth system (local + database backup)
+        const { state, saveCreds } = await useSimpleAuthWithDatabaseBackup();
+        
+        console.log('🔑 Auth state loaded successfully');
         
         const sock = makeWASocket({
             auth: state,
@@ -137,7 +142,7 @@ async function startBot() {
         });
 
         // Set up credentials update handler
-        sock.ev.on('creds.update', createCredsHandler(saveCreds, sock.user?.id));
+        sock.ev.on('creds.update', saveCreds);
         
         sock.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect, qr } = update;
@@ -155,10 +160,10 @@ async function startBot() {
                 console.log('4. Scan the QR code above');
                 console.log('='.repeat(50) + '\n');
                 
-                // Save QR code state to database
+                // Save QR code state
                 try {
-                    await databaseAuth.saveAuth({
-                        ...state.creds,
+                    await databaseAuth.saveAuth({ 
+                        creds: state.creds,
                         qrState: qr,
                         timestamp: new Date().toISOString()
                     });
@@ -176,7 +181,17 @@ async function startBot() {
                     setTimeout(() => startBot(), 5000);
                 } else {
                     console.log('⚠️ Authentication failed. Clearing auth...');
-                    await databaseAuth.clearAuth();
+                    try {
+                        await databaseAuth.clearAuth();
+                        // Clear local auth too
+                        const authDir = path.join(__dirname, 'auth');
+                        if (fs.existsSync(authDir)) {
+                            fs.rmSync(authDir, { recursive: true, force: true });
+                            console.log('🗑️ Local auth cleared');
+                        }
+                    } catch (error) {
+                        console.log('Error clearing auth:', error.message);
+                    }
                     console.log('🔄 Restarting bot...');
                     setTimeout(() => startBot(), 3000);
                 }
@@ -184,7 +199,7 @@ async function startBot() {
                 console.log('\n' + '✅'.repeat(10));
                 console.log('✅ BOT CONNECTED SUCCESSFULLY!');
                 console.log('📱 Now you can message: 0750910158');
-                console.log('💾 Auth Storage: Database');
+                console.log('💾 Auth Backup: Database');
                 console.log('🎯 Registration System: Send "Hi" to register');
                 console.log('🎯 New Exam System: Type EXAM to try');
                 console.log('✅'.repeat(10) + '\n');
@@ -192,7 +207,7 @@ async function startBot() {
                 // Save successful connection state
                 try {
                     await databaseAuth.saveAuth({
-                        ...state.creds,
+                        creds: state.creds,
                         isConnected: true,
                         connectedAt: new Date().toISOString(),
                         user: sock.user
@@ -207,7 +222,7 @@ async function startBot() {
         const userLanguages = new Map();
 
         // ============================================
-        // HANDLE INCOMING MESSAGES - UPDATED VERSION
+        // HANDLE INCOMING MESSAGES
         // ============================================
         sock.ev.on('messages.upsert', async ({ messages }) => {
             const msg = messages[0];
@@ -491,7 +506,7 @@ async function startBot() {
                 
                 if (upperText === '!AUTH BACKUP' && jid.includes('255750910158')) {
                     console.log(`💾 Admin backing up auth`);
-                    const backupResult = await databaseAuth.backupAuth(state.creds);
+                    const backupResult = await databaseAuth.backupAuth({ creds: state.creds });
                     const backupMsg = backupResult.success 
                         ? '✅ Auth backup completed successfully'
                         : `❌ Backup failed: ${backupResult.error}`;
@@ -502,8 +517,14 @@ async function startBot() {
                 if (upperText === '!AUTH CLEAR' && jid.includes('255750910158')) {
                     console.log(`🗑️ Admin clearing auth`);
                     const clearResult = await databaseAuth.clearAuth();
+                    // Clear local auth too
+                    const authDir = path.join(__dirname, 'auth');
+                    if (fs.existsSync(authDir)) {
+                        fs.rmSync(authDir, { recursive: true, force: true });
+                    }
+                    
                     const clearMsg = clearResult.success 
-                        ? '✅ Auth cleared from database'
+                        ? '✅ Auth cleared from database and local storage'
                         : `❌ Clear failed: ${clearResult.error}`;
                     await sock.sendMessage(jid, { text: clearMsg });
                     return;
@@ -558,7 +579,7 @@ async function startBot() {
         // Periodic auth backup
         setInterval(async () => {
             try {
-                const result = await databaseAuth.backupAuth(state.creds);
+                const result = await databaseAuth.backupAuth({ creds: state.creds });
                 if (result.success) {
                     console.log('💾 Periodic auth backup completed');
                 }
@@ -568,10 +589,10 @@ async function startBot() {
         }, 30 * 60 * 1000); // Every 30 minutes
 
         console.log('\n✅ Bot is running. Waiting for QR code...\n');
-        console.log('💾 Database Auth Features:');
-        console.log('• WhatsApp auth stored in Supabase');
-        console.log('• Automatic encryption of sensitive data');
-        console.log('• Fallback to local storage if database fails');
+        console.log('💾 Auth Backup Features:');
+        console.log('• Local auth storage (primary)');
+        console.log('• Database backup of credentials');
+        console.log('• Automatic fallback if database fails');
         console.log('• Periodic automatic backups');
         console.log('• Admin commands for auth management');
         console.log('\n🎯 Registration System Features:');
@@ -595,12 +616,12 @@ async function checkAuthStatus() {
         
         let status = '🔐 *AUTHENTICATION STATUS*\n\n';
         
-        if (authData) {
-            status += '✅ *Database Auth:* Available\n';
+        if (authData && authData.creds) {
+            status += '✅ *Database Backup:* Available\n';
             status += `📅 Last Updated: ${authData.timestamp ? new Date(authData.timestamp).toLocaleString() : 'Unknown'}\n`;
             status += `🔗 Connection: ${authData.isConnected ? '✅ Connected' : '❌ Not connected'}\n`;
         } else {
-            status += '❌ *Database Auth:* Not available\n';
+            status += '❌ *Database Backup:* Not available\n';
         }
         
         status += '\n';
@@ -610,14 +631,15 @@ async function checkAuthStatus() {
             status += '✅ *Local Auth:* Available\n';
             status += `📅 Last Modified: ${stats.mtime.toLocaleString()}\n`;
             status += `📊 Size: ${(stats.size / 1024).toFixed(2)} KB\n`;
+            status += `🏠 Primary storage\n`;
         } else {
-            status += '❌ *Local Auth:* Not available\n';
+            status += '❌ *Local Auth:* Not available (need to scan QR)\n';
         }
         
         status += '\n💡 *Tips:*\n';
         status += '• Use !AUTH BACKUP to force backup\n';
         status += '• Use !AUTH CLEAR to reset auth\n';
-        status += '• Bot will automatically fallback to local auth if database fails';
+        status += '• Bot uses local storage as primary';
         
         return status;
     } catch (error) {
