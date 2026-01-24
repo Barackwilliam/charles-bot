@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-graduation-cap"></i> Charles Academy - Exam Dashboard</h1>
+                <p>Real-time exam results and student performance analytics</p>
+                <p class="time-info">Last updated: <%= currentTime %></p>
+            </div>
+            <div style="text-align: center;">
+                <div style="background: #667eea; color: white; padding: 15px 25px; border-radius: 10px;">
+                    <h3 style="margin: 0; color: white;">Live Results</h3>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em;">Auto-refresh every 30 seconds</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search students by name or registration number...">
+            <div id="searchResults" style="margin-top: 10px;"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><i class="fas fa-users"></i> Total Students</h3>
+                <div class="number"><%= stats.totalStudents %></div>
+                <p>Registered in system</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-file-alt"></i> Total Exams Taken</h3>
+                <div class="number"><%= stats.totalExams %></div>
+                <p>All exam attempts</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-check-circle"></i> Exams Passed</h3>
+                <div class="number"><%= stats.passedExams %></div>
+                <p>Score ≥ 70%</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-chart-line"></i> Pass Rate</h3>
+                <div class="number"><%= stats.passRate %>%</div>
+                <p>Overall success rate</p>
+            </div>
+        </div>
+
+        <div class="exam-results">
+            <h2><i class="fas fa-list-alt"></i> Recent Exam Results</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Registration No.</th>
+                            <th>Exam</th>
+                            <th>Course</th>
+                            <th>Score</th>
+                            <th>Time Taken</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (examResults.length > 0) { %>
+                            <% examResults.forEach(result => { %>
+                                <tr>
+                                    <td>
+                                        <a href="/student/<%= encodeURIComponent(result.student_jid) %>" class="student-link">
+                                            <i class="fas fa-user"></i> <%= result.student_name %>
+                                        </a>
+                                    </td>
+                                    <td><code><%= result.registration_number %></code></td>
+                                    <td><strong><%= result.exam_title %></strong></td>
+                                    <td><%= result.course %></td>
+                                    <td>
+                                        <span class="score score-<%= 
+                                            result.score >= 70 ? 'high' : 
+                                            result.score >= 50 ? 'medium' : 'low'
+                                        %>">
+                                            <%= result.score %>%
+                                        </span>
+                                        (<%= result.correct_answers %>/<%= result.total_questions %>)
+                                    </td>
+                                    <td><%= result.time_taken_minutes %> mins</td>
+                                    <td>
+                                        <span class="status-<%= result.passed ? 'passed' : 'failed' %>">
+                                            <%= result.passed ? 'PASSED ✓' : 'FAILED ✗' %>
+                                        </span>
+                                    </td>
+                                    <td><%= new Date(result.completed_at).toLocaleDateString() %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                                    <i class="fas fa-inbox" style="font-size: 3em; margin-bottom: 20px;"></i>
+                                    <p>No exam results available yet.</p>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Charles Academy Exam Dashboard • Updated in real-time • <a href="/" style="color: white; text-decoration: underline;">Refresh</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh page every 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    let html = '<div style="background: white; border-radius: 10px; padding: 15px; border: 1px solid #e9ecef;">';
+                    html += '<h4 style="margin-bottom: 10px; color: #333;">Search Results:</h4>';
+                    
+                    data.data.forEach(student => {
+                        html += `<div style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <a href="/student/${encodeURIComponent(student.jid)}" style="color: #667eea; text-decoration: none;">
+                                <strong>${student.full_name}</strong> (${student.registration_number})
+                            </a>
+                        </div>`;
+                    });
+                    
+                    html += '</div>';
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p style="color: #999; padding: 10px;">No students found</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p style="color: #dc3545; padding: 10px;">Search error</p>';
+            }
+        });
+    </script>
+</body>
+</html>

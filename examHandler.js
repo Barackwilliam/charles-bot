@@ -1,7 +1,5 @@
 // examHandler.js - Handles all exam logic
 const examsData = require('./examsData.js');
-const learningSession = require('./learningSession.js');
-const learningDb = require('./learningDb.js');
 
 class ExamHandler {
     constructor() {
@@ -177,6 +175,16 @@ class ExamHandler {
             return { type: 'exam_response', data: upperText };
         }
         
+        // Handle CANCEL command
+        if (upperText === 'CANCEL' || upperText === 'STOP') {
+            this.cancelExam(jid);
+            this.clearUserState(jid);
+            return {
+                type: 'exam_cancelled',
+                data: this.getExamCancelledText(language)
+            };
+        }
+        
         // Handle course selection
         if (userState.step === 'selecting_course') {
             return this.handleCourseSelection(jid, upperText, language);
@@ -338,7 +346,7 @@ class ExamHandler {
             title: exam.title[language],
             time: exam.time,
             totalMarks: exam.totalMarks,
-            instructions: exam.instructions[language],
+            instructions: exam.instructions ? exam.instructions[language] : '',
             questions: exam.questions,
             currentQuestion: 0,
             currentSubQuestion: 0,
@@ -363,17 +371,38 @@ class ExamHandler {
         }
         
         const question = session.questions[session.currentQuestion];
-        const subQuestion = question.subQuestions[session.currentSubQuestion];
         
-        return {
-            questionNumber: session.currentQuestion + 1,
-            subQuestionNumber: session.currentSubQuestion + 1,
-            totalQuestions: session.questions.length,
-            totalSubQuestions: question.subQuestions.length,
-            text: question.text[session.language],
-            subText: subQuestion.text[session.language],
-            answer: subQuestion.answer[session.language]
-        };
+        // Check if question has subQuestions
+        if (question.subQuestions && question.subQuestions.length > 0) {
+            if (session.currentSubQuestion >= question.subQuestions.length) {
+                session.currentQuestion++;
+                session.currentSubQuestion = 0;
+                return this.getCurrentQuestion(jid); // Recursively get next question
+            }
+            
+            const subQuestion = question.subQuestions[session.currentSubQuestion];
+            
+            return {
+                questionNumber: session.currentQuestion + 1,
+                subQuestionNumber: session.currentSubQuestion + 1,
+                totalQuestions: session.questions.length,
+                totalSubQuestions: question.subQuestions.length,
+                text: question.text[session.language],
+                subText: subQuestion.text ? subQuestion.text[session.language] : '',
+                answer: subQuestion.answer ? subQuestion.answer[session.language] : ''
+            };
+        } else {
+            // For questions without subquestions
+            return {
+                questionNumber: session.currentQuestion + 1,
+                subQuestionNumber: 1,
+                totalQuestions: session.questions.length,
+                totalSubQuestions: 1,
+                text: question.text[session.language],
+                subText: '',
+                answer: question.answer ? question.answer[session.language] : ''
+            };
+        }
     }
     
     // Submit answer
@@ -382,24 +411,40 @@ class ExamHandler {
         if (!session || session.completed) return { error: true, message: 'No active exam' };
         
         const question = session.questions[session.currentQuestion];
-        const subQuestion = question.subQuestions[session.currentSubQuestion];
         
-        // Store answer
-        session.answers.push({
-            questionNumber: session.currentQuestion + 1,
-            subQuestionNumber: session.currentSubQuestion + 1,
-            userAnswer: answer,
-            correctAnswer: subQuestion.answer[session.language],
-            isCorrect: this.checkAnswer(answer, subQuestion.answer[session.language])
-        });
-        
-        // Move to next sub-question
-        session.currentSubQuestion++;
-        
-        // If all sub-questions done, move to next question
-        if (session.currentSubQuestion >= question.subQuestions.length) {
+        // Check if question has subQuestions
+        if (question.subQuestions && question.subQuestions.length > 0) {
+            const subQuestion = question.subQuestions[session.currentSubQuestion];
+            
+            // Store answer
+            session.answers.push({
+                questionNumber: session.currentQuestion + 1,
+                subQuestionNumber: session.currentSubQuestion + 1,
+                userAnswer: answer,
+                correctAnswer: subQuestion.answer ? subQuestion.answer[session.language] : '',
+                isCorrect: this.checkAnswer(answer, subQuestion.answer ? subQuestion.answer[session.language] : '')
+            });
+            
+            // Move to next sub-question
+            session.currentSubQuestion++;
+            
+            // If all sub-questions done, move to next question
+            if (session.currentSubQuestion >= question.subQuestions.length) {
+                session.currentQuestion++;
+                session.currentSubQuestion = 0;
+            }
+        } else {
+            // For questions without subquestions
+            session.answers.push({
+                questionNumber: session.currentQuestion + 1,
+                subQuestionNumber: 1,
+                userAnswer: answer,
+                correctAnswer: question.answer ? question.answer[session.language] : '',
+                isCorrect: this.checkAnswer(answer, question.answer ? question.answer[session.language] : '')
+            });
+            
+            // Move to next question
             session.currentQuestion++;
-            session.currentSubQuestion = 0;
         }
         
         // Check if exam is complete
@@ -407,9 +452,6 @@ class ExamHandler {
             session.completed = true;
             session.endTime = Date.now();
             session.score = this.calculateScore(session);
-            
-            // Save to database
-            this.saveExamResults(session);
         }
         
         return { 
@@ -424,14 +466,28 @@ class ExamHandler {
         const user = userAnswer.toLowerCase().trim();
         const correct = correctAnswer.toLowerCase().trim();
         
-        // For open-ended questions, check if answer contains keywords
+        // Handle empty answers
+        if (!user || !correct) return false;
+        
+        // For open-ended questions (marked with [])
         if (correct.includes('[') && correct.includes(']')) {
-            // This is an open-ended question, accept any reasonable answer
-            return user.length > 3; // Minimum length check
+            // This is an open-ended question, check minimum length
+            return user.length > 3;
         }
         
-        // For specific answers, do exact or partial match
-        return user === correct || correct.includes(user) || user.includes(correct);
+        // For multiple choice questions
+        if (correctAnswer.includes('/')) {
+            const options = correct.split('/').map(opt => opt.trim());
+            return options.includes(user);
+        }
+        
+        // For TRUE/FALSE questions
+        if (correct === 'true' || correct === 'false') {
+            return user === correct;
+        }
+        
+        // For exact match questions
+        return user === correct;
     }
     
     // Calculate score
@@ -454,6 +510,7 @@ class ExamHandler {
         return {
             title: session.title,
             course: session.courseId,
+            exam: session.examId,
             score: session.score,
             correctAnswers: correctAnswers,
             totalQuestions: totalQuestions,
@@ -461,30 +518,6 @@ class ExamHandler {
             passed: session.score >= 70,
             answers: session.answers
         };
-    }
-    
-    // Save exam results to database
-    async saveExamResults(session) {
-        try {
-            const results = {
-                student_jid: session.jid,
-                course_id: session.courseId,
-                exam_id: session.examId,
-                exam_title: session.title,
-                score: session.score,
-                total_questions: session.answers.length,
-                correct_answers: session.answers.filter(a => a.isCorrect).length,
-                time_taken: Math.round((session.endTime - session.startTime) / 1000),
-                passed: session.score >= 70,
-                completed_at: new Date().toISOString(),
-                answers: JSON.stringify(session.answers)
-            };
-            
-            // Here you would save to your database
-            console.log(`📊 Exam results saved for ${session.jid}: ${session.score}%`);
-        } catch (error) {
-            console.error('Error saving exam results:', error);
-        }
     }
     
     // Cancel exam
@@ -507,7 +540,9 @@ class ExamHandler {
         
         const current = this.getCurrentQuestion(jid);
         const answered = session.answers.length;
-        const totalSubQuestions = session.questions.reduce((sum, q) => sum + q.subQuestions.length, 0);
+        const totalSubQuestions = session.questions.reduce((sum, q) => {
+            return sum + (q.subQuestions ? q.subQuestions.length : 1);
+        }, 0);
         
         return {
             course: session.courseId,
@@ -524,20 +559,33 @@ class ExamHandler {
         const session = this.examSessions.get(jid);
         if (!session) return null;
         
-        return session.instructions;
+        return session.instructions || 'Answer all questions.';
     }
     
     // Format exam question for display
     formatExamQuestion(question, language) {
-        let text = `📝 *Question ${question.questionNumber}.${question.subQuestionNumber}*\n\n`;
-        text += `${question.text}\n\n`;
+        let text = `📝 *Question ${question.questionNumber}`;
+        
+        if (question.totalSubQuestions > 1) {
+            text += `.${question.subQuestionNumber}`;
+        }
+        
+        text += `*\n\n`;
+        
+        if (question.text && question.text.trim() !== '') {
+            text += `${question.text}\n\n`;
+        }
         
         if (question.subText && question.subText.trim() !== '') {
             text += `➡️ ${question.subText}\n\n`;
         }
         
-        text += `Progress: ${question.questionNumber}/${question.totalQuestions} `;
-        text += `(Sub-question ${question.subQuestionNumber}/${question.totalSubQuestions})\n\n`;
+        if (question.totalSubQuestions > 1) {
+            text += `Progress: ${question.questionNumber}/${question.totalQuestions} `;
+            text += `(Sub-question ${question.subQuestionNumber}/${question.totalSubQuestions})\n\n`;
+        } else {
+            text += `Progress: ${question.questionNumber}/${question.totalQuestions}\n\n`;
+        }
         
         // Add answer instruction based on language
         const answerInstructions = {
@@ -571,6 +619,16 @@ class ExamHandler {
         return texts[language] || texts.en;
     }
     
+    // Get exam cancelled text
+    getExamCancelledText(language = 'en') {
+        const texts = {
+            en: '❌ Exam cancelled. Type EXAM to start a new exam.',
+            sw: '❌ Mtihani umeondolewa. Andika EXAM kuanza mtihani mpya.',
+            fr: '❌ Examen annulé. Tapez EXAM pour commencer un nouvel examen.'
+        };
+        return texts[language] || texts.en;
+    }
+    
     // Get exam result text
     getExamResultText(results, language = 'en') {
         const texts = {
@@ -580,7 +638,7 @@ class ExamHandler {
                 `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
                 `⏰ Time Taken: ${results.timeTaken} minutes\n\n` +
                 `${results.passed ? '🎉 CONGRATULATIONS! YOU PASSED! 🎉' : '📚 Keep studying! Try again.'}\n\n` +
-                `Type MENU to continue.`,
+                `Type EXAM to take another exam.`,
                 
             sw: `🎓 *MATOKEO YA MTIHANI*\n\n` +
                 `📚 Mtihani: ${results.title}\n` +
@@ -588,7 +646,7 @@ class ExamHandler {
                 `✅ Sahihi: ${results.correctAnswers}/${results.totalQuestions}\n` +
                 `⏰ Muda Uliochukuliwa: ${results.timeTaken} dakika\n\n` +
                 `${results.passed ? '🎉 HONGERA! UMEWEZA KUPITA! 🎉' : '📚 Endelea kujifunza! Jaribu tena.'}\n\n` +
-                `Andika MENU kuendelea.`,
+                `Andika EXAM kuchukua mtihani mwingine.`,
                 
             fr: `🎓 *RÉSULTATS DE L'EXAMEN*\n\n` +
                 `📚 Examen: ${results.title}\n` +
@@ -596,7 +654,7 @@ class ExamHandler {
                 `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
                 `⏰ Temps Pris: ${results.timeTaken} minutes\n\n` +
                 `${results.passed ? '🎉 FÉLICITATIONS ! VOUS AVEZ RÉUSSI ! 🎉' : '📚 Continuez à étudier ! Réessayez.'}\n\n` +
-                `Tapez MENU pour continuer.`
+                `Tapez EXAM pour passer un autre examen.`
         };
         
         return texts[language] || texts.en;

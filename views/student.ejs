@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-user-graduate"></i> <%= student.full_name %></h1>
+                <p>Registration Number: <code><%= student.registration_number %></code></p>
+                <p>Phone: <%= student.number %> • Language: <%= student.language.toUpperCase() %></p>
+                <p>Registered: <%= new Date(student.registered_at).toLocaleDateString() %></p>
+            </div>
+            <a href="/" style="background: #667eea; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Exams Taken</h3>
+                <div class="number"><%= examResults.length %></div>
+                <p>Total attempts</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Average Score</h3>
+                <div class="number"><%= averageScore %>%</div>
+                <p>Overall average</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Total Score</h3>
+                <div class="number"><%= totalScore %>%</div>
+                <p>Cumulative score</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Success Rate</h3>
+                <div class="number">
+                    <% 
+                        const passedExams = examResults.filter(r => r.passed).length;
+                        const passRate = examResults.length > 0 ? Math.round((passedExams / examResults.length) * 100) : 0;
+                    %>
+                    <%= passRate %>%
+                </div>
+                <p>Exams passed</p>
+            </div>
+        </div>
+
+        <div class="exam-results">
+            <h2><i class="fas fa-history"></i> Exam History</h2>
+            <% if (examResults.length > 0) { %>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Exam</th>
+                                <th>Course</th>
+                                <th>Score</th>
+                                <th>Time Taken</th>
+                                <th>Correct Answers</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% examResults.forEach(result => { %>
+                                <tr>
+                                    <td><%= new Date(result.completed_at).toLocaleString() %></td>
+                                    <td><strong><%= result.exam_title %></strong></td>
+                                    <td><%= result.course %></td>
+                                    <td>
+                                        <span class="score score-<%= 
+                                            result.score >= 70 ? 'high' : 
+                                            result.score >= 50 ? 'medium' : 'low'
+                                        %>">
+                                            <%= result.score %>%
+                                        </span>
+                                    </td>
+                                    <td><%= result.time_taken_minutes %> minutes</td>
+                                    <td><%= result.correct_answers %>/<%= result.total_questions %></td>
+                                    <td>
+                                        <span class="status-<%= result.passed ? 'passed' : 'failed' %>">
+                                            <%= result.passed ? 'PASSED ✓' : 'FAILED ✗' %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div style="text-align: center; padding: 50px; color: #999;">
+                    <i class="fas fa-clipboard-list" style="font-size: 4em; margin-bottom: 20px;"></i>
+                    <h3>No exam results yet</h3>
+                    <p>This student hasn't taken any exams.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="footer">
+            <p>Student Profile • Charles Academy • <a href="/" style="color: white; text-decoration: underline;">Dashboard</a></p>
+        </div>
+    </div>
+</body>
+</html>

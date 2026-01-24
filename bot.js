@@ -1,49 +1,8 @@
-// ==================== LOAD ENVIRONMENT VARIABLES ====================
-require('dotenv').config();
-
-// ==================== RENDER SERVER SETUP ====================
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-
-// Health check endpoint for Render
-app.get('/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'healthy', 
-        bot: process.env.BOT_NAME || 'Charles Academy Bot',
-        academy: process.env.ACADEMY_NAME || 'Charles Academy',
-        owner: process.env.OWNER_NUMBER || '255750910158',
-        version: '2.5.0',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
-});
-
-// Bot info endpoint
-app.get('/info', (req, res) => {
-    res.status(200).json({
-        name: process.env.BOT_NAME,
-        academy: process.env.ACADEMY_NAME,
-        support: process.env.SUPPORT_PHONE,
-        owner: process.env.OWNER_NUMBER,
-        database: process.env.DATABASE_URL ? 'Connected (Supabase)' : 'Not configured',
-        status: 'operational'
-    });
-});
-
-// Start Express server
-app.listen(PORT, () => {
-    console.log(`🌐 Health check server running on port ${PORT}`);
-    console.log(`🔗 Health check URL: http://localhost:${PORT}/health`);
-    console.log(`📊 Bot info URL: http://localhost:${PORT}/info`);
-});
-
-// ==================== MAIN BOT CODE ====================
+// bot.js - Updated to store WhatsApp auth in database
 const { makeWASocket, useMultiFileAuthState, Browsers } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
+const fs = require('fs');
+const path = require('path');
 
 // Import modules
 const learningCommands = require('./learningCommands');
@@ -51,72 +10,205 @@ const learningSession = require('./learningSession');
 const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 
+// === IMPORT DATABASE AUTH MODULE ===
+const databaseAuth = require('./databaseAuth');  // New database auth storage
+
+// === IMPORT STUDENT REGISTRATION ===
+const studentRegistration = require('./studentRegistration');
+
+// Function to check if auth directory exists (for fallback)
+function ensureAuthDirectory() {
+    const authDir = path.join(__dirname, 'auth');
+    if (!fs.existsSync(authDir)) {
+        fs.mkdirSync(authDir, { recursive: true });
+        console.log('📁 Created auth directory for local fallback');
+    }
+}
+
+// Function to handle credentials update
+function createCredsHandler(saveCreds, jid) {
+    return async (creds) => {
+        console.log(`💾 Creds update event received for ${jid || 'new session'}`);
+        
+        try {
+            // Save locally first (fallback)
+            await saveCreds();
+            
+            // Save to database if available
+            if (databaseAuth && typeof databaseAuth.saveAuth === 'function') {
+                const authData = {
+                    creds: creds,
+                    timestamp: new Date().toISOString(),
+                    botId: 'charles_academy'
+                };
+                
+                const result = await databaseAuth.saveAuth(authData);
+                if (result.success && !result.local) {
+                    console.log('✅ Auth saved to database');
+                } else if (result.local) {
+                    console.log('⚠️ Auth saved locally (database not available)');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error saving credentials:', error.message);
+            // Continue with local save only
+            await saveCreds();
+        }
+    };
+}
+
+// Modified useMultiFileAuthState to use database
+async function useDatabaseAuthState(botId = 'charles_academy') {
+    console.log('🔧 Initializing Database Auth System...');
+    
+    // Ensure local auth directory exists for fallback
+    ensureAuthDirectory();
+    
+    try {
+        // Try to load from database first
+        console.log('🔍 Loading auth from database...');
+        const savedAuth = await databaseAuth.loadAuth();
+        
+        if (savedAuth && savedAuth.creds) {
+            console.log('✅ Auth loaded from database');
+            
+            // Create state object similar to useMultiFileAuthState
+            const state = {
+                creds: savedAuth.creds,
+                keys: {
+                    get: async (type, ids) => {
+                        // Handle key retrieval from database
+                        if (type === 'pre-key' || type === 'session' || type === 'sender-key' || type === 'app-state-sync-key') {
+                            return savedAuth.keys ? savedAuth.keys[type] : {};
+                        }
+                        return {};
+                    },
+                    set: async (data) => {
+                        // Save keys to database
+                        if (savedAuth.keys) {
+                            Object.assign(savedAuth.keys, data);
+                            await databaseAuth.saveAuth(savedAuth);
+                        }
+                    }
+                }
+            };
+            
+            // Create saveCreds function
+            const saveCreds = () => databaseAuth.saveAuth(savedAuth);
+            
+            return { state, saveCreds };
+        }
+    } catch (error) {
+        console.log('⚠️ Could not load from database:', error.message);
+        console.log('🔄 Falling back to local auth...');
+    }
+    
+    // Fallback to local file auth
+    console.log('📁 Using local auth storage...');
+    return await useMultiFileAuthState('./auth');
+}
+
 async function startBot() {
-    console.log('🚀 Starting Charles Academy Bot on Render...');
-    console.log('📚 Version: 2.5.0');
-    console.log('🏫 Academy:', process.env.ACADEMY_NAME || 'Charles Academy');
-    console.log('🤖 Bot Name:', process.env.BOT_NAME || 'Charles Academy Bot');
-    console.log('👑 Owner:', process.env.OWNER_NUMBER || '255750910158');
-    console.log('📞 Support:', process.env.SUPPORT_PHONE || '255750910158');
-    console.log('🌐 Server Port:', PORT);
-    console.log('📁 Auth Directory: /tmp/auth-whatsapp');
-    console.log('🗄️ Database:', process.env.DATABASE_URL ? 'Supabase (Connected)' : 'Not configured');
+    console.log('🚀 Starting Charles Academy Bot...');
+    console.log('📚 Version: 3.0.0'); // Updated version with database auth
+    console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
-    console.log('🎯 New Feature: Advanced Exam System');
+    console.log('📞 Test Number: 0776831991');
+    console.log('💾 Feature: Database Auth Storage');
+    console.log('🎯 Feature: Student Registration System');
     
     try {
         // Initialize database
         console.log('🔧 Initializing Database Connection...');
         
-        // Use temporary directory for Render
-        const { state, saveCreds } = await useMultiFileAuthState('/tmp/auth-whatsapp');
+        // Use database auth state
+        const { state, saveCreds } = await useDatabaseAuthState();
         
         const sock = makeWASocket({
             auth: state,
-            printQRInTerminal: true,  // IMPORTANT: Set to true for Render terminal
+            printQRInTerminal: false,
             browser: Browsers.ubuntu('Chrome'),
             connectTimeoutMs: 60000,
-            keepAliveIntervalMs: 25000
+            keepAliveIntervalMs: 25000,
+            syncFullHistory: false,
+            markOnlineOnConnect: true,
+            generateHighQualityLinkPreview: true,
+            defaultQueryTimeoutMs: 60000
         });
 
-        sock.ev.on('creds.update', saveCreds);
+        // Set up credentials update handler
+        sock.ev.on('creds.update', createCredsHandler(saveCreds, sock.user?.id));
         
-        sock.ev.on('connection.update', (update) => {
+        sock.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect, qr } = update;
             
             // Display QR Code
             if (qr) {
-                console.log('\n' + '='.repeat(60));
+                console.log('\n' + '='.repeat(50));
                 console.log('📱 SCAN THIS QR CODE WITH WHATSAPP');
-                console.log('='.repeat(60));
+                console.log('='.repeat(50));
                 qrcode.generate(qr, { small: true });
                 console.log('\n📋 Instructions:');
                 console.log('1. Open WhatsApp on your phone');
                 console.log('2. Tap ⋮ (three dots) → Linked Devices');
                 console.log('3. Tap "Link a Device"');
                 console.log('4. Scan the QR code above');
-                console.log('='.repeat(60) + '\n');
+                console.log('='.repeat(50) + '\n');
+                
+                // Save QR code state to database
+                try {
+                    await databaseAuth.saveAuth({
+                        ...state.creds,
+                        qrState: qr,
+                        timestamp: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.log('⚠️ Could not save QR state:', error.message);
+                }
             }
             
             if (connection === 'close') {
                 console.log('❌ Connection closed');
-                console.log('🔄 Reconnecting in 5 seconds...');
-                setTimeout(() => startBot(), 5000);
+                const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 401;
+                
+                if (shouldReconnect) {
+                    console.log('🔄 Reconnecting in 5 seconds...');
+                    setTimeout(() => startBot(), 5000);
+                } else {
+                    console.log('⚠️ Authentication failed. Clearing auth...');
+                    await databaseAuth.clearAuth();
+                    console.log('🔄 Restarting bot...');
+                    setTimeout(() => startBot(), 3000);
+                }
             } else if (connection === 'open') {
-                console.log('\n' + '✅'.repeat(12));
+                console.log('\n' + '✅'.repeat(10));
                 console.log('✅ BOT CONNECTED SUCCESSFULLY!');
-                console.log('🤖 Bot:', process.env.BOT_NAME || 'Charles Academy Bot');
-                console.log('👑 Owner:', process.env.OWNER_NUMBER || '255750910158');
-                console.log('📞 Support:', process.env.SUPPORT_PHONE || '255750910158');
+                console.log('📱 Now you can message: 0750910158');
+                console.log('💾 Auth Storage: Database');
+                console.log('🎯 Registration System: Send "Hi" to register');
                 console.log('🎯 New Exam System: Type EXAM to try');
-                console.log('✅'.repeat(12) + '\n');
+                console.log('✅'.repeat(10) + '\n');
+                
+                // Save successful connection state
+                try {
+                    await databaseAuth.saveAuth({
+                        ...state.creds,
+                        isConnected: true,
+                        connectedAt: new Date().toISOString(),
+                        user: sock.user
+                    });
+                } catch (error) {
+                    console.log('⚠️ Could not save connection state:', error.message);
+                }
             }
         });
 
         // Store user language preferences
         const userLanguages = new Map();
 
-        // Handle incoming messages
+        // ============================================
+        // HANDLE INCOMING MESSAGES - UPDATED VERSION
+        // ============================================
         sock.ev.on('messages.upsert', async ({ messages }) => {
             const msg = messages[0];
             if (!msg.message || msg.key.fromMe) return;
@@ -125,22 +217,73 @@ async function startBot() {
             const text = msg.message.conversation || 
                          msg.message.extendedTextMessage?.text || '';
             
-            console.log(`📩 Message from ${jid.split('@')[0]}: ${text}`);
+            console.log(`\n📩 Message from ${jid.split('@')[0]}: "${text}"`);
 
             try {
+                // ======================================
+                // STEP 1: CHECK IF USER IS REGISTERING
+                // ======================================
+                if (studentRegistration.isRegistering(jid)) {
+                    console.log(`📝 User is in registration process`);
+                    const response = await studentRegistration.handleRegistrationStep(jid, text, 'en');
+                    if (response) {
+                        console.log(`📤 Sending registration response`);
+                        await sock.sendMessage(jid, { text: response });
+                    }
+                    return;
+                }
+
+                // ======================================
+                // STEP 2: CHECK IF USER IS REGISTERED
+                // ======================================
+                console.log(`🔍 Checking if user is registered...`);
+                const { isRegistered } = await studentRegistration.isStudentRegistered(jid);
+                console.log(`📊 Registration status: ${isRegistered ? '✅ Registered' : '❌ Not registered'}`);
+
+                // ======================================
+                // STEP 3: HANDLE UNREGISTERED USERS
+                // ======================================
+                if (!isRegistered) {
+                    console.log(`👤 User not registered, checking message type...`);
+                    
+                    // Allow greetings to trigger registration
+                    if (text.toLowerCase().match(/^(hi|hello|hey|hujambo|bonjour|salut|mambo|start)/)) {
+                        console.log(`🎯 Greeting detected, starting registration...`);
+                        const registrationMsg = studentRegistration.startRegistration(jid, 'en');
+                        await sock.sendMessage(jid, { text: registrationMsg });
+                        return;
+                    }
+                    
+                    // For any other message, also start registration
+                    console.log(`📝 Starting registration for new user...`);
+                    const registrationMsg = studentRegistration.startRegistration(jid, 'en');
+                    await sock.sendMessage(jid, { text: registrationMsg });
+                    return;
+                }
+
+                // ======================================
+                // STEP 4: USER IS REGISTERED - PROCESS COMMANDS
+                // ======================================
+                console.log(`✅ User is registered, processing command...`);
+                
                 // Get user language
                 const userLanguage = userLanguages.get(jid) || 'en';
                 
-                // === 1. CHECK FOR KEYWORDS (CAPITAL LETTERS) ===
+                // Convert to uppercase for keyword matching
                 const upperText = text.toUpperCase().trim();
                 
+                console.log(`🌍 User language: ${userLanguage}`);
+                console.log(`🔤 Processed text: ${upperText}`);
+
+                // ======================================
                 // LANGUAGE SELECTION KEYWORDS
+                // ======================================
                 if (upperText === 'ENGLISH') {
                     userLanguages.set(jid, 'en');
                     await learningDb.setStudentLanguage(jid, 'en');
                     await sock.sendMessage(jid, { 
                         text: `✅ Language set to English 🇬🇧\n\n` +
-                              `Welcome to ${process.env.ACADEMY_NAME}! Type MENU to see options.` 
+                              `Welcome to Charles Academy! Type MENU to see options.` 
                     });
                     return;
                 }
@@ -150,7 +293,7 @@ async function startBot() {
                     await learningDb.setStudentLanguage(jid, 'sw');
                     await sock.sendMessage(jid, { 
                         text: `✅ Lugha imewekwa kwa Kiswahili 🇹🇿\n\n` +
-                              `Karibu kwenye ${process.env.ACADEMY_NAME}! Andika MENU kuona chaguo.` 
+                              `Karibu kwenye Charles Academy! Andika MENU kuona chaguo.` 
                     });
                     return;
                 }
@@ -160,34 +303,43 @@ async function startBot() {
                     await learningDb.setStudentLanguage(jid, 'fr');
                     await sock.sendMessage(jid, { 
                         text: `✅ Langue définie en Français 🇫🇷\n\n` +
-                              `Bienvenue à ${process.env.ACADEMY_NAME}! Tapez MENU pour voir les options.` 
+                              `Bienvenue à Charles Academy! Tapez MENU pour voir les options.` 
                     });
                     return;
                 }
 
-                // === 2. CHECK FOR ACTIVE EXAM FIRST ===
+                // ======================================
+                // CHECK FOR ACTIVE EXAM FIRST
+                // ======================================
                 if (examHandler.hasActiveExam(jid)) {
+                    console.log(`📝 User has active exam, handling exam response`);
                     await handleExamResponse(sock, jid, text, userLanguage);
                     return;
                 }
 
-                // === 3. MAIN KEYWORDS ===
+                // ======================================
+                // MAIN KEYWORDS
+                // ======================================
                 if (upperText === 'MENU') {
+                    console.log(`📱 Showing main menu`);
                     await sock.sendMessage(jid, { text: await getMenuText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'HELP') {
+                    console.log(`❓ Showing help`);
                     await sock.sendMessage(jid, { text: await getHelpText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'SUPPORT') {
+                    console.log(`🆘 Showing support`);
                     await sock.sendMessage(jid, { text: await getSupportText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'PROGRESS') {
+                    console.log(`📊 Showing progress`);
                     const progress = await learningDb.getStudentStats(jid);
                     const progressText = getProgressText(userLanguage, progress);
                     await sock.sendMessage(jid, { text: progressText });
@@ -195,6 +347,7 @@ async function startBot() {
                 }
                 
                 if (upperText === 'COURSES') {
+                    console.log(`📚 Showing courses`);
                     const courses = await learningDb.getCourses(userLanguage);
                     const coursesText = getCoursesText(userLanguage, courses.data || []);
                     await sock.sendMessage(jid, { text: coursesText });
@@ -202,13 +355,16 @@ async function startBot() {
                 }
                 
                 if (upperText === 'LEARN') {
+                    console.log(`📖 Starting learning`);
                     await sock.sendMessage(jid, { text: await getLearnText(userLanguage) });
                     return;
                 }
                 
-                // === 4. NEW EXAM SYSTEM ===
+                // ======================================
+                // NEW EXAM SYSTEM
+                // ======================================
                 if (upperText === 'EXAM') {
-                    // Initialize exam state
+                    console.log(`🎓 Starting exam system`);
                     examHandler.initUserState(jid);
                     const userState = examHandler.userStates.get(jid);
                     userState.step = 'selecting_course';
@@ -219,69 +375,87 @@ async function startBot() {
                     return;
                 }
 
-                // === HANDLE EXAM RESPONSES ===
+                // ======================================
+                // HANDLE EXAM RESPONSES
+                // ======================================
                 if (examHandler.hasActiveExam(jid) || 
                     (examHandler.userStates.has(jid) && examHandler.userStates.get(jid).step !== 'idle')) {
                     
+                    console.log(`📝 Handling exam state response`);
                     await handleExamResponse(sock, jid, text, userLanguage);
                     return;
                 }
                 
-                // === 5. OLD EXAM/TEST/EXERCISE COMMANDS (Keep for compatibility) ===
+                // ======================================
+                // OLD EXAM/TEST/EXERCISE COMMANDS
+                // ======================================
                 if (upperText === 'TEST') {
+                    console.log(`📝 Starting test`);
                     await sock.sendMessage(jid, { text: await getTestText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'EXERCISE') {
+                    console.log(`🧪 Starting exercise`);
                     await sock.sendMessage(jid, { text: await getExerciseText(userLanguage) });
                     return;
                 }
                 
                 // EXERCISE TYPE SELECTION
                 if (upperText === 'ENGLISH EXERCISE') {
+                    console.log(`🧪 English exercise`);
                     await startExercise(sock, jid, '1', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'KISWAHILI EXERCISE') {
+                    console.log(`🧪 Kiswahili exercise`);
                     await startExercise(sock, jid, '2', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'GRAPHICS EXERCISE') {
+                    console.log(`🧪 Graphics exercise`);
                     await startExercise(sock, jid, '3', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'WEB EXERCISE') {
+                    console.log(`🧪 Web exercise`);
                     await startExercise(sock, jid, '4', userLanguage);
                     return;
                 }
                 
                 // TEST LEVEL SELECTION
                 if (upperText === 'TEST 1' || upperText === 'TEST BEGINNER') {
+                    console.log(`📝 Test level 1`);
                     await startTest(sock, jid, '1', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 2' || upperText === 'TEST INTERMEDIATE') {
+                    console.log(`📝 Test level 2`);
                     await startTest(sock, jid, '2', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 3' || upperText === 'TEST ADVANCED') {
+                    console.log(`📝 Test level 3`);
                     await startTest(sock, jid, '3', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 4' || upperText === 'TEST EXPERT') {
+                    console.log(`📝 Test level 4`);
                     await startTest(sock, jid, '4', userLanguage);
                     return;
                 }
 
-                // === 6. HANDLE READY FOR EXAMS/TESTS ===
+                // ======================================
+                // HANDLE READY FOR EXAMS/TESTS
+                // ======================================
                 if (upperText === 'READY') {
+                    console.log(`✅ User ready for activity`);
                     const session = learningSession.getSession(jid);
                     if (session.currentActivity) {
                         const firstQuestion = learningSession.getCurrentQuestion(jid);
@@ -292,9 +466,11 @@ async function startBot() {
                     }
                 }
 
-                // === 7. HANDLE CANCEL ===
+                // ======================================
+                // HANDLE CANCEL
+                // ======================================
                 if (upperText === 'CANCEL' || upperText === 'STOP') {
-                    // Cancel both old sessions and new exam sessions
+                    console.log(`🛑 Cancelling session`);
                     learningSession.clearSession(jid);
                     examHandler.cancelExam(jid);
                     
@@ -302,52 +478,150 @@ async function startBot() {
                     await sock.sendMessage(jid, { text: cancelMsg });
                     return;
                 }
+                
+                // ======================================
+                // NEW: ADMIN COMMANDS FOR AUTH MANAGEMENT
+                // ======================================
+                if (upperText === '!AUTH STATUS' && jid.includes('255750910158')) {
+                    console.log(`🔐 Admin checking auth status`);
+                    const authStatus = await checkAuthStatus();
+                    await sock.sendMessage(jid, { text: authStatus });
+                    return;
+                }
+                
+                if (upperText === '!AUTH BACKUP' && jid.includes('255750910158')) {
+                    console.log(`💾 Admin backing up auth`);
+                    const backupResult = await databaseAuth.backupAuth(state.creds);
+                    const backupMsg = backupResult.success 
+                        ? '✅ Auth backup completed successfully'
+                        : `❌ Backup failed: ${backupResult.error}`;
+                    await sock.sendMessage(jid, { text: backupMsg });
+                    return;
+                }
+                
+                if (upperText === '!AUTH CLEAR' && jid.includes('255750910158')) {
+                    console.log(`🗑️ Admin clearing auth`);
+                    const clearResult = await databaseAuth.clearAuth();
+                    const clearMsg = clearResult.success 
+                        ? '✅ Auth cleared from database'
+                        : `❌ Clear failed: ${clearResult.error}`;
+                    await sock.sendMessage(jid, { text: clearMsg });
+                    return;
+                }
 
-                // === 8. GREETINGS & INITIAL MESSAGE ===
+                // ======================================
+                // GREETINGS & INITIAL MESSAGE
+                // ======================================
                 if (text.toLowerCase().match(/^(hi|hello|hey|hujambo|bonjour|salut|mambo|start)/)) {
+                    console.log(`👋 Greeting detected`);
                     const welcomeMsg = await getWelcomeText(userLanguage);
                     await sock.sendMessage(jid, { text: welcomeMsg });
                     return;
                 }
 
-                // === 9. LANGUAGE SELECTION REQUEST ===
+                // ======================================
+                // LANGUAGE SELECTION REQUEST
+                // ======================================
                 if (text.toLowerCase().match(/^(language|lugha|langue|change language)/)) {
+                    console.log(`🌍 Language change request`);
                     const langResponse = await getLanguageSelectionText(userLanguage);
                     await sock.sendMessage(jid, { text: langResponse });
                     return;
                 }
 
-                // === 10. HANDLE OLD EXAM/TEST/EXERCISE RESPONSES ===
+                // ======================================
+                // HANDLE OLD EXAM/TEST/EXERCISE RESPONSES
+                // ======================================
                 const session = learningSession.getSession(jid);
                 if (session.currentActivity && text.length > 0) {
+                    console.log(`📝 Handling session response`);
                     await handleSessionResponse(sock, jid, text, session, userLanguage);
                     return;
                 }
 
-                // === 11. DEFAULT RESPONSE ===
+                // ======================================
+                // DEFAULT RESPONSE
+                // ======================================
                 if (text.length > 2) {
+                    console.log(`🤖 Default response`);
                     const defaultMsg = getDefaultResponseText(userLanguage);
                     await sock.sendMessage(jid, { text: defaultMsg });
                 }
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error:', error);
                 const errorMsg = getErrorText(userLanguages.get(jid) || 'en');
                 await sock.sendMessage(jid, { text: errorMsg });
             }
         });
 
+        // Periodic auth backup
+        setInterval(async () => {
+            try {
+                const result = await databaseAuth.backupAuth(state.creds);
+                if (result.success) {
+                    console.log('💾 Periodic auth backup completed');
+                }
+            } catch (error) {
+                console.log('⚠️ Periodic backup failed:', error.message);
+            }
+        }, 30 * 60 * 1000); // Every 30 minutes
+
         console.log('\n✅ Bot is running. Waiting for QR code...\n');
-        console.log('🎯 New Exam System Features:');
-        console.log('• 4 Courses with multiple exams each');
-        console.log('• Kiswahili exams always in Kiswahili');
-        console.log('• Automatic scoring and results');
-        console.log('• Progress tracking');
+        console.log('💾 Database Auth Features:');
+        console.log('• WhatsApp auth stored in Supabase');
+        console.log('• Automatic encryption of sensitive data');
+        console.log('• Fallback to local storage if database fails');
+        console.log('• Periodic automatic backups');
+        console.log('• Admin commands for auth management');
+        console.log('\n🎯 Registration System Features:');
+        console.log('• Ask for full name and registration number');
+        console.log('• Registration number is optional (type SKIP)');
+        console.log('• All exam results saved with student details');
+        console.log('• View results on dashboard');
         
     } catch (error) {
         console.error('❌ Fatal error:', error);
         console.log('🔄 Restarting in 10 seconds...');
         setTimeout(() => startBot(), 10000);
+    }
+}
+
+// ==================== NEW AUTH STATUS FUNCTION ====================
+async function checkAuthStatus() {
+    try {
+        const authData = await databaseAuth.loadAuth();
+        const hasLocalAuth = fs.existsSync(path.join(__dirname, 'auth', 'creds.json'));
+        
+        let status = '🔐 *AUTHENTICATION STATUS*\n\n';
+        
+        if (authData) {
+            status += '✅ *Database Auth:* Available\n';
+            status += `📅 Last Updated: ${authData.timestamp ? new Date(authData.timestamp).toLocaleString() : 'Unknown'}\n`;
+            status += `🔗 Connection: ${authData.isConnected ? '✅ Connected' : '❌ Not connected'}\n`;
+        } else {
+            status += '❌ *Database Auth:* Not available\n';
+        }
+        
+        status += '\n';
+        
+        if (hasLocalAuth) {
+            const stats = fs.statSync(path.join(__dirname, 'auth', 'creds.json'));
+            status += '✅ *Local Auth:* Available\n';
+            status += `📅 Last Modified: ${stats.mtime.toLocaleString()}\n`;
+            status += `📊 Size: ${(stats.size / 1024).toFixed(2)} KB\n`;
+        } else {
+            status += '❌ *Local Auth:* Not available\n';
+        }
+        
+        status += '\n💡 *Tips:*\n';
+        status += '• Use !AUTH BACKUP to force backup\n';
+        status += '• Use !AUTH CLEAR to reset auth\n';
+        status += '• Bot will automatically fallback to local auth if database fails';
+        
+        return status;
+    } catch (error) {
+        return `❌ Error checking auth status: ${error.message}`;
     }
 }
 
@@ -416,6 +690,27 @@ async function handleExamResponse(sock, jid, text, language) {
                 const resultText = examHandler.getExamResultText(examResults, language);
                 await sock.sendMessage(jid, { text: resultText });
                 
+                // ============================================
+                // SAVE EXAM RESULTS TO DATABASE
+                // ============================================
+                console.log(`📊 Exam completed for ${jid}, saving results...`);
+                if (examResults) {
+                    const examData = {
+                        title: examResults.title,
+                        course: examResults.course,
+                        examId: examHandler.examSessions.get(jid)?.examId,
+                        score: examResults.score,
+                        totalQuestions: examResults.totalQuestions,
+                        correctAnswers: examResults.correctAnswers,
+                        timeTaken: examResults.timeTaken,
+                        startTime: examHandler.examSessions.get(jid)?.startTime,
+                        language: language
+                    };
+                    
+                    const saveResult = await studentRegistration.saveExamResult(jid, examData);
+                    console.log(`💾 Save result:`, saveResult.success ? '✅ Success' : '❌ Failed');
+                }
+                
                 // Clear exam state
                 examHandler.cancelExam(jid);
             } else if (answerResult.nextQuestion) {
@@ -433,204 +728,107 @@ async function handleExamResponse(sock, jid, text, language) {
     }
 }
 
-async function handleExamSelection(sock, jid, text, language) {
-    const choice = text.trim();
-    
-    // First level: Course selection
-    if (!examHandler.selectedCourse[jid]) {
-        const courses = ['english', 'kiswahili', 'graphics', 'website'];
-        const courseIndex = parseInt(choice) - 1;
-        
-        if (courseIndex >= 0 && courseIndex < courses.length) {
-            const courseId = courses[courseIndex];
-            examHandler.selectedCourse[jid] = courseId;
-            
-            // Show exams for this course
-            const courseSelection = examHandler.getCourseSelectionText(courseId, language);
-            await sock.sendMessage(jid, { text: courseSelection });
-        } else {
-            await sock.sendMessage(jid, { 
-                text: getInvalidChoiceText(language) + '\n\n' + examHandler.getExamMenu(language) 
-            });
-        }
-    } 
-    // Second level: Exam selection
-    else if (!examHandler.selectedExam[jid]) {
-        const courseId = examHandler.selectedCourse[jid];
-        const exams = Object.keys(examHandler.getExamsData()[courseId] || {});
-        const examIndex = parseInt(choice) - 1;
-        
-        if (examIndex >= 0 && examIndex < exams.length) {
-            const examId = exams[examIndex];
-            
-            // Start the exam
-            const exam = examHandler.startExam(jid, courseId, examId, language);
-            
-            if (exam.error) {
-                await sock.sendMessage(jid, { text: getErrorText(language) });
-                return;
-            }
-            
-            // Show exam instructions and first question
-            const instructions = examHandler.getExamInstructions(jid);
-            const question = examHandler.getCurrentQuestion(jid);
-            
-            let startText = `🎓 *${exam.examSession.title}*\n\n`;
-            startText += `⏰ Time: ${exam.examSession.time}\n`;
-            startText += `📊 Total Marks: ${exam.examSession.totalMarks}\n\n`;
-            startText += `📝 *Instructions:*\n${instructions}\n\n`;
-            startText += `Type READY to begin or CANCEL to stop.`;
-            
-            await sock.sendMessage(jid, { text: startText });
-            
-            // Clear selection states
-            delete examHandler.selectedCourse[jid];
-            delete examHandler.selectedExam[jid];
-            examHandler.examSelectionState = null;
-            
-        } else {
-            await sock.sendMessage(jid, { 
-                text: getInvalidChoiceText(language) + '\n\n' + 
-                      examHandler.getCourseSelectionText(courseId, language) 
-            });
-        }
-    }
-}
-
-function formatExamQuestion(question, language) {
-    let text = `📝 *Question ${question.questionNumber}.${question.subQuestionNumber}*\n\n`;
-    text += `${question.text}\n\n`;
-    
-    if (question.subText) {
-        text += `➡️ ${question.subText}\n\n`;
-    }
-    
-    text += `Progress: ${question.questionNumber}/${question.totalQuestions} (Sub-question ${question.subQuestionNumber}/${question.totalSubQuestions})\n\n`;
-    text += getAnswerInstruction(language, 'short_answer');
-    
-    return text;
-}
-
-function getExamResultText(results, language) {
-    const texts = {
-        en: `🎓 *EXAM RESULTS*\n\n` +
-            `📚 Exam: ${results.title}\n` +
-            `📊 Score: ${results.score}%\n` +
-            `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Time Taken: ${results.timeTaken} minutes\n\n` +
-            `${results.passed ? '🎉 CONGRATULATIONS! YOU PASSED! 🎉' : '📚 Keep studying! Try again.'}\n\n` +
-            `Type MENU to continue.`,
-            
-        sw: `🎓 *MATOKEO YA MTIHANI*\n\n` +
-            `📚 Mtihani: ${results.title}\n` +
-            `📊 Alama: ${results.score}%\n` +
-            `✅ Sahihi: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Muda Uliochukuliwa: ${results.timeTaken} dakika\n\n` +
-            `${results.passed ? '🎉 HONGERA! UMEWEZA KUPITA! 🎉' : '📚 Endelea kujifunza! Jaribu tena.'}\n\n` +
-            `Andika MENU kuendelea.`,
-            
-        fr: `🎓 *RÉSULTATS DE L\'EXAMEN*\n\n` +
-            `📚 Examen: ${results.title}\n` +
-            `📊 Score: ${results.score}%\n` +
-            `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Temps Pris: ${results.timeTaken} minutes\n\n` +
-            `${results.passed ? '🎉 FÉLICITATIONS ! VOUS AVEZ RÉUSSI ! 🎉' : '📚 Continuez à étudier ! Réessayez.'}\n\n` +
-            `Tapez MENU pour continuer.`
-    };
-    
-    return texts[language] || texts.en;
-}
-
-function getInvalidChoiceText(language) {
-    const texts = {
-        en: '❌ Invalid choice. Please select a valid number.',
-        sw: '❌ Chaguo batili. Tafadhali chagua namba sahihi.',
-        fr: '❌ Choix invalide. Veuillez sélectionner un numéro valide.'
-    };
-    return texts[language] || texts.en;
-}
-
 // ==================== OLD FUNCTIONS (KEPT FOR COMPATIBILITY) ====================
 
 async function startExercise(sock, jid, courseId, language) {
-    const exercise = await learningCommands.getExercise(courseId, language);
-    if (exercise) {
-        learningSession.startSession(jid, 'exercise', exercise);
-        
-        const startText = getExerciseStartText(language, exercise.name, exercise.questions.length);
-        await sock.sendMessage(jid, { text: startText });
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
+    console.log(`Starting exercise for course ${courseId} in ${language}`);
+    const exercise = await learningSession.startExercise(jid, courseId, language);
+    
+    if (exercise.error) {
+        await sock.sendMessage(jid, { text: exercise.error });
+        return;
     }
+    
+    const startText = getExerciseStartText(language, exercise.courseName, exercise.totalQuestions);
+    await sock.sendMessage(jid, { text: startText });
 }
 
 async function startTest(sock, jid, testLevel, language) {
-    const test = await learningCommands.getTest(testLevel, language);
-    if (test) {
-        learningSession.startSession(jid, 'test', test);
-        
-        const startText = getTestStartText(language, test.name, test.questions.length);
-        await sock.sendMessage(jid, { text: startText });
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
-    }
-}
-
-async function handleSessionResponse(sock, jid, answer, session, language) {
-    const result = learningSession.checkAnswer(jid, answer);
+    console.log(`Starting test level ${testLevel} in ${language}`);
+    const test = await learningSession.startTest(jid, testLevel, language);
     
-    if (result.correct !== undefined) {
-        const nextQuestion = learningSession.getCurrentQuestion(jid);
-        
-        if (nextQuestion) {
-            await sendQuestion(sock, jid, nextQuestion, session, language);
-        } else {
-            // Session completed
-            const stats = learningSession.getSessionStats(jid);
-            const score = Math.round((stats.correct / stats.totalQuestions) * 100);
-            
-            const resultText = getResultText(language, score, stats);
-            await sock.sendMessage(jid, { text: resultText });
-            
-            // Clear session
-            learningSession.clearSession(jid);
-        }
-    } else {
-        const errorText = getErrorText(language);
-        await sock.sendMessage(jid, { text: errorText });
+    if (test.error) {
+        await sock.sendMessage(jid, { text: test.error });
+        return;
     }
+    
+    const testName = getTestName(testLevel, language);
+    const startText = getTestStartText(language, testName, test.totalQuestions);
+    await sock.sendMessage(jid, { text: startText });
 }
 
 function checkAnswer(question, userAnswer) {
-    const correctAnswer = question.correctAnswer || question.answer;
-    const userUpper = userAnswer.trim().toUpperCase();
-    const correctUpper = correctAnswer.trim().toUpperCase();
+    if (!question || !userAnswer) return false;
     
-    return userUpper === correctUpper;
+    const normalizedUserAnswer = userAnswer.toString().trim().toLowerCase();
+    const normalizedCorrectAnswer = question.correctAnswer.toString().trim().toLowerCase();
+    
+    // For multiple choice questions
+    if (question.type === 'multiple_choice') {
+        const userChoice = normalizedUserAnswer.charAt(0).toUpperCase();
+        const correctChoice = normalizedCorrectAnswer.charAt(0).toUpperCase();
+        return userChoice === correctChoice;
+    }
+    
+    // For true/false questions
+    if (question.type === 'true_false') {
+        const trueSynonyms = ['true', 't', 'yes', 'y', 'correct', 'right', 'kweli', 'vrai', 'oui'];
+        const falseSynonyms = ['false', 'f', 'no', 'n', 'wrong', 'incorrect', 'sio kweli', 'faux', 'non'];
+        
+        if (trueSynonyms.includes(normalizedUserAnswer)) {
+            return normalizedCorrectAnswer.includes('true') || normalizedCorrectAnswer.includes('kweli') || normalizedCorrectAnswer.includes('vrai');
+        }
+        
+        if (falseSynonyms.includes(normalizedUserAnswer)) {
+            return normalizedCorrectAnswer.includes('false') || normalizedCorrectAnswer.includes('sio kweli') || normalizedCorrectAnswer.includes('faux');
+        }
+    }
+    
+    // For short answer questions
+    return normalizedUserAnswer === normalizedCorrectAnswer;
+}
+
+async function handleSessionResponse(sock, jid, answer, session, language) {
+    console.log(`Handling session response for ${jid}`);
+    const result = learningSession.processAnswer(jid, answer);
+    
+    if (result.completed) {
+        const resultText = getResultText(language, result.score, result.stats);
+        await sock.sendMessage(jid, { text: resultText });
+        learningSession.clearSession(jid);
+    } else if (result.nextQuestion) {
+        await sendQuestion(sock, jid, result.nextQuestion, session, language);
+    } else {
+        await sock.sendMessage(jid, { text: getErrorText(language) });
+    }
+}
+
+function getTestName(level, language) {
+    const names = {
+        '1': { 'en': 'Beginner Test', 'sw': 'Mtihani wa Mwanzo', 'fr': 'Test Débutant' },
+        '2': { 'en': 'Intermediate Test', 'sw': 'Mtihani wa Kati', 'fr': 'Test Intermédiaire' },
+        '3': { 'en': 'Advanced Test', 'sw': 'Mtihani wa Juu', 'fr': 'Test Avancé' },
+        '4': { 'en': 'Expert Test', 'sw': 'Mtihani wa Utaalamu', 'fr': 'Test Expert' }
+    };
+    return names[level]?.[language] || names[level]?.['en'] || `Test Level ${level}`;
 }
 
 async function sendQuestion(sock, jid, question, session, language) {
-    const questionNumber = learningSession.getCurrentQuestionIndex(jid) + 1;
-    const totalQuestions = session.questions.length;
+    const questionNumber = session.currentQuestion || 1;
+    const header = getQuestionHeader(language, questionNumber, session.currentActivity);
+    const instruction = getAnswerInstruction(language, question.type);
+    const progress = getProgressText(language, questionNumber - 1, session.totalQuestions);
     
-    let questionText = getQuestionHeader(language, questionNumber, session.currentActivity);
-    questionText += question.text + '\n\n';
+    let questionText = `${header}${question.text}\n\n`;
     
-    if (question.options && question.options.length > 0) {
+    if (question.options) {
         question.options.forEach((option, index) => {
-            const letter = String.fromCharCode(65 + index); // A, B, C, D
-            questionText += `${letter}. ${option}\n`;
+            questionText += `${String.fromCharCode(65 + index)}. ${option}\n`;
         });
-        questionText += '\n' + getAnswerInstruction(language, 'multiple_choice');
-    } else if (question.type === 'true_false') {
-        questionText += getAnswerInstruction(language, 'true_false');
-    } else {
-        questionText += getAnswerInstruction(language, 'short_answer');
+        questionText += '\n';
     }
     
-    questionText += '\n' + getProgressText(language, questionNumber, totalQuestions);
+    questionText += `${instruction}\n${progress}`;
     
     await sock.sendMessage(jid, { text: questionText });
 }
@@ -638,23 +836,22 @@ async function sendQuestion(sock, jid, question, session, language) {
 // ==================== LANGUAGE TEXT FUNCTIONS ====================
 
 async function getWelcomeText(language) {
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
     const texts = {
-        'en': `🎓 *Welcome to ${academyName}!*\n\n` +
+        'en': `🎓 *Welcome to Charles Academy!*\n\n` +
               `Please choose your language first:\n\n` +
               `Type: ENGLISH 🇬🇧\n` +
               `Type: KISWAHILI 🇹🇿\n` +
               `Type: FRANÇAIS 🇫🇷\n\n` +
               `*Example:* Type "ENGLISH" to continue in English`,
         
-        'sw': `🎓 *Karibu kwenye ${academyName}!*\n\n` +
+        'sw': `🎓 *Karibu kwenye Charles Academy!*\n\n` +
               `Tafadhali chagua lugha yako kwanza:\n\n` +
               `Andika: ENGLISH 🇬🇧\n` +
               `Andika: KISWAHILI 🇹🇿\n` +
               `Andika: FRANÇAIS 🇫🇷\n\n` +
               `*Mfano:* Andika "KISWAHILI" kuendelea kwa Kiswahili`,
         
-        'fr': `🎓 *Bienvenue à ${academyName}!*\n\n` +
+        'fr': `🎓 *Bienvenue à Charles Academy!*\n\n` +
               `Veuillez d'abord choisir votre langue:\n\n` +
               `Tapez: ENGLISH 🇬🇧\n` +
               `Tapez: KISWAHILI 🇹🇿\n` +
@@ -691,9 +888,8 @@ async function getLanguageSelectionText(language) {
 }
 
 async function getMenuText(language) {
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
     const texts = {
-        'en': `🎓 *${academyName} - Main Menu*\n\n` +
+        'en': `🎓 *Charles Academy - Main Menu*\n\n` +
               `Available options:\n\n` +
               `📚 LEARN - Start learning\n` +
               `🎓 EXAM - Take an exam (NEW!)\n` +
@@ -706,7 +902,7 @@ async function getMenuText(language) {
               `*Type the word in CAPITAL LETTERS*\n` +
               `Example: Type "EXAM" for new exam system`,
         
-        'sw': `🎓 *${academyName} - Menyu Kuu*\n\n` +
+        'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
               `Chaguo zilizopo:\n\n` +
               `📚 JIFUNZE - Anza kujifunza\n` +
               `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
@@ -719,7 +915,7 @@ async function getMenuText(language) {
               `*Andika neno kwa HERUFI KUBWA*\n` +
               `Mfano: Andika "MTIHANI" kwa mfumo mpya wa mitihani`,
         
-        'fr': `🎓 *${academyName} - Menu Principal*\n\n` +
+        'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
               `Options disponibles:\n\n` +
               `📚 APPRENDRE - Commencer à apprendre\n` +
               `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
@@ -736,11 +932,8 @@ async function getMenuText(language) {
 }
 
 async function getHelpText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
-    
     const texts = {
-        'en': `📚 *${botName} - HELP*\n\n` +
+        'en': `📚 *Charles Academy - HELP*\n\n` +
               `*AVAILABLE COMMANDS:*\n\n` +
               `🔹 ENGLISH - Set English language\n` +
               `🔹 KISWAHILI - Set Kiswahili language\n` +
@@ -759,10 +952,9 @@ async function getHelpText(language) {
               `• Multiple exams per course\n` +
               `• Automatic scoring\n` +
               `• Progress tracking\n\n` +
-              `*Support:* ${supportPhone}\n` +
               `*Just type the word in CAPITAL LETTERS*`,
         
-        'sw': `📚 *${botName} - USAIDIZI*\n\n` +
+        'sw': `📚 *Charles Academy - USAIDIZI*\n\n` +
               `*AMRI ZILIZOPO:*\n\n` +
               `🔹 ENGLISH - Weka lugha ya Kiingereza\n` +
               `🔹 KISWAHILI - Weka lugha ya Kiswahili\n` +
@@ -781,10 +973,9 @@ async function getHelpText(language) {
               `• Mitihani mingi kwa kila kozi\n` +
               `• Upimaji wa kiotomatiki\n` +
               `• Ufuatiliaji wa maendeleo\n\n` +
-              `*Usaidizi:* ${supportPhone}\n` +
               `*Andika tu neno kwa HERUFI KUBWA*`,
         
-        'fr': `📚 *${botName} - AIDE*\n\n` +
+        'fr': `📚 *Charles Academy - AIDE*\n\n` +
               `*COMMANDES DISPONIBLES:*\n\n` +
               `🔹 ENGLISH - Définir la langue anglaise\n` +
               `🔹 KISWAHILI - Définir la langue kiswahili\n` +
@@ -803,39 +994,30 @@ async function getHelpText(language) {
               `• Plusieurs examens par cours\n` +
               `• Notation automatique\n` +
               `• Suivi des progrès\n\n` +
-              `*Support:* ${supportPhone}\n` +
               `*Tapez simplement le mot en MAJUSCULES*`
     };
     return texts[language] || texts['en'];
 }
 
 async function getSupportText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
-    const academyName = process.env.ACADEMY_NAME || 'Charles Academy';
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
-    const ownerPhone = process.env.OWNER_NUMBER || '255750910158';
-    
     const texts = {
         'en': `❓ *HELP & SUPPORT*\n\n` +
               `For any assistance, contact us:\n\n` +
-              `📞 *Support:* ${supportPhone}\n` +
-              `👑 *Owner:* ${ownerPhone}\n` +
+              `📞 *Support:* +255750910158\n` +
               `📧 *Email:* support@charlesacademy.com\n\n` +
               `🕒 *Available:* Monday-Friday, 8AM-6PM\n\n` +
               `Type MENU to return to main menu`,
         
         'sw': `❓ *USAIDIZI NA MSADA*\n\n` +
               `Kwa usaidizi wowote, wasiliana nasi:\n\n` +
-              `📞 *Usaidizi:* ${supportPhone}\n` +
-              `👑 *Mmiliki:* ${ownerPhone}\n` +
+              `📞 *Usaidizi:* +255750910158\n` +
               `📧 *Barua pepe:* support@charlesacademy.com\n\n` +
               `🕒 *Inapatikana:* Jumatatu-Ijumaa, 8AM-6PM\n\n` +
               `Andika MENU kurudi kwenye menyu kuu`,
         
         'fr': `❓ *AIDE ET SUPPORT*\n\n` +
               `Pour toute assistance, contactez-nous:\n\n` +
-              `📞 *Support:* ${supportPhone}\n` +
-              `👑 *Propriétaire:* ${ownerPhone}\n` +
+              `📞 *Support:* +255750910158\n` +
               `📧 *Email:* support@charlesacademy.com\n\n` +
               `🕒 *Disponible:* Lundi-Vendredi, 8h-18h\n\n` +
               `Tapez MENU pour retourner au menu principal`
@@ -993,11 +1175,11 @@ function getProgressText(language, progress) {
     
     if (language === 'en') {
         progressMsg = `📊 *Your Learning Progress*\n\n`;
-        progressMsg += `✅ Completed Lessons: ${progress.completedLessons}\n`;
-        progressMsg += `🏆 Average Score: ${progress.averageScore}%\n`;
-        progressMsg += `🎓 Exams Passed: ${progress.passedExams}/${progress.totalExams}\n\n`;
+        progressMsg += `✅ Completed Lessons: ${progress.completedLessons || 0}\n`;
+        progressMsg += `🏆 Average Score: ${progress.averageScore || 0}%\n`;
+        progressMsg += `🎓 Exams Passed: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
         
-        if (progress.completedLessons === 0) {
+        if (!progress.completedLessons || progress.completedLessons === 0) {
             progressMsg += `📝 No completed lessons yet.\n`;
             progressMsg += `Start learning with: COURSES`;
         }
@@ -1006,11 +1188,11 @@ function getProgressText(language, progress) {
         
     } else if (language === 'sw') {
         progressMsg = `📊 *Maendeleo Yako ya Kujifunza*\n\n`;
-        progressMsg += `✅ Masomo Yamalizika: ${progress.completedLessons}\n`;
-        progressMsg += `🏆 Wastani wa Alama: ${progress.averageScore}%\n`;
-        progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams}/${progress.totalExams}\n\n`;
+        progressMsg += `✅ Masomo Yamalizika: ${progress.completedLessons || 0}\n`;
+        progressMsg += `🏆 Wastani wa Alama: ${progress.averageScore || 0}%\n`;
+        progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
         
-        if (progress.completedLessons === 0) {
+        if (!progress.completedLessons || progress.completedLessons === 0) {
             progressMsg += `📝 Bila masomo yaliyokamilika bado.\n`;
             progressMsg += `Anza kujifunza kwa: COURSES`;
         }
@@ -1019,11 +1201,11 @@ function getProgressText(language, progress) {
         
     } else if (language === 'fr') {
         progressMsg = `📊 *Vos Progrès d'Apprentissage*\n\n`;
-        progressMsg += `✅ Leçons Terminées: ${progress.completedLessons}\n`;
-        progressMsg += `🏆 Score Moyen: ${progress.averageScore}%\n`;
-        progressMsg += `🎓 Examens Réussis: ${progress.passedExams}/${progress.totalExams}\n\n`;
+        progressMsg += `✅ Leçons Terminées: ${progress.completedLessons || 0}\n`;
+        progressMsg += `🏆 Score Moyen: ${progress.averageScore || 0}%\n`;
+        progressMsg += `🎓 Examens Réussis: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
         
-        if (progress.completedLessons === 0) {
+        if (!progress.completedLessons || progress.completedLessons === 0) {
             progressMsg += `📝 Aucune leçon terminée pour le moment.\n`;
             progressMsg += `Commencez à apprendre avec: COURSES`;
         }
@@ -1040,7 +1222,7 @@ function getCoursesText(language, courses) {
     if (language === 'en') {
         courseList = `📚 *Available Courses:*\n\n`;
         
-        if (courses.length === 0) {
+        if (!courses || courses.length === 0) {
             courseList += `📝 No courses available yet. Check back soon!`;
         } else {
             courses.forEach((course, index) => {
@@ -1057,7 +1239,7 @@ function getCoursesText(language, courses) {
     } else if (language === 'sw') {
         courseList = `📚 *Kozi Zilizopo:*\n\n`;
         
-        if (courses.length === 0) {
+        if (!courses || courses.length === 0) {
             courseList += `📝 Bila kozi zilizopo bado. Rudi tena baadaye!`;
         } else {
             courses.forEach((course, index) => {
@@ -1074,7 +1256,7 @@ function getCoursesText(language, courses) {
     } else if (language === 'fr') {
         courseList = `📚 *Cours Disponibles:*\n\n`;
         
-        if (courses.length === 0) {
+        if (!courses || courses.length === 0) {
             courseList += `📝 Aucun cours disponible pour le moment. Revenez bientôt!`;
         } else {
             courses.forEach((course, index) => {
@@ -1102,17 +1284,16 @@ function getCancelText(language) {
 }
 
 function getDefaultResponseText(language) {
-    const botName = process.env.BOT_NAME || 'Charles Academy Bot';
     const texts = {
-        'en': `🤖 I'm ${botName}, your learning assistant.\n\n` +
+        'en': `🤖 I'm your learning assistant.\n\n` +
               `Type MENU to see options\n` +
               `Type HELP for assistance\n\n` +
               `Or say "Hi" to start fresh!`,
-        'sw': `🤖 Mimi ni ${botName}, msaidizi wako wa kujifunza.\n\n` +
+        'sw': `🤖 Mimi ni msaidizi wako wa kujifunza.\n\n` +
               `Andika MENU kuona chaguo\n` +
               `Andika HELP kwa usaidizi\n\n` +
               `Au sema "Hi" kuanza upya!`,
-        'fr': `🤖 Je suis ${botName}, votre assistant d'apprentissage.\n\n` +
+        'fr': `🤖 Je suis votre assistant d'apprentissage.\n\n` +
               `Tapez MENU pour voir les options\n` +
               `Tapez HELP pour assistance\n\n` +
               `Ou dites "Hi" pour recommencer!`
@@ -1121,11 +1302,10 @@ function getDefaultResponseText(language) {
 }
 
 function getErrorText(language) {
-    const supportPhone = process.env.SUPPORT_PHONE || '255750910158';
     const texts = {
-        'en': `❌ An error occurred. Please try again or type SUPPORT for help.\nSupport: ${supportPhone}`,
-        'sw': `❌ Hitilafu imetokea. Tafadhali jaribu tena au andika SUPPORT kwa usaidizi.\nUsaidizi: ${supportPhone}`,
-        'fr': `❌ Une erreur s'est produite. Veuillez réessayer ou tapez SUPPORT pour obtenir de l'aide.\nSupport: ${supportPhone}`
+        'en': `❌ An error occurred. Please try again or type SUPPORT for help.`,
+        'sw': `❌ Hitilafu imetokea. Tafadhali jaribu tena au andika SUPPORT kwa usaidizi.`,
+        'fr': `❌ Une erreur s'est produite. Veuillez réessayer ou tapez SUPPORT pour obtenir de l'aide.`
     };
     return texts[language] || texts['en'];
 }

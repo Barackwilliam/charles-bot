@@ -7,13 +7,16 @@ const learningSession = require('./learningSession');
 const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 
+// === IMPORT NEW MODULES ===
+const studentRegistration = require('./studentRegistration');
+
 async function startBot() {
     console.log('🚀 Starting Charles Academy Bot...');
-    console.log('📚 Version: 2.5.0'); // Updated version
+    console.log('📚 Version: 2.6.0'); // Updated version with registration
     console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
     console.log('📞 Test Number: 0776831991');
-    console.log('🎯 New Feature: Advanced Exam System');
+    console.log('🎯 New Feature: Student Registration System');
     
     try {
         // Initialize database
@@ -56,6 +59,7 @@ async function startBot() {
                 console.log('\n' + '✅'.repeat(10));
                 console.log('✅ BOT CONNECTED SUCCESSFULLY!');
                 console.log('📱 Now you can message: 0750910158');
+                console.log('🎯 Registration System: Send "Hi" to register');
                 console.log('🎯 New Exam System: Type EXAM to try');
                 console.log('✅'.repeat(10) + '\n');
             }
@@ -64,7 +68,9 @@ async function startBot() {
         // Store user language preferences
         const userLanguages = new Map();
 
-        // Handle incoming messages
+        // ============================================
+        // HANDLE INCOMING MESSAGES - UPDATED VERSION
+        // ============================================
         sock.ev.on('messages.upsert', async ({ messages }) => {
             const msg = messages[0];
             if (!msg.message || msg.key.fromMe) return;
@@ -73,16 +79,67 @@ async function startBot() {
             const text = msg.message.conversation || 
                          msg.message.extendedTextMessage?.text || '';
             
-            console.log(`📩 Message from ${jid.split('@')[0]}: ${text}`);
+            console.log(`\n📩 Message from ${jid.split('@')[0]}: "${text}"`);
 
             try {
+                // ======================================
+                // STEP 1: CHECK IF USER IS REGISTERING
+                // ======================================
+                if (studentRegistration.isRegistering(jid)) {
+                    console.log(`📝 User is in registration process`);
+                    const response = await studentRegistration.handleRegistrationStep(jid, text, 'en');
+                    if (response) {
+                        console.log(`📤 Sending registration response`);
+                        await sock.sendMessage(jid, { text: response });
+                    }
+                    return;
+                }
+
+                // ======================================
+                // STEP 2: CHECK IF USER IS REGISTERED
+                // ======================================
+                console.log(`🔍 Checking if user is registered...`);
+                const { isRegistered } = await studentRegistration.isStudentRegistered(jid);
+                console.log(`📊 Registration status: ${isRegistered ? '✅ Registered' : '❌ Not registered'}`);
+
+                // ======================================
+                // STEP 3: HANDLE UNREGISTERED USERS
+                // ======================================
+                if (!isRegistered) {
+                    console.log(`👤 User not registered, checking message type...`);
+                    
+                    // Allow greetings to trigger registration
+                    if (text.toLowerCase().match(/^(hi|hello|hey|hujambo|bonjour|salut|mambo|start)/)) {
+                        console.log(`🎯 Greeting detected, starting registration...`);
+                        const registrationMsg = studentRegistration.startRegistration(jid, 'en');
+                        await sock.sendMessage(jid, { text: registrationMsg });
+                        return;
+                    }
+                    
+                    // For any other message, also start registration
+                    console.log(`📝 Starting registration for new user...`);
+                    const registrationMsg = studentRegistration.startRegistration(jid, 'en');
+                    await sock.sendMessage(jid, { text: registrationMsg });
+                    return;
+                }
+
+                // ======================================
+                // STEP 4: USER IS REGISTERED - PROCESS COMMANDS
+                // ======================================
+                console.log(`✅ User is registered, processing command...`);
+                
                 // Get user language
                 const userLanguage = userLanguages.get(jid) || 'en';
                 
-                // === 1. CHECK FOR KEYWORDS (CAPITAL LETTERS) ===
+                // Convert to uppercase for keyword matching
                 const upperText = text.toUpperCase().trim();
                 
+                console.log(`🌍 User language: ${userLanguage}`);
+                console.log(`🔤 Processed text: ${upperText}`);
+
+                // ======================================
                 // LANGUAGE SELECTION KEYWORDS
+                // ======================================
                 if (upperText === 'ENGLISH') {
                     userLanguages.set(jid, 'en');
                     await learningDb.setStudentLanguage(jid, 'en');
@@ -113,29 +170,38 @@ async function startBot() {
                     return;
                 }
 
-                // === 2. CHECK FOR ACTIVE EXAM FIRST ===
+                // ======================================
+                // CHECK FOR ACTIVE EXAM FIRST
+                // ======================================
                 if (examHandler.hasActiveExam(jid)) {
+                    console.log(`📝 User has active exam, handling exam response`);
                     await handleExamResponse(sock, jid, text, userLanguage);
                     return;
                 }
 
-                // === 3. MAIN KEYWORDS ===
+                // ======================================
+                // MAIN KEYWORDS
+                // ======================================
                 if (upperText === 'MENU') {
+                    console.log(`📱 Showing main menu`);
                     await sock.sendMessage(jid, { text: await getMenuText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'HELP') {
+                    console.log(`❓ Showing help`);
                     await sock.sendMessage(jid, { text: await getHelpText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'SUPPORT') {
+                    console.log(`🆘 Showing support`);
                     await sock.sendMessage(jid, { text: await getSupportText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'PROGRESS') {
+                    console.log(`📊 Showing progress`);
                     const progress = await learningDb.getStudentStats(jid);
                     const progressText = getProgressText(userLanguage, progress);
                     await sock.sendMessage(jid, { text: progressText });
@@ -143,6 +209,7 @@ async function startBot() {
                 }
                 
                 if (upperText === 'COURSES') {
+                    console.log(`📚 Showing courses`);
                     const courses = await learningDb.getCourses(userLanguage);
                     const coursesText = getCoursesText(userLanguage, courses.data || []);
                     await sock.sendMessage(jid, { text: coursesText });
@@ -150,86 +217,107 @@ async function startBot() {
                 }
                 
                 if (upperText === 'LEARN') {
+                    console.log(`📖 Starting learning`);
                     await sock.sendMessage(jid, { text: await getLearnText(userLanguage) });
                     return;
                 }
                 
-                // === 4. NEW EXAM SYSTEM ===
+                // ======================================
+                // NEW EXAM SYSTEM
+                // ======================================
                 if (upperText === 'EXAM') {
-                // Initialize exam state
-                examHandler.initUserState(jid);
-                const userState = examHandler.userStates.get(jid);
-                userState.step = 'selecting_course';
-                userState.language = userLanguage;
-                
-                const examMenu = examHandler.getExamMenu(userLanguage);
-                await sock.sendMessage(jid, { text: examMenu });
-                return;
-            }
+                    console.log(`🎓 Starting exam system`);
+                    examHandler.initUserState(jid);
+                    const userState = examHandler.userStates.get(jid);
+                    userState.step = 'selecting_course';
+                    userState.language = userLanguage;
+                    
+                    const examMenu = examHandler.getExamMenu(userLanguage);
+                    await sock.sendMessage(jid, { text: examMenu });
+                    return;
+                }
 
-                // === HANDLE EXAM RESPONSES ===
+                // ======================================
+                // HANDLE EXAM RESPONSES
+                // ======================================
                 if (examHandler.hasActiveExam(jid) || 
                     (examHandler.userStates.has(jid) && examHandler.userStates.get(jid).step !== 'idle')) {
                     
+                    console.log(`📝 Handling exam state response`);
                     await handleExamResponse(sock, jid, text, userLanguage);
                     return;
                 }
                 
-                // === 5. OLD EXAM/TEST/EXERCISE COMMANDS (Keep for compatibility) ===
+                // ======================================
+                // OLD EXAM/TEST/EXERCISE COMMANDS
+                // ======================================
                 if (upperText === 'TEST') {
+                    console.log(`📝 Starting test`);
                     await sock.sendMessage(jid, { text: await getTestText(userLanguage) });
                     return;
                 }
                 
                 if (upperText === 'EXERCISE') {
+                    console.log(`🧪 Starting exercise`);
                     await sock.sendMessage(jid, { text: await getExerciseText(userLanguage) });
                     return;
                 }
                 
                 // EXERCISE TYPE SELECTION
                 if (upperText === 'ENGLISH EXERCISE') {
+                    console.log(`🧪 English exercise`);
                     await startExercise(sock, jid, '1', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'KISWAHILI EXERCISE') {
+                    console.log(`🧪 Kiswahili exercise`);
                     await startExercise(sock, jid, '2', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'GRAPHICS EXERCISE') {
+                    console.log(`🧪 Graphics exercise`);
                     await startExercise(sock, jid, '3', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'WEB EXERCISE') {
+                    console.log(`🧪 Web exercise`);
                     await startExercise(sock, jid, '4', userLanguage);
                     return;
                 }
                 
                 // TEST LEVEL SELECTION
                 if (upperText === 'TEST 1' || upperText === 'TEST BEGINNER') {
+                    console.log(`📝 Test level 1`);
                     await startTest(sock, jid, '1', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 2' || upperText === 'TEST INTERMEDIATE') {
+                    console.log(`📝 Test level 2`);
                     await startTest(sock, jid, '2', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 3' || upperText === 'TEST ADVANCED') {
+                    console.log(`📝 Test level 3`);
                     await startTest(sock, jid, '3', userLanguage);
                     return;
                 }
                 
                 if (upperText === 'TEST 4' || upperText === 'TEST EXPERT') {
+                    console.log(`📝 Test level 4`);
                     await startTest(sock, jid, '4', userLanguage);
                     return;
                 }
 
-                // === 6. HANDLE READY FOR EXAMS/TESTS ===
+                // ======================================
+                // HANDLE READY FOR EXAMS/TESTS
+                // ======================================
                 if (upperText === 'READY') {
+                    console.log(`✅ User ready for activity`);
                     const session = learningSession.getSession(jid);
                     if (session.currentActivity) {
                         const firstQuestion = learningSession.getCurrentQuestion(jid);
@@ -240,9 +328,11 @@ async function startBot() {
                     }
                 }
 
-                // === 7. HANDLE CANCEL ===
+                // ======================================
+                // HANDLE CANCEL
+                // ======================================
                 if (upperText === 'CANCEL' || upperText === 'STOP') {
-                    // Cancel both old sessions and new exam sessions
+                    console.log(`🛑 Cancelling session`);
                     learningSession.clearSession(jid);
                     examHandler.cancelExam(jid);
                     
@@ -251,46 +341,58 @@ async function startBot() {
                     return;
                 }
 
-                // === 8. GREETINGS & INITIAL MESSAGE ===
+                // ======================================
+                // GREETINGS & INITIAL MESSAGE
+                // ======================================
                 if (text.toLowerCase().match(/^(hi|hello|hey|hujambo|bonjour|salut|mambo|start)/)) {
+                    console.log(`👋 Greeting detected`);
                     const welcomeMsg = await getWelcomeText(userLanguage);
                     await sock.sendMessage(jid, { text: welcomeMsg });
                     return;
                 }
 
-                // === 9. LANGUAGE SELECTION REQUEST ===
+                // ======================================
+                // LANGUAGE SELECTION REQUEST
+                // ======================================
                 if (text.toLowerCase().match(/^(language|lugha|langue|change language)/)) {
+                    console.log(`🌍 Language change request`);
                     const langResponse = await getLanguageSelectionText(userLanguage);
                     await sock.sendMessage(jid, { text: langResponse });
                     return;
                 }
 
-                // === 10. HANDLE OLD EXAM/TEST/EXERCISE RESPONSES ===
+                // ======================================
+                // HANDLE OLD EXAM/TEST/EXERCISE RESPONSES
+                // ======================================
                 const session = learningSession.getSession(jid);
                 if (session.currentActivity && text.length > 0) {
+                    console.log(`📝 Handling session response`);
                     await handleSessionResponse(sock, jid, text, session, userLanguage);
                     return;
                 }
 
-                // === 11. DEFAULT RESPONSE ===
+                // ======================================
+                // DEFAULT RESPONSE
+                // ======================================
                 if (text.length > 2) {
+                    console.log(`🤖 Default response`);
                     const defaultMsg = getDefaultResponseText(userLanguage);
                     await sock.sendMessage(jid, { text: defaultMsg });
                 }
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error:', error);
                 const errorMsg = getErrorText(userLanguages.get(jid) || 'en');
                 await sock.sendMessage(jid, { text: errorMsg });
             }
         });
 
         console.log('\n✅ Bot is running. Waiting for QR code...\n');
-        console.log('🎯 New Exam System Features:');
-        console.log('• 4 Courses with multiple exams each');
-        console.log('• Kiswahili exams always in Kiswahili');
-        console.log('• Automatic scoring and results');
-        console.log('• Progress tracking');
+        console.log('🎯 Registration System Features:');
+        console.log('• Ask for full name and registration number');
+        console.log('• Registration number is optional (type SKIP)');
+        console.log('• All exam results saved with student details');
+        console.log('• View results on dashboard');
         
     } catch (error) {
         console.error('❌ Fatal error:', error);
@@ -308,7 +410,6 @@ async function handleExamCommand(sock, jid, language) {
     // Store that user is selecting exam
     examHandler.examSelectionState = jid;
 }
-
 
 async function handleExamResponse(sock, jid, text, language) {
     const upperText = text.toUpperCase().trim();
@@ -365,6 +466,27 @@ async function handleExamResponse(sock, jid, text, language) {
                 const resultText = examHandler.getExamResultText(examResults, language);
                 await sock.sendMessage(jid, { text: resultText });
                 
+                // ============================================
+                // SAVE EXAM RESULTS TO DATABASE
+                // ============================================
+                console.log(`📊 Exam completed for ${jid}, saving results...`);
+                if (examResults) {
+                    const examData = {
+                        title: examResults.title,
+                        course: examResults.course,
+                        examId: examHandler.examSessions.get(jid)?.examId,
+                        score: examResults.score,
+                        totalQuestions: examResults.totalQuestions,
+                        correctAnswers: examResults.correctAnswers,
+                        timeTaken: examResults.timeTaken,
+                        startTime: examHandler.examSessions.get(jid)?.startTime,
+                        language: language
+                    };
+                    
+                    const saveResult = await studentRegistration.saveExamResult(jid, examData);
+                    console.log(`💾 Save result:`, saveResult.success ? '✅ Success' : '❌ Failed');
+                }
+                
                 // Clear exam state
                 examHandler.cancelExam(jid);
             } else if (answerResult.nextQuestion) {
@@ -380,123 +502,6 @@ async function handleExamResponse(sock, jid, text, language) {
         default:
             await sock.sendMessage(jid, { text: getErrorText(language) });
     }
-}
-
-async function handleExamSelection(sock, jid, text, language) {
-    const choice = text.trim();
-    
-    // First level: Course selection
-    if (!examHandler.selectedCourse[jid]) {
-        const courses = ['english', 'kiswahili', 'graphics', 'website'];
-        const courseIndex = parseInt(choice) - 1;
-        
-        if (courseIndex >= 0 && courseIndex < courses.length) {
-            const courseId = courses[courseIndex];
-            examHandler.selectedCourse[jid] = courseId;
-            
-            // Show exams for this course
-            const courseSelection = examHandler.getCourseSelectionText(courseId, language);
-            await sock.sendMessage(jid, { text: courseSelection });
-        } else {
-            await sock.sendMessage(jid, { 
-                text: getInvalidChoiceText(language) + '\n\n' + examHandler.getExamMenu(language) 
-            });
-        }
-    } 
-    // Second level: Exam selection
-    else if (!examHandler.selectedExam[jid]) {
-        const courseId = examHandler.selectedCourse[jid];
-        const exams = Object.keys(examHandler.getExamsData()[courseId] || {});
-        const examIndex = parseInt(choice) - 1;
-        
-        if (examIndex >= 0 && examIndex < exams.length) {
-            const examId = exams[examIndex];
-            
-            // Start the exam
-            const exam = examHandler.startExam(jid, courseId, examId, language);
-            
-            if (exam.error) {
-                await sock.sendMessage(jid, { text: getErrorText(language) });
-                return;
-            }
-            
-            // Show exam instructions and first question
-            const instructions = examHandler.getExamInstructions(jid);
-            const question = examHandler.getCurrentQuestion(jid);
-            
-            let startText = `🎓 *${exam.examSession.title}*\n\n`;
-            startText += `⏰ Time: ${exam.examSession.time}\n`;
-            startText += `📊 Total Marks: ${exam.examSession.totalMarks}\n\n`;
-            startText += `📝 *Instructions:*\n${instructions}\n\n`;
-            startText += `Type READY to begin or CANCEL to stop.`;
-            
-            await sock.sendMessage(jid, { text: startText });
-            
-            // Clear selection states
-            delete examHandler.selectedCourse[jid];
-            delete examHandler.selectedExam[jid];
-            examHandler.examSelectionState = null;
-            
-        } else {
-            await sock.sendMessage(jid, { 
-                text: getInvalidChoiceText(language) + '\n\n' + 
-                      examHandler.getCourseSelectionText(courseId, language) 
-            });
-        }
-    }
-}
-
-function formatExamQuestion(question, language) {
-    let text = `📝 *Question ${question.questionNumber}.${question.subQuestionNumber}*\n\n`;
-    text += `${question.text}\n\n`;
-    
-    if (question.subText) {
-        text += `➡️ ${question.subText}\n\n`;
-    }
-    
-    text += `Progress: ${question.questionNumber}/${question.totalQuestions} (Sub-question ${question.subQuestionNumber}/${question.totalSubQuestions})\n\n`;
-    text += getAnswerInstruction(language, 'short_answer');
-    
-    return text;
-}
-
-function getExamResultText(results, language) {
-    const texts = {
-        en: `🎓 *EXAM RESULTS*\n\n` +
-            `📚 Exam: ${results.title}\n` +
-            `📊 Score: ${results.score}%\n` +
-            `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Time Taken: ${results.timeTaken} minutes\n\n` +
-            `${results.passed ? '🎉 CONGRATULATIONS! YOU PASSED! 🎉' : '📚 Keep studying! Try again.'}\n\n` +
-            `Type MENU to continue.`,
-            
-        sw: `🎓 *MATOKEO YA MTIHANI*\n\n` +
-            `📚 Mtihani: ${results.title}\n` +
-            `📊 Alama: ${results.score}%\n` +
-            `✅ Sahihi: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Muda Uliochukuliwa: ${results.timeTaken} dakika\n\n` +
-            `${results.passed ? '🎉 HONGERA! UMEWEZA KUPITA! 🎉' : '📚 Endelea kujifunza! Jaribu tena.'}\n\n` +
-            `Andika MENU kuendelea.`,
-            
-        fr: `🎓 *RÉSULTATS DE L\'EXAMEN*\n\n` +
-            `📚 Examen: ${results.title}\n` +
-            `📊 Score: ${results.score}%\n` +
-            `✅ Correct: ${results.correctAnswers}/${results.totalQuestions}\n` +
-            `⏰ Temps Pris: ${results.timeTaken} minutes\n\n` +
-            `${results.passed ? '🎉 FÉLICITATIONS ! VOUS AVEZ RÉUSSI ! 🎉' : '📚 Continuez à étudier ! Réessayez.'}\n\n` +
-            `Tapez MENU pour continuer.`
-    };
-    
-    return texts[language] || texts.en;
-}
-
-function getInvalidChoiceText(language) {
-    const texts = {
-        en: '❌ Invalid choice. Please select a valid number.',
-        sw: '❌ Chaguo batili. Tafadhali chagua namba sahihi.',
-        fr: '❌ Choix invalide. Veuillez sélectionner un numéro valide.'
-    };
-    return texts[language] || texts.en;
 }
 
 // ==================== OLD FUNCTIONS (KEPT FOR COMPATIBILITY) ====================
@@ -548,6 +553,77 @@ async function getWelcomeText(language) {
     };
     return texts[language] || texts['en'];
 }
+
+async function getLanguageSelectionText(language) {
+    const texts = {
+        'en': `🌍 *Choose Your Language*\n\n` +
+              `Type one of these words:\n\n` +
+              `ENGLISH 🇬🇧 - For English language\n` +
+              `KISWAHILI 🇹🇿 - For Kiswahili language\n` +
+              `FRANÇAIS 🇫🇷 - For French language\n\n` +
+              `*Example:* Type "ENGLISH" to set English`,
+        
+        'sw': `🌍 *Chagua Lugha Yako*\n\n` +
+              `Andika moja ya maneno haya:\n\n` +
+              `ENGLISH 🇬🇧 - Kwa lugha ya Kiingereza\n` +
+              `KISWAHILI 🇹🇿 - Kwa lugha ya Kiswahili\n` +
+              `FRANÇAIS 🇫🇷 - Kwa lugha ya Kifaransa\n\n` +
+              `*Mfano:* Andika "KISWAHILI" kuweka Kiswahili`,
+        
+        'fr': `🌍 *Choisissez Votre Langue*\n\n` +
+              `Tapez un de ces mots:\n\n` +
+              `ENGLISH 🇬🇧 - Pour la langue anglaise\n` +
+              `KISWAHILI 🇹🇿 - Pour la langue kiswahili\n` +
+              `FRANÇAIS 🇫🇷 - Pour la langue française\n\n` +
+              `*Exemple:* Tapez "FRANÇAIS" pour définir le français`
+    };
+    return texts[language] || texts['en'];
+}
+
+async function getMenuText(language) {
+    const texts = {
+        'en': `🎓 *Charles Academy - Main Menu*\n\n` +
+              `Available options:\n\n` +
+              `📚 LEARN - Start learning\n` +
+              `🎓 EXAM - Take an exam (NEW!)\n` +
+              `🧪 EXERCISE - Practice exercises\n` +
+              `📝 TEST - Take a test\n` +
+              `📊 PROGRESS - My progress\n` +
+              `🌍 LANGUAGE - Change language\n` +
+              `❓ HELP - Show all commands\n` +
+              `🆘 SUPPORT - Help & Support\n\n` +
+              `*Type the word in CAPITAL LETTERS*\n` +
+              `Example: Type "EXAM" for new exam system`,
+        
+        'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
+              `Chaguo zilizopo:\n\n` +
+              `📚 JIFUNZE - Anza kujifunza\n` +
+              `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
+              `🧪 MAZOEZI - Fanya mazoezi\n` +
+              `📝 TEST - Fanya mtihani\n` +
+              `📊 MAENDELEO - Angalia maendeleo yako\n` +
+              `🌍 LUGHA - Badilisha lugha\n` +
+              `❓ USAIDIZI - Onyesha amri zote\n` +
+              `🆘 MSADA - Usaidizi na msaada\n\n` +
+              `*Andika neno kwa HERUFI KUBWA*\n` +
+              `Mfano: Andika "MTIHANI" kwa mfumo mpya wa mitihani`,
+        
+        'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
+              `Options disponibles:\n\n` +
+              `📚 APPRENDRE - Commencer à apprendre\n` +
+              `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
+              `🧪 EXERCICE - Faire des exercices\n` +
+              `📝 TEST - Passer un test\n` +
+              `📊 PROGRÈS - Mes progrès\n` +
+              `🌍 LANGUE - Changer de langue\n` +
+              `❓ AIDE - Afficher toutes les commandes\n` +
+              `🆘 SUPPORT - Aide et support\n\n` +
+              `*Tapez le mot en MAJUSCULES*\n` +
+              `Exemple: Tapez "EXAMEN" pour le nouveau système d\'examen`
+    };
+    return texts[language] || texts['en'];
+}
+
 
 async function getLanguageSelectionText(language) {
     const texts = {

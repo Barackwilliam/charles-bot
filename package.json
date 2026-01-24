@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node bot.js",
     "dev": "nodemon bot.js",
+    "dashboard": "node startDashboard.js",
     "setup": "node scripts/setupDatabase.js",
     "backup": "node scripts/backup.js",
     "seed": "node scripts/seedData.js",
@@ -20,12 +21,13 @@
   "license": "MIT",
   "description": "WhatsApp Learning Bot for Charles Academy - Supports English, Kiswahili, French languages with courses, exams, and certificates",
   "dependencies": {
-    "@supabase/supabase-js": "^2.91.0",
+    "@supabase/supabase-js": "^2.91.1",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
     "axios": "^1.13.2",
     "canvas": "^3.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "ejs": "^4.0.1",
     "express": "^5.2.1",
     "fs-extra": "^11.3.0",
     "googleapis": "^170.1.0",
