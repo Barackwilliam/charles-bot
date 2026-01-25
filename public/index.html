@@ -21,11 +21,6 @@
             --telegram-yellow: #f9ca24;
             --telegram-purple: #9b59b6;
             --telegram-gradient: linear-gradient(135deg, #0088cc 0%, #2ecc71 100%);
-            
-            /* Responsive breakpoints */
-            --mobile: 768px;
-            --tablet: 1024px;
-            --desktop: 1200px;
         }
 
         /* ========== RESET & BASE STYLES ========== */
@@ -36,18 +31,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html {
-            font-size: 16px;
+        html, body {
             height: 100%;
+            width: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: var(--telegram-bg);
             color: var(--telegram-text);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
         }
 
         /* ========== MAIN CHAT LAYOUT ========== */
@@ -55,9 +48,10 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            width: 100%;
+            width: 100vw;
             background: var(--telegram-chat-bg);
             position: relative;
+            overflow: hidden;
         }
 
         /* Chat Header */
@@ -138,31 +132,30 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        /* Messages Area - IMPROVED FLEXIBILITY */
+        /* Messages Area - FIXED: No max-height constraint */
         .messages-area {
-            flex: 1;
+            flex: 1 1 auto;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+            height: calc(100vh - 180px); /* Automatically calculated */
             min-height: 0;
-            padding-bottom: 20px;
             width: 100%;
         }
 
-        /* Message Bubbles - MORE RESPONSIVE */
+        /* Message Bubbles - IMPROVED */
         .message {
             display: flex;
-            max-width: 95%;
+            max-width: 85%;
             animation: messageAppear 0.3s ease;
             position: relative;
-            touch-action: pan-y;
-            word-wrap: break-word;
+            word-break: break-word;
             overflow-wrap: break-word;
-            hyphens: auto;
         }
 
         @keyframes messageAppear {
@@ -193,11 +186,9 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             word-break: break-word;
-            hyphens: auto;
             max-width: 100%;
-            min-width: 0; /* CRITICAL FIX: Allows content to shrink */
-            line-height: 1.4;
-            user-select: text;
+            min-width: 0;
+            line-height: 1.5;
         }
 
         .message.incoming .message-content {
@@ -218,7 +209,7 @@
             word-break: break-word;
             overflow-wrap: break-word;
             white-space: pre-wrap;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .message-text strong {
@@ -242,7 +233,7 @@
             gap: 4px;
             font-size: 11px;
             opacity: 0.8;
-            margin-top: 5px;
+            margin-top: 8px;
         }
 
         .message-time {
@@ -251,72 +242,14 @@
             flex-shrink: 0;
         }
 
-        /* Message Context Menu */
-        .message-context-menu {
-            position: fixed;
-            background: var(--telegram-sidebar);
-            border: 1px solid var(--telegram-border);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            min-width: 150px;
-            overflow: hidden;
-        }
-
-        .message-context-menu.active {
-            display: flex;
-        }
-
-        .context-menu-item {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--telegram-text);
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.2s;
-            border: none;
-            background: transparent;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        .context-menu-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .context-menu-item i {
-            width: 18px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .context-menu-item.copy {
-            color: var(--telegram-blue);
-        }
-
-        .context-menu-item.delete {
-            color: var(--telegram-red);
-        }
-
-        /* Message Selection Effect */
-        .message.selected .message-content {
-            outline: 2px solid var(--telegram-blue);
-            outline-offset: 2px;
-        }
-
         /* Message Actions */
         .message-actions {
-            margin-top: 10px;
+            margin-top: 12px;
             padding-top: 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
         }
 
         .message-action-btn {
@@ -331,8 +264,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            touch-action: manipulation;
-            user-select: none;
             white-space: nowrap;
         }
 
@@ -374,6 +305,7 @@
             position: sticky;
             bottom: 0;
             z-index: 10;
+            width: 100%;
         }
 
         .input-container {
@@ -402,8 +334,6 @@
             justify-content: center;
             font-size: 18px;
             transition: all 0.2s;
-            touch-action: manipulation;
-            user-select: none;
             flex-shrink: 0;
         }
 
@@ -455,8 +385,6 @@
             transition: all 0.2s;
             margin-bottom: 10px;
             flex-shrink: 0;
-            touch-action: manipulation;
-            user-select: none;
         }
 
         .send-button:hover {
@@ -492,8 +420,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            touch-action: manipulation;
-            user-select: none;
             white-space: nowrap;
         }
 
@@ -536,13 +462,18 @@
 
         /* Mobile (up to 767px) */
         @media (max-width: 767px) {
+            .messages-area {
+                padding: 12px;
+                height: calc(100vh - 160px); /* Adjusted for mobile */
+            }
+            
             .message {
-                max-width: 98%;
+                max-width: 90%;
             }
 
             .message-content {
                 padding: 10px 12px;
-                margin: 0 4px;
+                margin: 0 6px;
             }
 
             .chat-header {
@@ -589,18 +520,24 @@
 
             .message-text {
                 font-size: 14px;
+                line-height: 1.5;
             }
         }
 
         /* Extra Small Mobile (360px and below) */
         @media (max-width: 360px) {
+            .messages-area {
+                padding: 10px;
+                height: calc(100vh - 150px);
+            }
+            
             .message {
-                max-width: 100%;
+                max-width: 95%;
             }
 
             .message-content {
                 padding: 8px 10px;
-                margin: 0 2px;
+                margin: 0 4px;
             }
 
             .chat-header {
@@ -626,16 +563,16 @@
                 padding: 6px 10px;
                 font-size: 12px;
             }
+            
+            .message-text {
+                font-size: 13px;
+            }
         }
 
         /* Tablet (768px and up) */
         @media (min-width: 768px) {
-            .message {
-                max-width: 85%;
-            }
-
             .chat-app {
-                max-width: 900px;
+                max-width: 768px;
                 margin: 0 auto;
                 height: 100vh;
                 box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -644,12 +581,8 @@
 
         /* Desktop (1024px and up) */
         @media (min-width: 1024px) {
-            .message {
-                max-width: 80%;
-            }
-
             .chat-app {
-                max-width: 1000px;
+                max-width: 900px;
             }
 
             .message-content {
@@ -657,21 +590,10 @@
             }
         }
 
-        /* Large Desktop (1200px and up) */
-        @media (min-width: 1200px) {
-            .message {
-                max-width: 75%;
-            }
-
-            .chat-app {
-                max-width: 1100px;
-            }
-        }
-
         /* Landscape Mode */
         @media (max-height: 600px) and (orientation: landscape) {
             .messages-area {
-                max-height: 60vh;
+                height: calc(100vh - 140px);
             }
 
             .chat-header {
@@ -695,14 +617,6 @@
             display: none !important;
         }
 
-        .visible {
-            display: block !important;
-        }
-
-        .no-scroll {
-            overflow: hidden !important;
-        }
-
         /* Touch Device Optimizations */
         @media (hover: none) and (pointer: coarse) {
             .message-action-btn,
@@ -723,21 +637,10 @@
                 width: 44px;
                 height: 44px;
             }
-
-            .message {
-                touch-action: pan-y;
-            }
             
-            /* Better tap targets */
             .message-content {
                 padding: 14px 16px;
             }
-        }
-
-        /* Selection Styles */
-        ::selection {
-            background: rgba(0, 136, 204, 0.3);
-            color: white;
         }
 
         /* Scrollbar Styling */
@@ -763,6 +666,12 @@
             overflow-wrap: anywhere;
             word-break: break-word;
             hyphens: auto;
+        }
+        
+        /* Smooth scrolling */
+        .messages-area {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -792,7 +701,7 @@
             </div>
         </div>
 
-        <!-- Messages Area -->
+        <!-- Messages Area - Now properly sized -->
         <div class="messages-area" id="messagesArea">
             <!-- Messages will be populated here -->
         </div>
@@ -886,12 +795,39 @@
             if (localStorage.getItem('charles_first_visit') !== 'true') {
                 localStorage.setItem('charles_first_visit', 'true');
             }
+            
+            // Ensure messages area has correct height initially
+            updateMessagesAreaHeight();
         });
 
         // ==================== RESPONSIVE FUNCTIONS ====================
         function updateMobileDetection() {
             isMobile = window.innerWidth < 768;
             document.body.classList.toggle('mobile', isMobile);
+            updateMessagesAreaHeight();
+        }
+
+        function updateMessagesAreaHeight() {
+            const messagesArea = document.getElementById('messagesArea');
+            const chatHeader = document.querySelector('.chat-header');
+            const inputArea = document.querySelector('.input-area');
+            
+            if (messagesArea && chatHeader && inputArea) {
+                const headerHeight = chatHeader.offsetHeight;
+                const inputHeight = inputArea.offsetHeight;
+                const windowHeight = window.innerHeight;
+                
+                // Calculate available height for messages
+                const availableHeight = windowHeight - headerHeight - inputHeight;
+                
+                // Set messages area height
+                messagesArea.style.height = `${availableHeight}px`;
+                
+                // Scroll to bottom after resize
+                setTimeout(() => {
+                    scrollToBottom();
+                }, 100);
+            }
         }
 
         // ==================== API FUNCTIONS ====================
@@ -971,6 +907,7 @@
                 } finally {
                     sendBtn.disabled = false;
                     sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    updateMessagesAreaHeight();
                 }
             }, 1000);
         }
@@ -1024,16 +961,6 @@
             } else {
                 messageElement.addEventListener('contextmenu', handleRightClick);
                 messageElement.addEventListener('click', handleMessageClick);
-            }
-            
-            if (!isMobile) {
-                messageElement.addEventListener('mouseenter', () => {
-                    messageElement.style.opacity = '0.9';
-                });
-                
-                messageElement.addEventListener('mouseleave', () => {
-                    messageElement.style.opacity = '1';
-                });
             }
         }
 
@@ -1140,6 +1067,7 @@
                     selectedMessage.style.animation = 'messageAppear 0.3s ease reverse';
                     setTimeout(() => {
                         selectedMessage.remove();
+                        updateMessagesAreaHeight();
                     }, 300);
                 }
                 closeContextMenu();
@@ -1266,9 +1194,11 @@
 
         function scrollToBottom() {
             const messagesArea = document.getElementById('messagesArea');
-            setTimeout(() => {
-                messagesArea.scrollTop = messagesArea.scrollHeight;
-            }, 100);
+            if (messagesArea) {
+                setTimeout(() => {
+                    messagesArea.scrollTop = messagesArea.scrollHeight;
+                }, 100);
+            }
         }
 
         function setupEventListeners() {
@@ -1285,13 +1215,13 @@
                 });
             }
             
-            if (isMobile) {
-                window.addEventListener('orientationchange', () => {
-                    setTimeout(() => {
-                        scrollToBottom();
-                    }, 300);
-                });
-            }
+            window.addEventListener('resize', updateMessagesAreaHeight);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    updateMessagesAreaHeight();
+                    scrollToBottom();
+                }, 300);
+            });
             
             document.addEventListener('contextmenu', (e) => {
                 if (!e.target.closest('.message')) {
