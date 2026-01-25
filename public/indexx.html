@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Charles Academy - Telegram Style Web Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --telegram-blue: #0088cc;
+            --telegram-blue-light: #ebf5ff;
+            --telegram-bg: #0e1621;
+            --telegram-chat-bg: #17212b;
+            --telegram-sidebar: #182533;
+            --telegram-text: #ffffff;
+            --telegram-text-secondary: #8f98a3;
+            --telegram-border: #2b2b2b;
+            --telegram-green: #00a884;
+            --telegram-red: #eb4d4b;
+            --telegram-yellow: #f9ca24;
+            --telegram-purple: #9b59b6;
+            --telegram-gradient: linear-gradient(135deg, #0088cc 0%, #2ecc71 100%);
+            
+            /* Responsive breakpoints */
+            --mobile: 768px;
+            --tablet: 1024px;
+            --desktop: 1200px;
+        }
+
+        /* ========== RESET & BASE STYLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--telegram-bg);
+            color: var(--telegram-text);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        /* ========== MAIN LAYOUT - MOBILE FIRST ========== */
+        .telegram-app {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            background: var(--telegram-bg);
+        }
+
+        /* Sidebar - Hidden by default on mobile */
+        .telegram-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--telegram-sidebar);
+            border-right: 1px solid var(--telegram-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .telegram-sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Chat Container - Always visible */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            background: var(--telegram-chat-bg);
+            position: relative;
+        }
+
+        /* ========== SIDEBAR STYLES ========== */
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--telegram-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: var(--telegram-sidebar);
+            position: relative;
+        }
+
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--telegram-text);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .menu-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 50%;
+            background: var(--telegram-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--telegram-green);
+            border-radius: 50%;
+            border: 2px solid var(--telegram-sidebar);
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-details p {
+            font-size: 13px;
+            color: var(--telegram-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .menu-item {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--telegram-text);
+            text-decoration: none;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            background: rgba(0, 136, 204, 0.2);
+            color: var(--telegram-blue);
+        }
+
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-badge {
+            background: var(--telegram-red);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            padding: 16px;
+            flex-shrink: 0;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--telegram-blue);
+        }
+
+        .stats-card h4 {
+            color: var(--telegram-blue);
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--telegram-green);
+            display: block;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--telegram-text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* ========== CHAT CONTAINER STYLES ========== */
+        .chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--telegram-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--telegram-chat-bg);
+            flex-shrink: 0;
+            min-height: 64px;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: var(--telegram-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .chat-user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-user-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-user-details p {
+            font-size: 13px;
+            color: var(--telegram-green);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .chat-header-actions i {
+            font-size: 18px;
+            color: var(--telegram-text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .chat-header-actions i:hover {
+            color: var(--telegram-blue);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
+        }
+
+        /* Message Bubbles - Responsive */
+        .message {
+            display: flex;
+            max-width: 85%;
+            animation: messageAppear 0.3s ease;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.incoming {
+            align-self: flex-start;
+        }
+
+        .message.outgoing {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            position: relative;
+            padding: 12px 14px;
+            border-radius: 18px;
+            margin: 0 8px;
+            word-wrap: break-word;
+            max-width: 100%;
+            line-height: 1.4;
+            overflow-wrap: break-word;
+        }
+
+        .message.incoming .message-content {
+            background: #2b5278;
+            border-top-left-radius: 5px;
+            color: white;
+        }
+
+        .message.outgoing .message-content {
+            background: #2b5278;
+            border-top-right-radius: 5px;
+            color: white;
+        }
+
+        .message-text {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .message-text strong {
+            font-weight: 700;
+        }
+
+        .message-text ul, .message-text ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .message-text li {
+            margin-bottom: 5px;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Message Actions */
+        .message-actions {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .message-action-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            color: var(--telegram-text);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .message-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #2b5278;
+            border-radius: 18px;
+            align-self: flex-start;
+            max-width: 60px;
+            margin-bottom: 12px;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: var(--telegram-text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite both;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--telegram-border);
+            background: var(--telegram-chat-bg);
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .input-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--telegram-text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .input-action-btn:hover {
+            color: var(--telegram-blue);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .message-input {
+            flex: 1;
+            min-height: 40px;
+            max-height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--telegram-border);
+            border-radius: 20px;
+            color: var(--telegram-text);
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            padding: 10px 16px;
+            line-height: 1.4;
+            transition: border-color 0.2s;
+        }
+
+        .message-input:focus {
+            border-color: var(--telegram-blue);
+        }
+
+        .message-input::placeholder {
+            color: var(--telegram-text-secondary);
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--telegram-blue);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .send-button:hover {
+            background: #0077b3;
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            background: var(--telegram-border);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Quick Commands */
+        .quick-commands {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-command {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            color: var(--telegram-text);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .quick-command:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ========== RESPONSIVE BREAKPOINTS ========== */
+
+        /* Tablet (768px and up) */
+        @media (min-width: 768px) {
+            .telegram-app {
+                grid-template-columns: 320px 1fr;
+            }
+
+            .telegram-sidebar {
+                position: relative;
+                transform: translateX(0);
+                width: 320px;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+
+            .message {
+                max-width: 75%;
+            }
+
+            .stats-card {
+                padding: 14px;
+            }
+        }
+
+        /* Desktop (1024px and up) */
+        @media (min-width: 1024px) {
+            .telegram-app {
+                grid-template-columns: 380px 1fr;
+                max-width: 1400px;
+                margin: 0 auto;
+                height: 100vh;
+            }
+
+            .telegram-sidebar {
+                width: 380px;
+            }
+
+            .message {
+                max-width: 70%;
+            }
+
+            .message-content {
+                padding: 14px 18px;
+            }
+        }
+
+        /* Large Desktop (1200px and up) */
+        @media (min-width: 1200px) {
+            .telegram-app {
+                max-width: 1400px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .message {
+                max-width: 65%;
+            }
+        }
+
+        /* Small Mobile (480px and below) */
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .message-content {
+                padding: 10px 12px;
+            }
+
+            .sidebar-header {
+                padding: 12px;
+            }
+
+            .sidebar-menu {
+                padding: 8px;
+            }
+
+            .menu-item {
+                padding: 12px;
+            }
+
+            .input-area {
+                padding: 10px 12px;
+            }
+
+            .quick-commands {
+                gap: 4px;
+            }
+
+            .quick-command {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Landscape Mode */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .telegram-sidebar {
+                overflow-y: auto;
+            }
+
+            .messages-area {
+                max-height: 60vh;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                font-size: 16px;
+            }
+
+            .chat-avatar {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+            }
+        }
+
+        /* ========== UTILITY CLASSES ========== */
+        .hidden {
+            display: none !important;
+        }
+
+        .visible {
+            display: block !important;
+        }
+
+        .no-scroll {
+            overflow: hidden !important;
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .menu-item,
+            .message-action-btn,
+            .quick-command,
+            .input-action-btn,
+            .send-button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .message-action-btn,
+            .quick-command {
+                padding: 10px 14px;
+            }
+
+            .input-action-btn,
+            .send-button {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <div class="telegram-app">
+        <!-- Sidebar -->
+        <div class="telegram-sidebar" id="telegramSidebar">
+            <div class="sidebar-header">
+                <div class="mobile-menu-toggle">
+                    <button class="menu-toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                            <div class="status-dot"></div>
+                        </div>
+                        <div class="user-details">
+                            <h3 id="currentUser">Loading...</h3>
+                            <p id="userStatus">Connecting...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <i class="fas fa-search" title="Search" onclick="toggleSearch()"></i>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" onclick="switchChat('bot'); toggleSidebar();">
+                    <i class="fas fa-robot"></i>
+                    <span class="menu-text">Learning Bot</span>
+                    <span class="menu-badge" id="botUnread">0</span>
+                </a>
+                <a href="#" class="menu-item" onclick="switchChat('stats'); toggleSidebar();">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="menu-text">My Statistics</span>
+                </a>
+                <a href="#" class="menu-item" onclick="switchChat('exams'); toggleSidebar();">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="menu-text">Exam Results</span>
+                    <span class="menu-badge" id="examCount">0</span>
+                </a>
+                <a href="#" class="menu-item" onclick="switchChat('progress'); toggleSidebar();">
+                    <i class="fas fa-trophy"></i>
+                    <span class="menu-text">Progress</span>
+                </a>
+                <a href="#" class="menu-item" onclick="switchChat('help'); toggleSidebar();">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="menu-text">Help & Support</span>
+                </a>
+            </div>
+
+            <div class="stats-container">
+                <div class="stats-card">
+                    <h4>Quick Stats</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="statLessons">0</span>
+                            <span class="stat-label">Lessons</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statProgress">0%</span>
+                            <span class="stat-label">Progress</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statExams">0</span>
+                            <span class="stat-label">Exams</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statScore">0%</span>
+                            <span class="stat-label">Avg Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <h4>Connection</h4>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div id="connectionStatus" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--telegram-green);"></span>
+                            <span style="font-size: 12px; color: var(--telegram-text-secondary);">Connected</span>
+                        </div>
+                        <button onclick="resetChat()" style="margin-left: auto; padding: 6px 12px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: var(--telegram-text); font-size: 12px; cursor: pointer;">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="mobile-menu-toggle">
+                    <button class="menu-toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="chat-user-info">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot" id="chatIcon"></i>
+                        </div>
+                        <div class="chat-user-details">
+                            <h3 id="chatTitle">Charles Academy Bot</h3>
+                            <p id="chatStatus">Connecting to bot...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <i class="fas fa-phone-alt" title="Voice Call" onclick="startVoiceCall()"></i>
+                    <i class="fas fa-video" title="Video Call" onclick="startVideoCall()"></i>
+                    <i class="fas fa-ellipsis-v" title="More options" onclick="showMoreOptions()"></i>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="messages-area" id="messagesArea">
+                <!-- Messages will be populated here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-actions">
+                    <button class="input-action-btn" onclick="attachFile()">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-action-btn" onclick="recordAudio()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <div class="input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Type your message..."
+                        rows="1"
+                        oninput="autoResize(this)"
+                        onkeydown="handleKeyPress(event)"
+                    ></textarea>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="quick-commands" id="quickCommands">
+                    <button class="quick-command" onclick="sendQuickMessage('Hi')">
+                        <i class="fas fa-hand-wave"></i> Hi
+                    </button>
+                    <button class="quick-command" onclick="sendQuickMessage('MENU')">
+                        <i class="fas fa-bars"></i> Menu
+                    </button>
+                    <button class="quick-command" onclick="sendQuickMessage('EXAM')">
+                        <i class="fas fa-file-alt"></i> Exam
+                    </button>
+                    <button class="quick-command" onclick="sendQuickMessage('PROGRESS')">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const API_BASE_URL = window.location.origin;
+        let sessionId = localStorage.getItem('charles_session_id');
+        let isTyping = false;
+        let activeChat = 'bot';
+        let isMobile = window.innerWidth < 768;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Initializing Charles Academy Telegram UI...');
+            
+            // Check if mobile
+            updateMobileDetection();
+            window.addEventListener('resize', updateMobileDetection);
+            
+            // Generate or get session ID
+            if (!sessionId) {
+                sessionId = generateSessionId();
+                localStorage.setItem('charles_session_id', sessionId);
+            }
+            
+            // Update UI
+            updateConnectionStatus('connected');
+            await loadUserData();
+            await loadStats();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Load initial chat
+            loadBotChat();
+            
+            // Show welcome message if new session
+            if (localStorage.getItem('charles_first_visit') !== 'true') {
+                showWelcomeMessage();
+                localStorage.setItem('charles_first_visit', 'true');
+            }
+        });
+
+        // ==================== RESPONSIVE FUNCTIONS ====================
+        function updateMobileDetection() {
+            isMobile = window.innerWidth < 768;
+            
+            // Update body class for mobile styles
+            if (isMobile) {
+                document.body.classList.add('mobile');
+            } else {
+                document.body.classList.remove('mobile');
+                // Close sidebar on desktop if it was open
+                closeSidebar();
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('telegramSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (isMobile) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.classList.toggle('no-scroll');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('telegramSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+
+        // ==================== API FUNCTIONS ====================
+        async function sendMessageToBot(message) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: sessionId
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.sessionId && data.sessionId !== sessionId) {
+                        sessionId = data.sessionId;
+                        localStorage.setItem('charles_session_id', sessionId);
+                    }
+                    
+                    return {
+                        success: true,
+                        response: data.response,
+                        userStatus: data.userStatus
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: data.error || 'Unknown error'
+                    };
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                return {
+                    success: false,
+                    error: 'Network error. Please check your connection.'
+                };
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/${sessionId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        document.getElementById('currentUser').textContent = 
+                            data.studentData?.full_name || 'Guest Student';
+                        
+                        document.getElementById('userStatus').textContent = 
+                            data.registered ? 'Registered' : 'Not Registered';
+                        
+                        document.getElementById('userStatus').style.color = 
+                            data.registered ? 'var(--telegram-green)' : 'var(--telegram-text-secondary)';
+                    }
+                }
+            } catch (error) {
+                console.error('Load user data error:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                updateStatsUI({
+                    lessons: 0,
+                    progress: 0,
+                    exams: 0,
+                    score: 0
+                });
+            } catch (error) {
+                console.error('Load stats error:', error);
+            }
+        }
+
+        async function resetChat() {
+            if (confirm('Start a new session? Your current chat will be cleared.')) {
+                try {
+                    await fetch(`${API_BASE_URL}/api/reset`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ sessionId: sessionId })
+                    });
+
+                    localStorage.removeItem('charles_session_id');
+                    localStorage.removeItem('charles_first_visit');
+                    
+                    sessionId = generateSessionId();
+                    localStorage.setItem('charles_session_id', sessionId);
+                    
+                    document.getElementById('messagesArea').innerHTML = '';
+                    
+                    await loadUserData();
+                    await loadStats();
+                    
+                    showWelcomeMessage();
+                    
+                } catch (error) {
+                    console.error('Reset error:', error);
+                    alert('Error resetting chat. Please try again.');
+                }
+            }
+        }
+
+        // ==================== MESSAGE HANDLING ====================
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            input.value = '';
+            autoResize(input);
+            
+            addMessageToUI(message, 'outgoing');
+            
+            const sendBtn = document.getElementById('sendButton');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            showTypingIndicator();
+            
+            setTimeout(async () => {
+                try {
+                    const result = await sendMessageToBot(message);
+                    
+                    hideTypingIndicator();
+                    
+                    if (result.success) {
+                        addMessageToUI(result.response, 'incoming', 'Charles Academy Bot');
+                        
+                        if (result.userStatus) {
+                            await loadUserData();
+                        }
+                    } else {
+                        addMessageToUI(`❌ Error: ${result.error}`, 'incoming', 'System');
+                    }
+                } catch (error) {
+                    console.error('Send message error:', error);
+                    addMessageToUI('❌ Network error. Please check your connection.', 'incoming', 'System');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                }
+            }, 1000);
+        }
+
+        function sendQuickMessage(command) {
+            const input = document.getElementById('messageInput');
+            input.value = command;
+            sendMessage();
+        }
+
+        // ==================== UI FUNCTIONS ====================
+        function addMessageToUI(text, type, sender = 'You') {
+            const messagesArea = document.getElementById('messagesArea');
+            const messageId = 'msg_' + Date.now();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.id = messageId;
+            
+            const formattedText = formatMessage(text);
+            const quickActions = extractQuickActions(text);
+            const messageWithoutActions = text.replace(/\n📝.*$/s, '').replace(/\n🎯.*$/s, '').replace(/\n📚.*$/s, '');
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${type === 'incoming' ? 
+                        `<div style="font-size: 12px; color: var(--telegram-text-secondary); margin-bottom: 5px;">
+                            ${sender}
+                        </div>` : ''}
+                    <div class="message-text">${type === 'incoming' ? formattedText : text}</div>
+                    ${quickActions ? `<div class="message-actions">${quickActions}</div>` : ''}
+                    <div class="message-meta">
+                        <span class="message-time">${time}</span>
+                        ${type === 'outgoing' ? `<i class="fas fa-check message-check"></i>` : ''}
+                    </div>
+                    <div class="message-buttons" style="position: absolute; right: -40px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s; display: flex; gap: 5px;">
+                        <button onclick="deleteMessage('${messageId}')" style="width: 25px; height: 25px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-trash" style="font-size: 12px;"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add hover effect only on non-touch devices
+            if (!isMobile) {
+                messageDiv.addEventListener('mouseenter', () => {
+                    const buttons = messageDiv.querySelector('.message-buttons');
+                    if (buttons) buttons.style.opacity = '1';
+                });
+                
+                messageDiv.addEventListener('mouseleave', () => {
+                    const buttons = messageDiv.querySelector('.message-buttons');
+                    if (buttons) buttons.style.opacity = '0';
+                });
+            }
+            
+            messagesArea.appendChild(messageDiv);
+            scrollToBottom();
+            
+            saveToHistory(text, type, sender);
+        }
+
+        function formatMessage(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>')
+                .replace(/🎓/g, '🎓')
+                .replace(/📚/g, '📚')
+                .replace(/✅/g, '✅')
+                .replace(/❌/g, '❌')
+                .replace(/📝/g, '📝')
+                .replace(/🎯/g, '🎯')
+                .replace(/📊/g, '📊')
+                .replace(/👋/g, '👋')
+                .replace(/🤖/g, '🤖');
+        }
+
+        function extractQuickActions(text) {
+            const actions = [];
+            
+            if (text.includes('Type "Hi"')) {
+                actions.push('<button class="message-action-btn" onclick="sendQuickMessage(\'Hi\')"><i class="fas fa-hand-wave"></i> Say Hi</button>');
+            }
+            
+            if (text.includes('Type "MENU"') || text.includes('Type MENU')) {
+                actions.push('<button class="message-action-btn" onclick="sendQuickMessage(\'MENU\')"><i class="fas fa-bars"></i> Menu</button>');
+            }
+            
+            if (text.includes('Type "EXAM"') || text.includes('Type EXAM')) {
+                actions.push('<button class="message-action-btn" onclick="sendQuickMessage(\'EXAM\')"><i class="fas fa-file-alt"></i> Exam</button>');
+            }
+            
+            if (text.includes('Type "HELP"') || text.includes('Type HELP')) {
+                actions.push('<button class="message-action-btn" onclick="sendQuickMessage(\'HELP\')"><i class="fas fa-question-circle"></i> Help</button>');
+            }
+            
+            if (text.includes('Type "PROGRESS"') || text.includes('Type PROGRESS')) {
+                actions.push('<button class="message-action-btn" onclick="sendQuickMessage(\'PROGRESS\')"><i class="fas fa-chart-line"></i> Progress</button>');
+            }
+            
+            if (actions.length > 0) {
+                return actions.join('');
+            }
+            
+            return null;
+        }
+
+        function showTypingIndicator() {
+            if (isTyping) return;
+            isTyping = true;
+            
+            const messagesArea = document.getElementById('messagesArea');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            
+            messagesArea.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isTyping = false;
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function deleteMessage(messageId) {
+            const messageElement = document.getElementById(messageId);
+            if (!messageElement) return;
+            
+            messageElement.classList.add('message-deleting');
+            
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        }
+
+        // ==================== CHAT MANAGEMENT ====================
+        function switchChat(chatType) {
+            activeChat = chatType;
+            
+            closeSidebar();
+            
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.menu-item').classList.add('active');
+            
+            updateChatHeader(chatType);
+            
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.innerHTML = '';
+            
+            switch(chatType) {
+                case 'bot':
+                    loadBotChat();
+                    break;
+                case 'stats':
+                    loadStatisticsChat();
+                    break;
+                case 'exams':
+                    loadExamsChat();
+                    break;
+                case 'progress':
+                    loadProgressChat();
+                    break;
+                case 'help':
+                    loadHelpChat();
+                    break;
+            }
+        }
+
+        function updateChatHeader(chatType) {
+            const chatTitle = document.getElementById('chatTitle');
+            const chatStatus = document.getElementById('chatStatus');
+            const chatIcon = document.getElementById('chatIcon');
+            
+            switch(chatType) {
+                case 'bot':
+                    chatTitle.textContent = 'Charles Academy Bot';
+                    chatStatus.textContent = 'Online • Responding instantly';
+                    chatStatus.style.color = 'var(--telegram-green)';
+                    chatIcon.className = 'fas fa-robot';
+                    break;
+                case 'stats':
+                    chatTitle.textContent = 'My Statistics';
+                    chatStatus.textContent = 'View your learning stats';
+                    chatStatus.style.color = 'var(--telegram-blue)';
+                    chatIcon.className = 'fas fa-chart-bar';
+                    break;
+                case 'exams':
+                    chatTitle.textContent = 'Exam Results';
+                    chatStatus.textContent = 'View your exam history';
+                    chatStatus.style.color = 'var(--telegram-purple)';
+                    chatIcon.className = 'fas fa-file-alt';
+                    break;
+                case 'progress':
+                    chatTitle.textContent = 'Progress Tracking';
+                    chatStatus.textContent = 'Track your learning progress';
+                    chatStatus.style.color = 'var(--telegram-green)';
+                    chatIcon.className = 'fas fa-trophy';
+                    break;
+                case 'help':
+                    chatTitle.textContent = 'Help & Support';
+                    chatStatus.textContent = 'Get help and support';
+                    chatStatus.style.color = 'var(--telegram-yellow)';
+                    chatIcon.className = 'fas fa-question-circle';
+                    break;
+            }
+            
+            updateQuickCommands(chatType);
+        }
+
+        function updateQuickCommands(chatType) {
+            const quickCommands = document.getElementById('quickCommands');
+            
+            switch(chatType) {
+                case 'bot':
+                    quickCommands.innerHTML = `
+                        <button class="quick-command" onclick="sendQuickMessage('Hi')">
+                            <i class="fas fa-hand-wave"></i> Hi
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('MENU')">
+                            <i class="fas fa-bars"></i> Menu
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('EXAM')">
+                            <i class="fas fa-file-alt"></i> Exam
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('PROGRESS')">
+                            <i class="fas fa-chart-line"></i> Progress
+                        </button>
+                    `;
+                    break;
+                case 'stats':
+                    quickCommands.innerHTML = `
+                        <button class="quick-command" onclick="sendQuickMessage('PROGRESS')">
+                            <i class="fas fa-chart-line"></i> Progress
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('EXAM')">
+                            <i class="fas fa-file-alt"></i> Exams
+                        </button>
+                        <button class="quick-command" onclick="refreshStats()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="quick-command" onclick="switchChat('bot')">
+                            <i class="fas fa-robot"></i> Back
+                        </button>
+                    `;
+                    break;
+                case 'exams':
+                    quickCommands.innerHTML = `
+                        <button class="quick-command" onclick="sendQuickMessage('EXAM')">
+                            <i class="fas fa-plus"></i> New Exam
+                        </button>
+                        <button class="quick-command" onclick="downloadResults()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="quick-command" onclick="refreshExams()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="quick-command" onclick="switchChat('bot')">
+                            <i class="fas fa-robot"></i> Back
+                        </button>
+                    `;
+                    break;
+                default:
+                    quickCommands.innerHTML = `
+                        <button class="quick-command" onclick="sendQuickMessage('Hi')">
+                            <i class="fas fa-hand-wave"></i> Hi
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('HELP')">
+                            <i class="fas fa-question-circle"></i> Help
+                        </button>
+                        <button class="quick-command" onclick="sendQuickMessage('MENU')">
+                            <i class="fas fa-bars"></i> Menu
+                        </button>
+                        <button class="quick-command" onclick="switchChat('bot')">
+                            <i class="fas fa-robot"></i> Bot
+                        </button>
+                    `;
+            }
+        }
+
+        function loadBotChat() {
+            showWelcomeMessage();
+        }
+
+        function loadStatisticsChat() {
+            addMessageToUI(
+                `📊 **Your Learning Statistics**\n\n` +
+                `✅ **Completed Lessons:** 0\n` +
+                `🎯 **Overall Progress:** 0%\n` +
+                `📝 **Exams Taken:** 0\n` +
+                `⭐ **Average Score:** 0%\n` +
+                `🏆 **Exams Passed:** 0/0\n\n` +
+                `*Start learning to see your statistics!*`,
+                'incoming',
+                'Statistics System'
+            );
+        }
+
+        function loadExamsChat() {
+            addMessageToUI(
+                `📋 **Exam Results History**\n\n` +
+                `No exam results yet.\n\n` +
+                `Take your first exam by typing "EXAM" or using the quick action button below.`,
+                'incoming',
+                'Exam System'
+            );
+        }
+
+        function loadProgressChat() {
+            addMessageToUI(
+                `🎯 **Your Learning Progress**\n\n` +
+                `📊 **Overall Progress:** 0%\n` +
+                `📚 **Lessons Completed:** 0/0\n` +
+                `⭐ **Average Performance:** 0%\n` +
+                `🎓 **Exams Passed:** 0/0\n\n` +
+                `*Progress visualization will appear here as you learn.*`,
+                'incoming',
+                'Progress Tracker'
+            );
+        }
+
+        function loadHelpChat() {
+            addMessageToUI(
+                `❓ **Help & Support Center**\n\n` +
+                `**Quick Commands:**\n` +
+                `• **MENU** - Show main menu\n` +
+                `• **EXAM** - Start a new exam\n` +
+                `• **PROGRESS** - Check your progress\n` +
+                `• **HELP** - Show this help\n\n` +
+                `**Languages Supported:**\n` +
+                `• **ENGLISH** - Default language\n` +
+                `• **KISWAHILI** - Changia lugha\n` +
+                `• **FRANÇAIS** - Changer la langue\n\n` +
+                `**Need immediate help?** Type your question in the main chat!`,
+                'incoming',
+                'Support Team'
+            );
+        }
+
+        function showWelcomeMessage() {
+            addMessageToUI(
+                `🎓 **Welcome to Charles Academy!**\n\n` +
+                `I'm your intelligent learning assistant. Here's what I can help you with:\n\n` +
+                `• 📚 Take comprehensive exams\n` +
+                `• 🎓 Track your learning progress\n` +
+                `• 🌍 Support multiple languages\n` +
+                `• 📊 Provide detailed analytics\n\n` +
+                `Just type your message or use the quick commands below!\n\n` +
+                `📝 **Quick Start:**\n` +
+                `1. Say "Hi" to begin\n` +
+                `2. Choose your language\n` +
+                `3. Register as a student\n` +
+                `4. Start learning!`,
+                'incoming',
+                'Charles Academy Bot'
+            );
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function generateSessionId() {
+            return 'web_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        }
+
+        function updateConnectionStatus(status) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (status === 'connected') {
+                statusElement.innerHTML = `
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--telegram-green);"></span>
+                    <span style="font-size: 12px; color: var(--telegram-text-secondary);">Connected</span>
+                `;
+            } else {
+                statusElement.innerHTML = `
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--telegram-red);"></span>
+                    <span style="font-size: 12px; color: var(--telegram-text-secondary);">Disconnected</span>
+                `;
+            }
+        }
+
+        function updateStatsUI(stats) {
+            document.getElementById('statLessons').textContent = stats.lessons;
+            document.getElementById('statProgress').textContent = stats.progress + '%';
+            document.getElementById('statExams').textContent = stats.exams;
+            document.getElementById('statScore').textContent = stats.score + '%';
+            
+            document.getElementById('examCount').textContent = stats.exams;
+            if (stats.exams > 0) {
+                document.getElementById('examCount').style.display = 'inline-block';
+            } else {
+                document.getElementById('examCount').style.display = 'none';
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function scrollToBottom() {
+            const messagesArea = document.getElementById('messagesArea');
+            setTimeout(() => {
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }, 100);
+        }
+
+        function setupEventListeners() {
+            const input = document.getElementById('messageInput');
+            
+            input.addEventListener('focus', () => {
+                if (isMobile) {
+                    setTimeout(() => {
+                        scrollToBottom();
+                    }, 300);
+                }
+            });
+            
+            input.addEventListener('input', () => autoResize(input));
+            
+            // Handle keyboard show/hide on mobile
+            if (isMobile) {
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        scrollToBottom();
+                    }, 300);
+                });
+            }
+            
+            input.focus();
+        }
+
+        function saveToHistory(text, type, sender) {
+            const history = JSON.parse(localStorage.getItem('charles_chat_history') || '[]');
+            history.push({
+                text,
+                type,
+                sender,
+                timestamp: new Date().toISOString()
+            });
+            
+            if (history.length > 100) {
+                history.splice(0, history.length - 100);
+            }
+            
+            localStorage.setItem('charles_chat_history', JSON.stringify(history));
+        }
+
+        // ==================== PLACEHOLDER FUNCTIONS ====================
+        function toggleSearch() {
+            alert('Search feature would open here');
+        }
+
+        function startVoiceCall() {
+            alert('Voice call feature would start here');
+        }
+
+        function startVideoCall() {
+            alert('Video call feature would start here');
+        }
+
+        function showMoreOptions() {
+            alert('More options menu would open here');
+        }
+
+        function attachFile() {
+            alert('File attachment feature would open here');
+        }
+
+        function recordAudio() {
+            alert('Audio recording feature would start here');
+        }
+
+        function refreshStats() {
+            alert('Refreshing statistics...');
+            loadStats();
+        }
+
+        function refreshExams() {
+            alert('Refreshing exam results...');
+            loadExamsChat();
+        }
+
+        function downloadResults() {
+            alert('Downloading exam results...');
+        }
+
+        // Katika index.html script
+async function handleLogin() {
+    const loginData = {
+        registrationNumber: document.getElementById('regNumber').value,
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value
+    };
+    
+    // API call kwa login
+    const response = await fetch(`${API_BASE_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...loginData, sessionId: sessionId })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+        // Update UI
+        document.getElementById('currentUser').textContent = result.student.full_name;
+        document.getElementById('userStatus').textContent = `Logged in (${result.student.registration_number})`;
+        document.getElementById('accountStatus').innerHTML = `
+            Logged in as: <strong>${result.student.full_name}</strong><br>
+            Reg No: ${result.student.registration_number}
+        `;
+    }
+}
+
+async function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        await fetch(`${API_BASE_URL}/api/logout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: sessionId })
+        });
+        
+        // Reset UI
+        document.getElementById('currentUser').textContent = 'Guest';
+        document.getElementById('userStatus').textContent = 'Not logged in';
+        document.getElementById('accountStatus').innerHTML = 'Not logged in';
+        
+        // Clear local data
+        localStorage.removeItem('charles_user_session');
+    }
+}
+    </script>
+</body>
+</html>
