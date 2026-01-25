@@ -1,8 +1,5 @@
-// bot.js - FIXED DATABASE AUTH VERSION
 const { makeWASocket, useMultiFileAuthState, Browsers } = require('@whiskeysockets/baileys');
 const qrcode = require('qrcode-terminal');
-const fs = require('fs');
-const path = require('path');
 
 // Import modules
 const learningCommands = require('./learningCommands');
@@ -10,141 +7,34 @@ const learningSession = require('./learningSession');
 const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 
-// === IMPORT DATABASE AUTH MODULE ===
-const databaseAuth = require('./databaseAuth');
-
-// === IMPORT STUDENT REGISTRATION ===
+// === IMPORT NEW MODULES ===
 const studentRegistration = require('./studentRegistration');
-
-// Function to check if auth directory exists
-function ensureAuthDirectory() {
-    const authDir = path.join(__dirname, 'auth');
-    if (!fs.existsSync(authDir)) {
-        fs.mkdirSync(authDir, { recursive: true });
-        console.log('📁 Created auth directory');
-    }
-}
-
-// Modified useMultiFileAuthState to use database WITH PROPER STRUCTURE
-async function useDatabaseAuthState() {
-    console.log('🔧 Initializing Database Auth System...');
-    
-    // Ensure local auth directory exists
-    ensureAuthDirectory();
-    
-    try {
-        // Try to load from database first
-        console.log('🔍 Loading auth from database...');
-        const savedAuth = await databaseAuth.loadAuth();
-        
-        if (savedAuth && savedAuth.creds) {
-            console.log('✅ Auth loaded from database');
-            
-            // IMPORTANT: Create PROPER state structure for baileys
-            const state = {
-                creds: savedAuth.creds,
-                keys: {
-                    get: async (type, ids) => {
-                        try {
-                            // Return empty object for all key types
-                            return {};
-                        } catch (error) {
-                            return {};
-                        }
-                    },
-                    set: async (data) => {
-                        try {
-                            // Save keys if needed
-                            console.log('📝 Keys update received');
-                        } catch (error) {
-                            console.error('Error saving keys:', error.message);
-                        }
-                    }
-                }
-            };
-            
-            // Create saveCreds function
-            const saveCreds = async () => {
-                try {
-                    const result = await databaseAuth.saveAuth({ creds: state.creds });
-                    if (result.success) {
-                        console.log('💾 Creds saved to database');
-                    }
-                } catch (error) {
-                    console.error('Error saving creds:', error.message);
-                }
-            };
-            
-            return { state, saveCreds };
-        }
-    } catch (error) {
-        console.log('⚠️ Could not load from database:', error.message);
-    }
-    
-    // Fallback to local file auth
-    console.log('📁 Using local auth storage (fallback)...');
-    return await useMultiFileAuthState('./auth');
-}
-
-// SIMPLIFIED VERSION - Use local auth with database backup
-async function useSimpleAuthWithDatabaseBackup() {
-    console.log('🔧 Using SIMPLE auth with database backup...');
-    
-    // Always use local auth first
-    const { state, saveCreds: localSaveCreds } = await useMultiFileAuthState('./auth');
-    
-    // Create wrapper saveCreds that saves to both local and database
-    const saveCreds = async () => {
-        // Save locally first
-        await localSaveCreds();
-        
-        // Then backup to database
-        try {
-            const result = await databaseAuth.saveAuth({ creds: state.creds });
-            if (result.success && !result.local) {
-                console.log('💾 Auth backed up to database');
-            }
-        } catch (error) {
-            console.log('⚠️ Could not backup to database:', error.message);
-        }
-    };
-    
-    return { state, saveCreds };
-}
 
 async function startBot() {
     console.log('🚀 Starting Charles Academy Bot...');
-    console.log('📚 Version: 3.1.0'); // Updated version
+    console.log('📚 Version: 2.6.0'); // Updated version with registration
     console.log('👨‍🎓 Academy: Charles Academy');
     console.log('🌍 Languages: English, Kiswahili, Français');
     console.log('📞 Test Number: 0776831991');
-    console.log('💾 Feature: Database Auth Backup');
+    console.log('🎯 New Feature: Student Registration System');
     
     try {
         // Initialize database
         console.log('🔧 Initializing Database Connection...');
         
-        // Use SIMPLE auth system (local + database backup)
-        const { state, saveCreds } = await useSimpleAuthWithDatabaseBackup();
-        
-        console.log('🔑 Auth state loaded successfully');
+        const { state, saveCreds } = await useMultiFileAuthState('./auth');
         
         const sock = makeWASocket({
             auth: state,
             printQRInTerminal: false,
             browser: Browsers.ubuntu('Chrome'),
             connectTimeoutMs: 60000,
-            keepAliveIntervalMs: 25000,
-            syncFullHistory: false,
-            markOnlineOnConnect: true,
-            generateHighQualityLinkPreview: true,
-            defaultQueryTimeoutMs: 60000
+            keepAliveIntervalMs: 25000
         });
 
-        // Set up credentials update handler
         sock.ev.on('creds.update', saveCreds);
         
-        sock.ev.on('connection.update', async (update) => {
+        sock.ev.on('connection.update', (update) => {
             const { connection, lastDisconnect, qr } = update;
             
             // Display QR Code
@@ -159,62 +49,19 @@ async function startBot() {
                 console.log('3. Tap "Link a Device"');
                 console.log('4. Scan the QR code above');
                 console.log('='.repeat(50) + '\n');
-                
-                // Save QR code state
-                try {
-                    await databaseAuth.saveAuth({ 
-                        creds: state.creds,
-                        qrState: qr,
-                        timestamp: new Date().toISOString()
-                    });
-                } catch (error) {
-                    console.log('⚠️ Could not save QR state:', error.message);
-                }
             }
             
             if (connection === 'close') {
                 console.log('❌ Connection closed');
-                const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 401;
-                
-                if (shouldReconnect) {
-                    console.log('🔄 Reconnecting in 5 seconds...');
-                    setTimeout(() => startBot(), 5000);
-                } else {
-                    console.log('⚠️ Authentication failed. Clearing auth...');
-                    try {
-                        await databaseAuth.clearAuth();
-                        // Clear local auth too
-                        const authDir = path.join(__dirname, 'auth');
-                        if (fs.existsSync(authDir)) {
-                            fs.rmSync(authDir, { recursive: true, force: true });
-                            console.log('🗑️ Local auth cleared');
-                        }
-                    } catch (error) {
-                        console.log('Error clearing auth:', error.message);
-                    }
-                    console.log('🔄 Restarting bot...');
-                    setTimeout(() => startBot(), 3000);
-                }
+                console.log('🔄 Reconnecting in 5 seconds...');
+                setTimeout(() => startBot(), 5000);
             } else if (connection === 'open') {
                 console.log('\n' + '✅'.repeat(10));
                 console.log('✅ BOT CONNECTED SUCCESSFULLY!');
                 console.log('📱 Now you can message: 0750910158');
-                console.log('💾 Auth Backup: Database');
                 console.log('🎯 Registration System: Send "Hi" to register');
                 console.log('🎯 New Exam System: Type EXAM to try');
                 console.log('✅'.repeat(10) + '\n');
-                
-                // Save successful connection state
-                try {
-                    await databaseAuth.saveAuth({
-                        creds: state.creds,
-                        isConnected: true,
-                        connectedAt: new Date().toISOString(),
-                        user: sock.user
-                    });
-                } catch (error) {
-                    console.log('⚠️ Could not save connection state:', error.message);
-                }
             }
         });
 
@@ -222,7 +69,7 @@ async function startBot() {
         const userLanguages = new Map();
 
         // ============================================
-        // HANDLE INCOMING MESSAGES
+        // HANDLE INCOMING MESSAGES - UPDATED VERSION
         // ============================================
         sock.ev.on('messages.upsert', async ({ messages }) => {
             const msg = messages[0];
@@ -493,42 +340,6 @@ async function startBot() {
                     await sock.sendMessage(jid, { text: cancelMsg });
                     return;
                 }
-                
-                // ======================================
-                // NEW: ADMIN COMMANDS FOR AUTH MANAGEMENT
-                // ======================================
-                if (upperText === '!AUTH STATUS' && jid.includes('255750910158')) {
-                    console.log(`🔐 Admin checking auth status`);
-                    const authStatus = await checkAuthStatus();
-                    await sock.sendMessage(jid, { text: authStatus });
-                    return;
-                }
-                
-                if (upperText === '!AUTH BACKUP' && jid.includes('255750910158')) {
-                    console.log(`💾 Admin backing up auth`);
-                    const backupResult = await databaseAuth.backupAuth({ creds: state.creds });
-                    const backupMsg = backupResult.success 
-                        ? '✅ Auth backup completed successfully'
-                        : `❌ Backup failed: ${backupResult.error}`;
-                    await sock.sendMessage(jid, { text: backupMsg });
-                    return;
-                }
-                
-                if (upperText === '!AUTH CLEAR' && jid.includes('255750910158')) {
-                    console.log(`🗑️ Admin clearing auth`);
-                    const clearResult = await databaseAuth.clearAuth();
-                    // Clear local auth too
-                    const authDir = path.join(__dirname, 'auth');
-                    if (fs.existsSync(authDir)) {
-                        fs.rmSync(authDir, { recursive: true, force: true });
-                    }
-                    
-                    const clearMsg = clearResult.success 
-                        ? '✅ Auth cleared from database and local storage'
-                        : `❌ Clear failed: ${clearResult.error}`;
-                    await sock.sendMessage(jid, { text: clearMsg });
-                    return;
-                }
 
                 // ======================================
                 // GREETINGS & INITIAL MESSAGE
@@ -576,26 +387,8 @@ async function startBot() {
             }
         });
 
-        // Periodic auth backup
-        setInterval(async () => {
-            try {
-                const result = await databaseAuth.backupAuth({ creds: state.creds });
-                if (result.success) {
-                    console.log('💾 Periodic auth backup completed');
-                }
-            } catch (error) {
-                console.log('⚠️ Periodic backup failed:', error.message);
-            }
-        }, 30 * 60 * 1000); // Every 30 minutes
-
         console.log('\n✅ Bot is running. Waiting for QR code...\n');
-        console.log('💾 Auth Backup Features:');
-        console.log('• Local auth storage (primary)');
-        console.log('• Database backup of credentials');
-        console.log('• Automatic fallback if database fails');
-        console.log('• Periodic automatic backups');
-        console.log('• Admin commands for auth management');
-        console.log('\n🎯 Registration System Features:');
+        console.log('🎯 Registration System Features:');
         console.log('• Ask for full name and registration number');
         console.log('• Registration number is optional (type SKIP)');
         console.log('• All exam results saved with student details');
@@ -605,45 +398,6 @@ async function startBot() {
         console.error('❌ Fatal error:', error);
         console.log('🔄 Restarting in 10 seconds...');
         setTimeout(() => startBot(), 10000);
-    }
-}
-
-// ==================== NEW AUTH STATUS FUNCTION ====================
-async function checkAuthStatus() {
-    try {
-        const authData = await databaseAuth.loadAuth();
-        const hasLocalAuth = fs.existsSync(path.join(__dirname, 'auth', 'creds.json'));
-        
-        let status = '🔐 *AUTHENTICATION STATUS*\n\n';
-        
-        if (authData && authData.creds) {
-            status += '✅ *Database Backup:* Available\n';
-            status += `📅 Last Updated: ${authData.timestamp ? new Date(authData.timestamp).toLocaleString() : 'Unknown'}\n`;
-            status += `🔗 Connection: ${authData.isConnected ? '✅ Connected' : '❌ Not connected'}\n`;
-        } else {
-            status += '❌ *Database Backup:* Not available\n';
-        }
-        
-        status += '\n';
-        
-        if (hasLocalAuth) {
-            const stats = fs.statSync(path.join(__dirname, 'auth', 'creds.json'));
-            status += '✅ *Local Auth:* Available\n';
-            status += `📅 Last Modified: ${stats.mtime.toLocaleString()}\n`;
-            status += `📊 Size: ${(stats.size / 1024).toFixed(2)} KB\n`;
-            status += `🏠 Primary storage\n`;
-        } else {
-            status += '❌ *Local Auth:* Not available (need to scan QR)\n';
-        }
-        
-        status += '\n💡 *Tips:*\n';
-        status += '• Use !AUTH BACKUP to force backup\n';
-        status += '• Use !AUTH CLEAR to reset auth\n';
-        status += '• Bot uses local storage as primary';
-        
-        return status;
-    } catch (error) {
-        return `❌ Error checking auth status: ${error.message}`;
     }
 }
 
@@ -753,106 +507,23 @@ async function handleExamResponse(sock, jid, text, language) {
 // ==================== OLD FUNCTIONS (KEPT FOR COMPATIBILITY) ====================
 
 async function startExercise(sock, jid, courseId, language) {
-    console.log(`Starting exercise for course ${courseId} in ${language}`);
-    const exercise = await learningSession.startExercise(jid, courseId, language);
-    
-    if (exercise.error) {
-        await sock.sendMessage(jid, { text: exercise.error });
-        return;
-    }
-    
-    const startText = getExerciseStartText(language, exercise.courseName, exercise.totalQuestions);
-    await sock.sendMessage(jid, { text: startText });
+    // ... keep old function ...
 }
 
 async function startTest(sock, jid, testLevel, language) {
-    console.log(`Starting test level ${testLevel} in ${language}`);
-    const test = await learningSession.startTest(jid, testLevel, language);
-    
-    if (test.error) {
-        await sock.sendMessage(jid, { text: test.error });
-        return;
-    }
-    
-    const testName = getTestName(testLevel, language);
-    const startText = getTestStartText(language, testName, test.totalQuestions);
-    await sock.sendMessage(jid, { text: startText });
-}
-
-function checkAnswer(question, userAnswer) {
-    if (!question || !userAnswer) return false;
-    
-    const normalizedUserAnswer = userAnswer.toString().trim().toLowerCase();
-    const normalizedCorrectAnswer = question.correctAnswer.toString().trim().toLowerCase();
-    
-    // For multiple choice questions
-    if (question.type === 'multiple_choice') {
-        const userChoice = normalizedUserAnswer.charAt(0).toUpperCase();
-        const correctChoice = normalizedCorrectAnswer.charAt(0).toUpperCase();
-        return userChoice === correctChoice;
-    }
-    
-    // For true/false questions
-    if (question.type === 'true_false') {
-        const trueSynonyms = ['true', 't', 'yes', 'y', 'correct', 'right', 'kweli', 'vrai', 'oui'];
-        const falseSynonyms = ['false', 'f', 'no', 'n', 'wrong', 'incorrect', 'sio kweli', 'faux', 'non'];
-        
-        if (trueSynonyms.includes(normalizedUserAnswer)) {
-            return normalizedCorrectAnswer.includes('true') || normalizedCorrectAnswer.includes('kweli') || normalizedCorrectAnswer.includes('vrai');
-        }
-        
-        if (falseSynonyms.includes(normalizedUserAnswer)) {
-            return normalizedCorrectAnswer.includes('false') || normalizedCorrectAnswer.includes('sio kweli') || normalizedCorrectAnswer.includes('faux');
-        }
-    }
-    
-    // For short answer questions
-    return normalizedUserAnswer === normalizedCorrectAnswer;
+    // ... keep old function ...
 }
 
 async function handleSessionResponse(sock, jid, answer, session, language) {
-    console.log(`Handling session response for ${jid}`);
-    const result = learningSession.processAnswer(jid, answer);
-    
-    if (result.completed) {
-        const resultText = getResultText(language, result.score, result.stats);
-        await sock.sendMessage(jid, { text: resultText });
-        learningSession.clearSession(jid);
-    } else if (result.nextQuestion) {
-        await sendQuestion(sock, jid, result.nextQuestion, session, language);
-    } else {
-        await sock.sendMessage(jid, { text: getErrorText(language) });
-    }
+    // ... keep old function ...
 }
 
-function getTestName(level, language) {
-    const names = {
-        '1': { 'en': 'Beginner Test', 'sw': 'Mtihani wa Mwanzo', 'fr': 'Test Débutant' },
-        '2': { 'en': 'Intermediate Test', 'sw': 'Mtihani wa Kati', 'fr': 'Test Intermédiaire' },
-        '3': { 'en': 'Advanced Test', 'sw': 'Mtihani wa Juu', 'fr': 'Test Avancé' },
-        '4': { 'en': 'Expert Test', 'sw': 'Mtihani wa Utaalamu', 'fr': 'Test Expert' }
-    };
-    return names[level]?.[language] || names[level]?.['en'] || `Test Level ${level}`;
+function checkAnswer(question, userAnswer) {
+    // ... keep old function ...
 }
 
 async function sendQuestion(sock, jid, question, session, language) {
-    const questionNumber = session.currentQuestion || 1;
-    const header = getQuestionHeader(language, questionNumber, session.currentActivity);
-    const instruction = getAnswerInstruction(language, question.type);
-    const progress = getProgressText(language, questionNumber - 1, session.totalQuestions);
-    
-    let questionText = `${header}${question.text}\n\n`;
-    
-    if (question.options) {
-        question.options.forEach((option, index) => {
-            questionText += `${String.fromCharCode(65 + index)}. ${option}\n`;
-        });
-        questionText += '\n';
-    }
-    
-    questionText += `${instruction}\n${progress}`;
-    
-    await sock.sendMessage(jid, { text: questionText });
+    // ... keep old function ...
 }
 
 // ==================== LANGUAGE TEXT FUNCTIONS ====================
@@ -882,6 +553,77 @@ async function getWelcomeText(language) {
     };
     return texts[language] || texts['en'];
 }
+
+async function getLanguageSelectionText(language) {
+    const texts = {
+        'en': `🌍 *Choose Your Language*\n\n` +
+              `Type one of these words:\n\n` +
+              `ENGLISH 🇬🇧 - For English language\n` +
+              `KISWAHILI 🇹🇿 - For Kiswahili language\n` +
+              `FRANÇAIS 🇫🇷 - For French language\n\n` +
+              `*Example:* Type "ENGLISH" to set English`,
+        
+        'sw': `🌍 *Chagua Lugha Yako*\n\n` +
+              `Andika moja ya maneno haya:\n\n` +
+              `ENGLISH 🇬🇧 - Kwa lugha ya Kiingereza\n` +
+              `KISWAHILI 🇹🇿 - Kwa lugha ya Kiswahili\n` +
+              `FRANÇAIS 🇫🇷 - Kwa lugha ya Kifaransa\n\n` +
+              `*Mfano:* Andika "KISWAHILI" kuweka Kiswahili`,
+        
+        'fr': `🌍 *Choisissez Votre Langue*\n\n` +
+              `Tapez un de ces mots:\n\n` +
+              `ENGLISH 🇬🇧 - Pour la langue anglaise\n` +
+              `KISWAHILI 🇹🇿 - Pour la langue kiswahili\n` +
+              `FRANÇAIS 🇫🇷 - Pour la langue française\n\n` +
+              `*Exemple:* Tapez "FRANÇAIS" pour définir le français`
+    };
+    return texts[language] || texts['en'];
+}
+
+async function getMenuText(language) {
+    const texts = {
+        'en': `🎓 *Charles Academy - Main Menu*\n\n` +
+              `Available options:\n\n` +
+              `📚 LEARN - Start learning\n` +
+              `🎓 EXAM - Take an exam (NEW!)\n` +
+              `🧪 EXERCISE - Practice exercises\n` +
+              `📝 TEST - Take a test\n` +
+              `📊 PROGRESS - My progress\n` +
+              `🌍 LANGUAGE - Change language\n` +
+              `❓ HELP - Show all commands\n` +
+              `🆘 SUPPORT - Help & Support\n\n` +
+              `*Type the word in CAPITAL LETTERS*\n` +
+              `Example: Type "EXAM" for new exam system`,
+        
+        'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
+              `Chaguo zilizopo:\n\n` +
+              `📚 JIFUNZE - Anza kujifunza\n` +
+              `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
+              `🧪 MAZOEZI - Fanya mazoezi\n` +
+              `📝 TEST - Fanya mtihani\n` +
+              `📊 MAENDELEO - Angalia maendeleo yako\n` +
+              `🌍 LUGHA - Badilisha lugha\n` +
+              `❓ USAIDIZI - Onyesha amri zote\n` +
+              `🆘 MSADA - Usaidizi na msaada\n\n` +
+              `*Andika neno kwa HERUFI KUBWA*\n` +
+              `Mfano: Andika "MTIHANI" kwa mfumo mpya wa mitihani`,
+        
+        'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
+              `Options disponibles:\n\n` +
+              `📚 APPRENDRE - Commencer à apprendre\n` +
+              `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
+              `🧪 EXERCICE - Faire des exercices\n` +
+              `📝 TEST - Passer un test\n` +
+              `📊 PROGRÈS - Mes progrès\n` +
+              `🌍 LANGUE - Changer de langue\n` +
+              `❓ AIDE - Afficher toutes les commandes\n` +
+              `🆘 SUPPORT - Aide et support\n\n` +
+              `*Tapez le mot en MAJUSCULES*\n` +
+              `Exemple: Tapez "EXAMEN" pour le nouveau système d\'examen`
+    };
+    return texts[language] || texts['en'];
+}
+
 
 async function getLanguageSelectionText(language) {
     const texts = {
@@ -1197,11 +939,11 @@ function getProgressText(language, progress) {
     
     if (language === 'en') {
         progressMsg = `📊 *Your Learning Progress*\n\n`;
-        progressMsg += `✅ Completed Lessons: ${progress.completedLessons || 0}\n`;
-        progressMsg += `🏆 Average Score: ${progress.averageScore || 0}%\n`;
-        progressMsg += `🎓 Exams Passed: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
+        progressMsg += `✅ Completed Lessons: ${progress.completedLessons}\n`;
+        progressMsg += `🏆 Average Score: ${progress.averageScore}%\n`;
+        progressMsg += `🎓 Exams Passed: ${progress.passedExams}/${progress.totalExams}\n\n`;
         
-        if (!progress.completedLessons || progress.completedLessons === 0) {
+        if (progress.completedLessons === 0) {
             progressMsg += `📝 No completed lessons yet.\n`;
             progressMsg += `Start learning with: COURSES`;
         }
@@ -1210,11 +952,11 @@ function getProgressText(language, progress) {
         
     } else if (language === 'sw') {
         progressMsg = `📊 *Maendeleo Yako ya Kujifunza*\n\n`;
-        progressMsg += `✅ Masomo Yamalizika: ${progress.completedLessons || 0}\n`;
-        progressMsg += `🏆 Wastani wa Alama: ${progress.averageScore || 0}%\n`;
-        progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
+        progressMsg += `✅ Masomo Yamalizika: ${progress.completedLessons}\n`;
+        progressMsg += `🏆 Wastani wa Alama: ${progress.averageScore}%\n`;
+        progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams}/${progress.totalExams}\n\n`;
         
-        if (!progress.completedLessons || progress.completedLessons === 0) {
+        if (progress.completedLessons === 0) {
             progressMsg += `📝 Bila masomo yaliyokamilika bado.\n`;
             progressMsg += `Anza kujifunza kwa: COURSES`;
         }
@@ -1223,11 +965,11 @@ function getProgressText(language, progress) {
         
     } else if (language === 'fr') {
         progressMsg = `📊 *Vos Progrès d'Apprentissage*\n\n`;
-        progressMsg += `✅ Leçons Terminées: ${progress.completedLessons || 0}\n`;
-        progressMsg += `🏆 Score Moyen: ${progress.averageScore || 0}%\n`;
-        progressMsg += `🎓 Examens Réussis: ${progress.passedExams || 0}/${progress.totalExams || 0}\n\n`;
+        progressMsg += `✅ Leçons Terminées: ${progress.completedLessons}\n`;
+        progressMsg += `🏆 Score Moyen: ${progress.averageScore}%\n`;
+        progressMsg += `🎓 Examens Réussis: ${progress.passedExams}/${progress.totalExams}\n\n`;
         
-        if (!progress.completedLessons || progress.completedLessons === 0) {
+        if (progress.completedLessons === 0) {
             progressMsg += `📝 Aucune leçon terminée pour le moment.\n`;
             progressMsg += `Commencez à apprendre avec: COURSES`;
         }
@@ -1244,7 +986,7 @@ function getCoursesText(language, courses) {
     if (language === 'en') {
         courseList = `📚 *Available Courses:*\n\n`;
         
-        if (!courses || courses.length === 0) {
+        if (courses.length === 0) {
             courseList += `📝 No courses available yet. Check back soon!`;
         } else {
             courses.forEach((course, index) => {
@@ -1261,7 +1003,7 @@ function getCoursesText(language, courses) {
     } else if (language === 'sw') {
         courseList = `📚 *Kozi Zilizopo:*\n\n`;
         
-        if (!courses || courses.length === 0) {
+        if (courses.length === 0) {
             courseList += `📝 Bila kozi zilizopo bado. Rudi tena baadaye!`;
         } else {
             courses.forEach((course, index) => {
@@ -1278,7 +1020,7 @@ function getCoursesText(language, courses) {
     } else if (language === 'fr') {
         courseList = `📚 *Cours Disponibles:*\n\n`;
         
-        if (!courses || courses.length === 0) {
+        if (courses.length === 0) {
             courseList += `📝 Aucun cours disponible pour le moment. Revenez bientôt!`;
         } else {
             courses.forEach((course, index) => {

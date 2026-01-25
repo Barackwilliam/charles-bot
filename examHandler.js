@@ -30,8 +30,8 @@ class ExamHandler {
         const menuTexts = {
             en: `🎓 *EXAM SELECTION*\n\n` +
                 `Select a course by typing:\n\n` +
-                `📚 ENGLISH_1 - English Language Exams\n` +
-                `🇹🇿 KISWAHILI_1 - Kiswahili Exams\n` +
+                `📚 ENGLISH ONE - English Language Exams\n` +
+                `🇹🇿 KISWAHILI ONE - Kiswahili Exams\n` +
                 `🎨 GRAPHICS - Graphics Design Exams\n` +
                 `💻 WEBSITE - Website Design Exams\n\n` +
                 `*Type the word in CAPITAL LETTERS*\n` +
@@ -39,8 +39,8 @@ class ExamHandler {
                 
             sw: `🎓 *UCHAGUZI WA MTIHANI*\n\n` +
                 `Chagua kozi kwa kuandika:\n\n` +
-                `📚 ENGLISH_1 - Mitihani ya Lugha ya Kiingereza\n` +
-                `🇹🇿 KISWAHILI_1 - Mitihani ya Kiswahili\n` +
+                `📚 ENGLISH ONE - Mitihani ya Lugha ya Kiingereza\n` +
+                `🇹🇿 KISWAHILI ONE - Mitihani ya Kiswahili\n` +
                 `🎨 GRAPHICS - Mitihani ya Ubunifu wa Michoro\n` +
                 `💻 WEBSITE - Mitihani ya Ubunifu wa Tovuti\n\n` +
                 `*Andika neno kwa HERUFI KUBWA*\n` +
@@ -48,8 +48,8 @@ class ExamHandler {
                 
             fr: `🎓 *SÉLECTION D'EXAMEN*\n\n` +
                 `Sélectionnez un cours en tapant:\n\n` +
-                `📚 ENGLISH_1 - Examens de Langue Anglaise\n` +
-                `🇹🇿 KISWAHILI_1 - Examens de Kiswahili\n` +
+                `📚 ENGLISH ONE - Examens de Langue Anglaise\n` +
+                `🇹🇿 KISWAHILI ONE - Examens de Kiswahili\n` +
                 `🎨 GRAPHICS - Examens de Conception Graphique\n` +
                 `💻 WEBSITE - Examens de Conception de Sites Web\n\n` +
                 `*Tapez le mot en MAJUSCULES*\n` +
@@ -211,8 +211,8 @@ class ExamHandler {
     handleCourseSelection(jid, input, language) {
         const userState = this.userStates.get(jid);
         const courseMap = {
-            'ENGLISH_1': 'english',
-            'KISWAHILI_1': 'kiswahili',
+            'ENGLISH ONE': 'english',
+            'KISWAHILI ONE': 'kiswahili',
             'GRAPHICS': 'graphics',
             'WEBSITE': 'website',
             'GRAPHIC': 'graphics', // Alternative

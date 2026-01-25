@@ -1,31 +1,27 @@
 services:
   - type: web
-    name: charles-academy-bot
+    name: charles-academy-dashboard
     env: node
-    region: ohio
-    buildCommand: npm run render-build
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        generateValue: true
-      - key: BOT_NAME
-        value: "Charles Academy Bot"
-      - key: ACADEMY_NAME
-        value: "Charles Academy"
-      - key: OWNER_NUMBER
-        value: "255776831991"
-      - key: SUPPORT_PHONE
-        value: "255776831991"
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_ANON_KEY
-        sync: false
-      - key: SUPABASE_SERVICE_KEY
-        sync: false
+        value: 10000
       - key: DATABASE_URL
         sync: false
-    plan: free
+      - key: JWT_SECRET
+        generateValue: true
     healthCheckPath: /health
     autoDeploy: true
+
+  - type: cron
+    name: cleanup-sessions
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    env: node
+    buildCommand: npm install
+    startCommand: node scripts/cleanup.js
+    envVars:
+      - key: NODE_ENV
+        value: production

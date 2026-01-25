@@ -286,6 +286,9 @@ class StudentRegistration {
         }
     }
 
+
+    
+
     // Save exam results to database
     async saveExamResult(jid, examData) {
         try {
