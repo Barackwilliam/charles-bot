@@ -15,9 +15,9 @@ const examsData = {
         {
             number: 1,
             text: {
-                en: 'Write TRUE if the statement is correct and FALSE if it is incorrect.',
-                sw: 'Andika KWELI ikiwa taarifa ni sahihi na SI KWELI ikiwa sio sahihi.',
-                fr: 'Écrivez VRAI si l\'énoncé est correct et FAUX s\'il est incorrect.'
+                en: 'Write TRUE or FALSE for each statement.',
+                sw: 'Andika KWELI au SI KWELI kwa kila taarifa.',
+                fr: 'Écrivez VRAI ou FAUX pour chaque énoncé.'
             },
             subQuestions: [
                 {
@@ -25,19 +25,19 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"She go to school every day" is a correct sentence.', sw: '"Yeye kwenda shuleni kila siku" ni sentensi sahihi.', fr: '"Elle aller à l\'école chaque jour" est une phrase correcte.' },
+                    text: { en: '“She go to school every day” is a correct sentence.', sw: '“Yeye kwenda shuleni kila siku” ni sentensi sahihi.', fr: '“Elle aller à l\'école chaque jour” est une phrase correcte.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
-                    text: { en: 'The past tense of "go" is "went".', sw: 'Wakati uliopita wa "kwenda" ni "aliwenda".', fr: 'Le passé de "aller" est "est allé".' },
+                    text: { en: 'The past tense of “go” is “went”.', sw: 'Wakati uliopita wa “kwenda” ni “aliwenda”.', fr: 'Le passé de “aller” est “est allé”.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: 'We use "is" with singular subjects.', sw: 'Tunatumia "ni" na vitu vya umoja.', fr: 'Nous utilisons "est" avec des sujets singuliers.' },
+                    text: { en: 'We use “is” with singular subjects.', sw: 'Tunatumia “ni” na vitu vya umoja.', fr: 'Nous utilisons “est” avec des sujets singuliers.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"They is playing football" is grammatically correct.', sw: '"Wao ni kucheza mpira" ni sahihi kisarufi.', fr: '"Ils est jouer au football" est grammaticalement correct.' },
+                    text: { en: '“They is playing football” is grammatically correct.', sw: '“Wao ni kucheza mpira” ni sahihi kisarufi.', fr: '“Ils est jouer au football” est grammaticalement correct.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
@@ -45,15 +45,15 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"Because" is a conjunction.', sw: '"Kwa sababu" ni kiunganishi.', fr: '"Parce que" est une conjonction.' },
+                    text: { en: '“Because” is a conjunction.', sw: '“Kwa sababu” ni kiunganishi.', fr: '“Parce que” est une conjonction.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: 'The future tense can be formed using "will".', sw: 'Wakati ujao unaweza kutengenezwa kwa kutumia "ata".', fr: 'Le futur peut être formé en utilisant "va".' },
+                    text: { en: 'The future tense can be formed using “will”.', sw: 'Wakati ujao unaweza kutengenezwa kwa kutumia “ata”.', fr: 'Le futur peut être formé en utilisant “va”.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"He don\'t like rice" is a correct sentence.', sw: '"Yeye si kupenda wali" ni sentensi sahihi.', fr: '"Il ne pas aimer riz" est une phrase correcte.' },
+                    text: { en: '“He don’t like rice” is a correct sentence.', sw: '“Yeye si kupenda wali” ni sentensi sahihi.', fr: '“Il ne pas aimer riz” est une phrase correcte.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
@@ -61,15 +61,15 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"Burundi" is a preposition.', sw: '"Burundi" ni kihusishi.', fr: '"Burundi" est une préposition.' },
+                    text: { en: '“Burundi” is a preposition.', sw: '“Burundi” ni kihusishi.', fr: '“Burundi” est une préposition.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
-                    text: { en: 'The comparative of "tall" is "taller".', sw: 'Kilinganishi cha "mrefu" ni "mrefu zaidi".', fr: 'Le comparatif de "grand" est "plus grand".' },
+                    text: { en: 'The comparative of “tall” is “taller”.', sw: 'Kilinganishi cha “mrefu” ni “mrefu zaidi”.', fr: 'Le comparatif de “grand” est “plus grand”.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"She has finished her work" is in the present perfect tense.', sw: '"Yeye amemaliza kazi yake" iko katika wakati uliopo kamili.', fr: '"Elle a fini son travail" est au présent parfait.' },
+                    text: { en: '“She has finished her work” is in the present perfect tense.', sw: '“Yeye amemaliza kazi yake” iko katika wakati uliopo kamili.', fr: '“Elle a fini son travail” est au présent parfait.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
@@ -77,11 +77,11 @@ const examsData = {
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
-                    text: { en: '"Although" is used to join two ideas.', sw: '"Ingawa" hutumiwa kuunganisha mawazo mawili.', fr: '"Bien que" est utilisé pour joindre deux idées.' },
+                    text: { en: '“Although” is used to join two ideas.', sw: '“Ingawa” hutumiwa kuunganisha mawazo mawili.', fr: '“Bien que” est utilisé pour joindre deux idées.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"I am study English now" is correct grammar.', sw: '"Mimi ni kusoma Kiingereza sasa" ni sahihi kisarufi.', fr: '"Je suis étudier anglais maintenant" est grammaticalement correct.' },
+                    text: { en: '“I am study English now” is correct grammar.', sw: '“Mimi ni kusoma Kiingereza sasa” ni sahihi kisarufi.', fr: '“Je suis étudier anglais maintenant” est grammaticalement correct.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
@@ -89,11 +89,11 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"At" is used with specific time.', sw: '"Saa" hutumiwa na wakati maalum.', fr: '"À" est utilisé avec un temps spécifique.' },
+                    text: { en: '“At” is used with specific time.', sw: '“Saa” hutumiwa na wakati maalum.', fr: '“À” est utilisé avec un temps spécifique.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"Friends" is a singular noun.', sw: '"Marafiki" ni nomino ya umoja.', fr: '"Amis" est un nom singulier.' },
+                    text: { en: '“Friends” is a singular noun.', sw: '“Marafiki” ni nomino ya umoja.', fr: '“Amis” est un nom singulier.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
@@ -101,7 +101,7 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"We was happy yesterday" is correct English.', sw: '"Sisi alikuwa na furaha jana" ni Kiingereza sahihi.', fr: '"Nous était heureux hier" est un anglais correct.' },
+                    text: { en: '“We was happy yesterday” is correct English.', sw: '“Sisi alikuwa na furaha jana” ni Kiingereza sahihi.', fr: '“Nous était heureux hier” est un anglais correct.' },
                     answer: { en: 'FALSE', sw: 'SI KWELI', fr: 'FAUX' }
                 },
                 {
@@ -109,15 +109,15 @@ const examsData = {
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"My favourite subject is English" is a complete sentence.', sw: '"Somo langu napendalo ni Kiingereza" ni sentensi kamili.', fr: '"Ma matière préférée est l\'anglais" est une phrase complète.' },
+                    text: { en: '“My favourite subject is English” is a complete sentence.', sw: '“Somo langu napendalo ni Kiingereza” ni sentensi kamili.', fr: '“Ma matière préférée est l\'anglais” est une phrase complète.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: '"If" is a conjunction.', sw: '"Kama" ni kiunganishi.', fr: '"Si" est une conjonction.' },
+                    text: { en: '“If” is a conjunction.', sw: '“Kama” ni kiunganishi.', fr: '“Si” est une conjonction.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 },
                 {
-                    text: { en: 'The superlative of "good" is "best".', sw: 'Kushinda cha "nzuri" ni "bora zaidi".', fr: 'Le superlatif de "bon" est "meilleur".' },
+                    text: { en: 'The superlative of “good” is “best”.', sw: 'Kushinda cha “nzuri” ni “bora zaidi”.', fr: 'Le superlatif de “bon” est “meilleur”.' },
                     answer: { en: 'TRUE', sw: 'KWELI', fr: 'VRAI' }
                 }
             ]
@@ -131,212 +131,212 @@ const examsData = {
             },
             subQuestions: [
                 {
-                    text: { en: 'Choose the correct sentence:', sw: 'Chagua sentensi sahihi:', fr: 'Choisissez la phrase correcte:' },
-                    answer: { 
-                        en: 'She goes to school every day.', 
-                        sw: 'Yeye huenda shuleni kila siku.', 
-                        fr: 'Elle va à l\'école chaque jour.' 
-                    }
+                    text: { 
+                        en: 'Choose the correct sentence:\nA. She go to school every day.\nB. She goes to school every day.\nC. She going to school every day.\nD. She gone to school every day.', 
+                        sw: 'Chagua sentensi sahihi:\nA. Yeye kwenda shuleni kila siku.\nB. Yeye huenda shuleni kila siku.\nC. Yeye akienda shuleni kila siku.\nD. Yeye amekwenda shuleni kila siku.', 
+                        fr: 'Choisissez la phrase correcte:\nA. Elle aller à l\'école chaque jour.\nB. Elle va à l\'école chaque jour.\nC. Elle allant à l\'école chaque jour.\nD. Elle est allée à l\'école chaque jour.' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'The plural of "child" is:', sw: 'Wingi wa "mtoto" ni:', fr: 'Le pluriel de "enfant" est:' },
-                    answer: { 
-                        en: 'children', 
-                        sw: 'watoto', 
-                        fr: 'enfants' 
-                    }
+                    text: { 
+                        en: 'The plural of "child" is:\nA. Childs\nB. Childes\nC. Children\nD. Childrens', 
+                        sw: 'Wingi wa "mtoto" ni:\nA. Watotos\nB. Watotoe\nC. Watoto\nD. Watotos', 
+                        fr: 'Le pluriel de "enfant" est:\nA. Enfants\nB. Enfantes\nC. Enfants\nD. Enfantss' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct verb: "I _____ English now."', sw: 'Chagua kitenzi sahihi: "Mimi _____ Kiingereza sasa."', fr: 'Choisissez le verbe correct: "Je _____ anglais maintenant."' },
-                    answer: { 
-                        en: 'am studying', 
-                        sw: 'ninasoma', 
-                        fr: 'suis en train d\'étudier' 
-                    }
+                    text: { 
+                        en: 'Choose the correct verb: "I _____ English now."\nA. study\nB. studied\nC. am studying\nD. will study', 
+                        sw: 'Chagua kitenzi sahihi: "Mimi _____ Kiingereza sasa."\nA. soma\nB. nilisoma\nC. ninasoma\nD. nitasoma', 
+                        fr: 'Choisissez le verbe correct: "Je _____ anglais maintenant."\nA. étudie\nB. ai étudié\nC. suis en train d\'étudier\nD. étudierai' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'The past tense of "eat" is:', sw: 'Wakati uliopita wa "kula" ni:', fr: 'Le passé de "manger" est:' },
-                    answer: { 
-                        en: 'ate', 
-                        sw: 'alikula', 
-                        fr: 'a mangé' 
-                    }
+                    text: { 
+                        en: 'The past tense of "eat" is:\nA. eated\nB. eats\nC. eating\nD. ate', 
+                        sw: 'Wakati uliopita wa "kula" ni:\nA. niliwala\nB. anakula\nC. kula\nD. alikula', 
+                        fr: 'Le passé de "manger" est:\nA. mangé\nB. mange\nC. mangeant\nD. a mangé' 
+                    },
+                    answer: { en: 'D', sw: 'D', fr: 'D' }
                 },
                 {
-                    text: { en: 'Choose the correct preposition: "The book is _____ the table."', sw: 'Chagua kihusishi sahihi: "Kitabu kiko _____ meza."', fr: 'Choisissez la préposition correcte: "Le livre est _____ la table."' },
-                    answer: { 
-                        en: 'on', 
-                        sw: 'juu ya', 
-                        fr: 'sur' 
-                    }
+                    text: { 
+                        en: 'Choose the correct preposition: "The book is _____ the table."\nA. in\nB. on\nC. at\nD. by', 
+                        sw: 'Chagua kihusishi sahihi: "Kitabu kiko _____ meza."\nA. ndani ya\nB. juu ya\nC. kwenye\nD. kando ya', 
+                        fr: 'Choisissez la préposition correcte: "Le livre est _____ la table."\nA. dans\nB. sur\nC. à\nD. par' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'Which word is a conjunction?', sw: 'Neno lipi ni kiunganishi?', fr: 'Quel mot est une conjonction?' },
-                    answer: { 
-                        en: 'because', 
-                        sw: 'kwa sababu', 
-                        fr: 'parce que' 
-                    }
+                    text: { 
+                        en: 'Which word is a conjunction?\nA. Quickly\nB. Teacher\nC. Because\nD. School', 
+                        sw: 'Neno lipi ni kiunganishi?\nA. Kwa haraka\nB. Mwalimu\nC. Kwa sababu\nD. Shule', 
+                        fr: 'Quel mot est une conjonction?\nA. Rapidement\nB. Professeur\nC. Parce que\nD. École' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct sentence:', sw: 'Chagua sentensi sahihi:', fr: 'Choisissez la phrase correcte:' },
-                    answer: { 
-                        en: 'He doesn\'t like vegetables.', 
-                        sw: 'Yeye hapendi mboga.', 
-                        fr: 'Il n\'aime pas les légumes.' 
-                    }
+                    text: { 
+                        en: 'Choose the correct sentence:\nA. He don\'t like vegetables.\nB. He doesn\'t likes vegetables.\nC. He doesn\'t like vegetables.\nD. He don\'t likes vegetables.', 
+                        sw: 'Chagua sentensi sahihi:\nA. Yeye si kupenda mboga.\nB. Yeye hasipendi mboga.\nC. Yeye hapendi mboga.\nD. Yeye si kupenda mboga.', 
+                        fr: 'Choisissez la phrase correcte:\nA. Il ne pas aimer légumes.\nB. Il ne aime pas légumes.\nC. Il n\'aime pas les légumes.\nD. Il ne pas aimer légumes.' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'The future form of "I go to school" is:', sw: 'Umboni wa wakati ujao wa "Ninaenda shuleni" ni:', fr: 'La forme future de "Je vais à l\'école" est:' },
-                    answer: { 
-                        en: 'I will go to school.', 
-                        sw: 'Nitakwenda shuleni.', 
-                        fr: 'J\'irai à l\'école.' 
-                    }
+                    text: { 
+                        en: 'The future form of "I go to school" is:\nA. I went to school.\nB. I am going to school.\nC. I will go to school.\nD. I have gone to school.', 
+                        sw: 'Umboni wa wakati ujao wa "Ninaenda shuleni" ni:\nA. Nilienda shuleni.\nB. Ninaenda shuleni.\nC. Nitakwenda shuleni.\nD. Nimekwenda shuleni.', 
+                        fr: 'La forme future de "Je vais à l\'école" est:\nA. Je suis allé à l\'école.\nB. Je vais à l\'école.\nC. J\'irai à l\'école.\nD. Je suis allé à l\'école.' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Which one is an adjective?', sw: 'Lipia ni kivumishi?', fr: 'Lequel est un adjectif?' },
-                    answer: { 
-                        en: 'happy', 
-                        sw: 'furaha', 
-                        fr: 'heureux' 
-                    }
+                    text: { 
+                        en: 'Which one is an adjective?\nA. Run\nB. Happy\nC. Quickly\nD. Eat', 
+                        sw: 'Lipia ni kivumishi?\nA. Kimbia\nB. Furaha\nC. Kwa haraka\nD. Kula', 
+                        fr: 'Lequel est un adjectif?\nA. Courir\nB. Heureux\nC. Rapidement\nD. Manger' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'Choose the correct article: "I saw _____ man."', sw: 'Chagua kihisishi sahihi: "Nilimwona _____ mtu."', fr: 'Choisissez l\'article correct: "J\'ai vu _____ homme."' },
-                    answer: { 
-                        en: 'a', 
-                        sw: 'mtu', 
-                        fr: 'un' 
-                    }
+                    text: { 
+                        en: 'Choose the correct article: "I saw _____ man."\nA. a\nB. an\nC. the\nD. no article', 
+                        sw: 'Chagua kihisishi sahihi: "Nilimwona _____ mtu."\nA. mtu\nB. (hakuna)\nC. (hakuna)\nD. (hakuna)', 
+                        fr: 'Choisissez l\'article correct: "J\'ai vu _____ homme."\nA. un\nB. (aucun)\nC. (aucun)\nD. (aucun)' 
+                    },
+                    answer: { en: 'A', sw: 'A', fr: 'A' }
                 },
                 {
-                    text: { en: 'The comparative of "big" is:', sw: 'Kilinganishi cha "kubwa" ni:', fr: 'Le comparatif de "grand" est:' },
-                    answer: { 
-                        en: 'bigger', 
-                        sw: 'kubwa zaidi', 
-                        fr: 'plus grand' 
-                    }
+                    text: { 
+                        en: 'The comparative of "big" is:\nA. big\nB. more big\nC. biggest\nD. bigger', 
+                        sw: 'Kilinganishi cha "kubwa" ni:\nA. kubwa\nB. kubwa zaidi\nC. kubwa zaidi\nD. kubwa zaidi', 
+                        fr: 'Le comparatif de "grand" est:\nA. grand\nB. plus grand\nC. le plus grand\nD. plus grand' 
+                    },
+                    answer: { en: 'D', sw: 'D', fr: 'D' }
                 },
                 {
-                    text: { en: 'Choose the correct sentence:', sw: 'Chagua sentensi sahihi:', fr: 'Choisissez la phrase correcte:' },
-                    answer: { 
-                        en: 'They are playing football.', 
-                        sw: 'Wao wanacheza mpira.', 
-                        fr: 'Ils jouent au football.' 
-                    }
+                    text: { 
+                        en: 'Choose the correct sentence:\nA. They is playing football.\nB. They are playing football.\nC. They am playing football.\nD. They be playing football.', 
+                        sw: 'Chagua sentensi sahihi:\nA. Wao ni kucheza mpira.\nB. Wao wanacheza mpira.\nC. Wao nina kucheza mpira.\nD. Wao kuwa kucheza mpira.', 
+                        fr: 'Choisissez la phrase correcte:\nA. Ils est jouer au football.\nB. Ils jouent au football.\nC. Ils suis jouer au football.\nD. Ils être jouer au football.' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'Which is a correct question?', sw: 'Ni swali lipi sahihi?', fr: 'Quelle est une question correcte?' },
-                    answer: { 
-                        en: 'Do you like English?', 
-                        sw: 'Je, unapenda Kiingereza?', 
-                        fr: 'Aimez-vous l\'anglais?' 
-                    }
+                    text: { 
+                        en: 'Which is a correct question?\nA. You like English?\nB. Like you English?\nC. Do you like English?\nD. You do like English?', 
+                        sw: 'Ni swali lipi sahihi?\nA. Unapenda Kiingereza?\nB. Penda wewe Kiingereza?\nC. Je, unapenda Kiingereza?\nD. Wewe unapenda Kiingereza?', 
+                        fr: 'Quelle est une question correcte?\nA. Vous aimez anglais?\nB. Aimez vous anglais?\nC. Aimez-vous l\'anglais?\nD. Vous faites aimer anglais?' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct tense: "She _____ to school yesterday."', sw: 'Chagua wakati sahihi: "Yeye _____ shuleni jana."', fr: 'Choisissez le temps correct: "Elle _____ à l\'école hier."' },
-                    answer: { 
-                        en: 'went', 
-                        sw: 'alienda', 
-                        fr: 'est allée' 
-                    }
+                    text: { 
+                        en: 'Choose the correct tense: "She _____ to school yesterday."\nA. go\nB. goes\nC. going\nD. went', 
+                        sw: 'Chagua wakati sahihi: "Yeye _____ shuleni jana."\nA. kwenda\nB. huenda\nC. akienda\nD. alienda', 
+                        fr: 'Choisissez le temps correct: "Elle _____ à l\'école hier."\nA. aller\nB. va\nC. allant\nD. est allée' 
+                    },
+                    answer: { en: 'D', sw: 'D', fr: 'D' }
                 },
                 {
-                    text: { en: 'Which sentence is passive?', sw: 'Sentensi ipi ni ya kufanywa?', fr: 'Quelle phrase est passive?' },
-                    answer: { 
-                        en: 'A letter is written by her.', 
-                        sw: 'Barua imeandikwa naye.', 
-                        fr: 'Une lettre est écrite par elle.' 
-                    }
+                    text: { 
+                        en: 'Which sentence is passive?\nA. She writes a letter.\nB. A letter is written by her.\nC. She is writing a letter.\nD. She wrote a letter.', 
+                        sw: 'Sentensi ipi ni ya kufanywa?\nA. Yeye anaandika barua.\nB. Barua imeandikwa naye.\nC. Yeye anaandika barua.\nD. Yeye aliandika barua.', 
+                        fr: 'Quelle phrase est passive?\nA. Elle écrit une lettre.\nB. Une lettre est écrite par elle.\nC. Elle est en train d\'écrire une lettre.\nD. Elle a écrit une lettre.' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'Choose the correct conjunction: "I stayed home _____ it was raining."', sw: 'Chagua kiunganishi sahihi: "Nilibaki nyumbani _____ ilikuwa inanyesha."', fr: 'Choisissez la conjonction correcte: "Je suis resté à la maison _____ il pleuvait."' },
-                    answer: { 
-                        en: 'because', 
-                        sw: 'kwa sababu', 
-                        fr: 'parce que' 
-                    }
+                    text: { 
+                        en: 'Choose the correct conjunction: "I stayed home _____ it was raining."\nA. but\nB. and\nC. because\nD. or', 
+                        sw: 'Chagua kiunganishi sahihi: "Nilibaki nyumbani _____ ilikuwa inanyesha."\nA. lakini\nB. na\nC. kwa sababu\nD. au', 
+                        fr: 'Choisissez la conjonction correcte: "Je suis resté à la maison _____ il pleuvait."\nA. mais\nB. et\nC. parce que\nD. ou' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Which one is a noun?', sw: 'Ni neno lipi nomino?', fr: 'Lequel est un nom?' },
-                    answer: { 
-                        en: 'teacher', 
-                        sw: 'mwalimu', 
-                        fr: 'professeur' 
-                    }
+                    text: { 
+                        en: 'Which one is a noun?\nA. Beautiful\nB. Quickly\nC. Teacher\nD. Running', 
+                        sw: 'Ni neno lipi nomino?\nA. Mzuri\nB. Kwa haraka\nC. Mwalimu\nD. Kukimbia', 
+                        fr: 'Lequel est un nom?\nA. Beau\nB. Rapidement\nC. Professeur\nD. Courir' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct form: "He _____ homework already."', sw: 'Chagua umbo sahihi: "Yeye _____ kazi ya nyumbani tayari."', fr: 'Choisissez la forme correcte: "Il _____ les devoirs déjà."' },
-                    answer: { 
-                        en: 'has finished', 
-                        sw: 'ameshamaliza', 
-                        fr: 'a fini' 
-                    }
+                    text: { 
+                        en: 'Choose the correct form: "He _____ homework already."\nA. finish\nB. finished\nC. finishing\nD. has finished', 
+                        sw: 'Chagua umbo sahihi: "Yeye _____ kazi ya nyumbani tayari."\nA. maliza\nB. alimaliza\nC. akiimaliza\nD. ameshamaliza', 
+                        fr: 'Choisissez la forme correcte: "Il _____ les devoirs déjà."\nA. finir\nB. a fini\nC. finissant\nD. a fini' 
+                    },
+                    answer: { en: 'D', sw: 'D', fr: 'D' }
                 },
                 {
-                    text: { en: 'The superlative of "small" is:', sw: 'Kushinda cha "dogo" ni:', fr: 'Le superlatif de "petit" est:' },
-                    answer: { 
-                        en: 'smallest', 
-                        sw: 'dogo zaidi', 
-                        fr: 'le plus petit' 
-                    }
+                    text: { 
+                        en: 'The superlative of "small" is:\nA. smaller\nB. small\nC. smallest\nD. more small', 
+                        sw: 'Kushinda cha "dogo" ni:\nA. dogo zaidi\nB. dogo\nC. dogo zaidi\nD. dogo zaidi', 
+                        fr: 'Le superlatif de "petit" est:\nA. plus petit\nB. petit\nC. le plus petit\nD. plus petit' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct preposition: "We will meet _____ 5 p.m."', sw: 'Chagua kihusishi sahihi: "Tutakutana _____ saa kumi na moja."', fr: 'Choisissez la préposition correcte: "Nous nous rencontrerons _____ 17h00."' },
-                    answer: { 
-                        en: 'at', 
-                        sw: 'saa', 
-                        fr: 'à' 
-                    }
+                    text: { 
+                        en: 'Choose the correct preposition: "We will meet _____ 5 p.m."\nA. in\nB. on\nC. at\nD. by', 
+                        sw: 'Chagua kihusishi sahihi: "Tutakutana _____ saa kumi na moja."\nA. ndani ya\nB. juu ya\nC. saa\nD. kando ya', 
+                        fr: 'Choisissez la préposition correcte: "Nous nous rencontrerons _____ 17h00."\nA. dans\nB. sur\nC. à\nD. par' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Which sentence is correct?', sw: 'Sentensi ipi ni sahihi?', fr: 'Quelle phrase est correcte?' },
-                    answer: { 
-                        en: 'I like reading books.', 
-                        sw: 'Napenda kusoma vitabu.', 
-                        fr: 'J\'aime lire des livres.' 
-                    }
+                    text: { 
+                        en: 'Which sentence is correct?\nA. I am like reading books.\nB. I like reading books.\nC. I am liking read books.\nD. I like read books.', 
+                        sw: 'Sentensi ipi ni sahihi?\nA. Mimi ni kama kusoma vitabu.\nB. Napenda kusoma vitabu.\nC. Mimi nina kupenda kusoma vitabu.\nD. Napenda kusoma vitabu.', 
+                        fr: 'Quelle phrase est correcte?\nA. Je suis comme lire des livres.\nB. J\'aime lire des livres.\nC. Je suis en train d\'aimer lire des livres.\nD. J\'aime lire des livres.' 
+                    },
+                    answer: { en: 'B', sw: 'B', fr: 'B' }
                 },
                 {
-                    text: { en: 'Choose the correct word: "My favourite _____ is English."', sw: 'Chagua neno sahihi: "_____ langu napendalo ni Kiingereza."', fr: 'Choisissez le mot correct: "Ma _____ préférée est l\'anglais."' },
-                    answer: { 
-                        en: 'subject', 
-                        sw: 'somo', 
-                        fr: 'matière' 
-                    }
+                    text: { 
+                        en: 'Choose the correct word: "My favourite _____ is English."\nA. teacher\nB. school\nC. subject\nD. classroom', 
+                        sw: 'Chagua neno sahihi: "_____ langu napendalo ni Kiingereza."\nA. mwalimu\nB. shule\nC. somo\nD. darasa', 
+                        fr: 'Choisissez le mot correct: "Ma _____ préférée est l\'anglais."\nA. professeur\nB. école\nC. matière\nD. salle de classe' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Which one is a pronoun?', sw: 'Ni neno lipi kiwakilishi?', fr: 'Lequel est un pronom?' },
-                    answer: { 
-                        en: 'she', 
-                        sw: 'yeye', 
-                        fr: 'elle' 
-                    }
+                    text: { 
+                        en: 'Which one is a pronoun?\nA. Book\nB. Run\nC. She\nD. Happy', 
+                        sw: 'Ni neno lipi kiwakilishi?\nA. Kitabu\nB. Kimbia\nC. Yeye\nD. Furaha', 
+                        fr: 'Lequel est un pronom?\nA. Livre\nB. Courir\nC. Elle\nD. Heureux' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Choose the correct sentence:', sw: 'Chagua sentensi sahihi:', fr: 'Choisissez la phrase correcte:' },
-                    answer: { 
-                        en: 'We were happy yesterday.', 
-                        sw: 'Sisi tulikuwa na furaha jana.', 
-                        fr: 'Nous étions heureux hier.' 
-                    }
+                    text: { 
+                        en: 'Choose the correct sentence:\nA. We was happy yesterday.\nB. We are happy yesterday.\nC. We were happy yesterday.\nD. We be happy yesterday.', 
+                        sw: 'Chagua sentensi sahihi:\nA. Sisi alikuwa na furaha jana.\nB. Sisi ni wenye furaha jana.\nC. Sisi tulikuwa na furaha jana.\nD. Sisi kuwa na furaha jana.', 
+                        fr: 'Choisissez la phrase correcte:\nA. Nous était heureux hier.\nB. Nous sommes heureux hier.\nC. Nous étions heureux hier.\nD. Nous être heureux hier.' 
+                    },
+                    answer: { en: 'C', sw: 'C', fr: 'C' }
                 },
                 {
-                    text: { en: 'Which sentence shows future tense?', sw: 'Sentensi ipi inaonyesha wakati ujao?', fr: 'Quelle phrase montre le futur?' },
-                    answer: { 
-                        en: 'I will eat rice.', 
-                        sw: 'Nitakula wali.', 
-                        fr: 'Je mangerai du riz.' 
-                    }
+                    text: { 
+                        en: 'Which sentence shows future tense?\nA. I eat rice.\nB. I ate rice.\nC. I am eating rice.\nD. I will eat rice.', 
+                        sw: 'Sentensi ipi inaonyesha wakati ujao?\nA. Ninakula wali.\nB. Nilikula wali.\nC. Nina kula wali.\nD. Nitakula wali.', 
+                        fr: 'Quelle phrase montre le futur?\nA. Je mange du riz.\nB. J\'ai mangé du riz.\nC. Je suis en train de manger du riz.\nD. Je mangerai du riz.' 
+                    },
+                    answer: { en: 'D', sw: 'D', fr: 'D' }
                 }
             ]
         }
     ],
     instructions: {
-        en: 'GENERAL INSTRUCTIONS\n• Answer ALL questions.\n• Write TRUE or FALSE for each statement in Question 1.\n• Choose the correct answer for each question in Question 2.\n• Each question carries equal marks.',
-        sw: 'MAELEKEZO YA JUMLA\n• Jibu maswali YOTE.\n• Andika KWELI au SI KWELI kwa kila taarifa katika Swali la 1.\n• Chagua jibu sahihi kwa kila swali katika Swali la 2.\n• Kila swali lina alama sawa.',
-        fr: 'INSTRUCTIONS GÉNÉRALES\n• Répondez à TOUTES les questions.\n• Écrivez VRAI ou FAUX pour chaque énoncé de la Question 1.\n• Choisissez la bonne réponse pour chaque question de la Question 2.\n• Chaque question porte des points égaux.'
+        en: 'GENERAL INSTRUCTIONS\n• Answer ALL questions.\n• Choose the correct answer for Multiple Choice questions.\n• Write TRUE or FALSE for each statement in Section A.\n• Each question carries equal marks.',
+        sw: 'MAELEKEZO YA JUMLA\n• Jibu maswali YOTE.\n• Chagua jibu sahihi kwa maswali ya Chaguo Nyingi.\n• Andika KWELI au SI KWELI kwa kila taarifa katika Sehemu A.\n• Kila swali lina alama sawa.',
+        fr: 'INSTRUCTIONS GÉNÉRALES\n• Répondez à TOUTES les questions.\n• Choisissez la bonne réponse pour les questions à choix multiples.\n• Écrivez VRAI ou FAUX pour chaque énoncé de la Section A.\n• Chaque question porte des points égaux.'
     }
 },
 
