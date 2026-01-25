@@ -3,25 +3,15 @@ services:
     name: charles-academy-dashboard
     env: node
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node web-bot.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
+      - key: SUPABASE_URL
         sync: false
-      - key: JWT_SECRET
-        generateValue: true
+      - key: SUPABASE_KEY
+        sync: false
     healthCheckPath: /health
     autoDeploy: true
-
-  - type: cron
-    name: cleanup-sessions
-    schedule: "0 2 * * *"  # Daily at 2 AM
-    env: node
-    buildCommand: npm install
-    startCommand: node scripts/cleanup.js
-    envVars:
-      - key: NODE_ENV
-        value: production

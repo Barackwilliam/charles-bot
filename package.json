@@ -2,10 +2,10 @@
   "name": "charles-academy-dashboard",
   "version": "2.0.0",
   "description": "Charles Academy Exam Dashboard with Web Bot",
-  "main": "server.js",
+  "main": "web-bot.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node web-bot.js",
+    "dev": "nodemon web-bot.js",
     "test": "jest",
     "build": "npm install",
     "deploy": "npm run build && npm start",
