@@ -138,7 +138,7 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        /* Messages Area */
+        /* Messages Area - IMPROVED FLEXIBILITY */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -150,15 +150,19 @@
             -webkit-overflow-scrolling: touch;
             min-height: 0;
             padding-bottom: 20px;
+            width: 100%;
         }
 
-        /* Message Bubbles - Responsive */
+        /* Message Bubbles - MORE RESPONSIVE */
         .message {
             display: flex;
-            max-width: 85%;
+            max-width: 95%;
             animation: messageAppear 0.3s ease;
             position: relative;
             touch-action: pan-y;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         @keyframes messageAppear {
@@ -187,9 +191,12 @@
             border-radius: 18px;
             margin: 0 8px;
             word-wrap: break-word;
-            max-width: 100%;
-            line-height: 1.4;
             overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            max-width: 100%;
+            min-width: 0; /* CRITICAL FIX: Allows content to shrink */
+            line-height: 1.4;
             user-select: text;
         }
 
@@ -209,6 +216,9 @@
             font-size: 15px;
             margin-bottom: 5px;
             word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
         }
 
         .message-text strong {
@@ -222,6 +232,7 @@
 
         .message-text li {
             margin-bottom: 5px;
+            word-break: break-word;
         }
 
         .message-meta {
@@ -237,11 +248,12 @@
         .message-time {
             font-size: 11px;
             opacity: 0.7;
+            flex-shrink: 0;
         }
 
-        /* Message Context Menu (for copy/delete) */
+        /* Message Context Menu */
         .message-context-menu {
-            position: absolute;
+            position: fixed;
             background: var(--telegram-sidebar);
             border: 1px solid var(--telegram-border);
             border-radius: 8px;
@@ -280,6 +292,7 @@
         .context-menu-item i {
             width: 18px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .context-menu-item.copy {
@@ -296,7 +309,7 @@
             outline-offset: 2px;
         }
 
-        /* Message Actions (Quick buttons below message) */
+        /* Message Actions */
         .message-actions {
             margin-top: 10px;
             padding-top: 10px;
@@ -320,6 +333,7 @@
             gap: 6px;
             touch-action: manipulation;
             user-select: none;
+            white-space: nowrap;
         }
 
         .message-action-btn:hover {
@@ -334,7 +348,7 @@
             background: #2b5278;
             border-radius: 18px;
             align-self: flex-start;
-            max-width: 60px;
+            width: auto;
             margin-bottom: 12px;
         }
 
@@ -366,6 +380,7 @@
             display: flex;
             gap: 8px;
             align-items: flex-end;
+            width: 100%;
         }
 
         .input-actions {
@@ -389,6 +404,7 @@
             transition: all 0.2s;
             touch-action: manipulation;
             user-select: none;
+            flex-shrink: 0;
         }
 
         .input-action-btn:hover {
@@ -411,6 +427,9 @@
             padding: 10px 16px;
             line-height: 1.4;
             transition: border-color 0.2s;
+            width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .message-input:focus {
@@ -475,6 +494,7 @@
             gap: 6px;
             touch-action: manipulation;
             user-select: none;
+            white-space: nowrap;
         }
 
         .quick-command:hover {
@@ -495,6 +515,7 @@
             border-radius: 20px;
             font-size: 12px;
             backdrop-filter: blur(10px);
+            pointer-events: none;
         }
 
         .status-dot {
@@ -516,11 +537,12 @@
         /* Mobile (up to 767px) */
         @media (max-width: 767px) {
             .message {
-                max-width: 90%;
+                max-width: 98%;
             }
 
             .message-content {
                 padding: 10px 12px;
+                margin: 0 4px;
             }
 
             .chat-header {
@@ -564,12 +586,52 @@
                 padding: 6px 10px;
                 font-size: 11px;
             }
+
+            .message-text {
+                font-size: 14px;
+            }
+        }
+
+        /* Extra Small Mobile (360px and below) */
+        @media (max-width: 360px) {
+            .message {
+                max-width: 100%;
+            }
+
+            .message-content {
+                padding: 8px 10px;
+                margin: 0 2px;
+            }
+
+            .chat-header {
+                padding: 8px 10px;
+            }
+
+            .chat-avatar {
+                width: 32px;
+                height: 32px;
+                min-width: 32px;
+            }
+
+            .input-area {
+                padding: 8px 10px;
+            }
+
+            .quick-command {
+                padding: 5px 8px;
+                font-size: 11px;
+            }
+
+            .message-action-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
         }
 
         /* Tablet (768px and up) */
         @media (min-width: 768px) {
             .message {
-                max-width: 75%;
+                max-width: 85%;
             }
 
             .chat-app {
@@ -583,7 +645,7 @@
         /* Desktop (1024px and up) */
         @media (min-width: 1024px) {
             .message {
-                max-width: 70%;
+                max-width: 80%;
             }
 
             .chat-app {
@@ -598,47 +660,11 @@
         /* Large Desktop (1200px and up) */
         @media (min-width: 1200px) {
             .message {
-                max-width: 65%;
+                max-width: 75%;
             }
 
             .chat-app {
                 max-width: 1100px;
-            }
-        }
-
-        /* Small Mobile (480px and below) */
-        @media (max-width: 480px) {
-            html {
-                font-size: 14px;
-            }
-
-            .message {
-                max-width: 95%;
-            }
-
-            .message-content {
-                padding: 8px 10px;
-            }
-
-            .messages-area {
-                padding: 12px;
-            }
-
-            .input-actions {
-                margin-bottom: 8px;
-            }
-
-            .input-action-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-
-            .send-button {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-                margin-bottom: 8px;
             }
         }
 
@@ -701,6 +727,11 @@
             .message {
                 touch-action: pan-y;
             }
+            
+            /* Better tap targets */
+            .message-content {
+                padding: 14px 16px;
+            }
         }
 
         /* Selection Styles */
@@ -725,6 +756,13 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Text overflow prevention */
+        .text-wrap-fix {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            hyphens: auto;
         }
     </style>
 </head>
@@ -827,32 +865,24 @@
         let selectedMessage = null;
         let isMobile = window.innerWidth < 768;
         let longPressTimer = null;
-        const LONG_PRESS_DURATION = 500; // ms
+        const LONG_PRESS_DURATION = 500;
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('🚀 Initializing Charles Academy Chat Interface...');
             
-            // Check if mobile
             updateMobileDetection();
             window.addEventListener('resize', updateMobileDetection);
             
-            // Generate or get session ID
             if (!sessionId) {
                 sessionId = generateSessionId();
                 localStorage.setItem('charles_session_id', sessionId);
             }
             
-            // Update UI
             updateConnectionStatus('connected');
-            
-            // Setup event listeners
             setupEventListeners();
-            
-            // Load initial chat
             showWelcomeMessage();
             
-            // Show welcome message if new session
             if (localStorage.getItem('charles_first_visit') !== 'true') {
                 localStorage.setItem('charles_first_visit', 'true');
             }
@@ -861,13 +891,7 @@
         // ==================== RESPONSIVE FUNCTIONS ====================
         function updateMobileDetection() {
             isMobile = window.innerWidth < 768;
-            
-            // Update body class for mobile styles
-            if (isMobile) {
-                document.body.classList.add('mobile');
-            } else {
-                document.body.classList.remove('mobile');
-            }
+            document.body.classList.toggle('mobile', isMobile);
         }
 
         // ==================== API FUNCTIONS ====================
@@ -972,9 +996,9 @@
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             messageDiv.innerHTML = `
-                <div class="message-content">
+                <div class="message-content text-wrap-fix">
                     ${type === 'incoming' ? 
-                        `<div style="font-size: 12px; color: var(--telegram-text-secondary); margin-bottom: 5px;">
+                        `<div style="font-size: 12px; color: var(--telegram-text-secondary); margin-bottom: 5px; word-break: break-word;">
                             ${sender}
                         </div>` : ''}
                     <div class="message-text">${type === 'incoming' ? formattedText : text}</div>
@@ -986,28 +1010,22 @@
                 </div>
             `;
             
-            // Add touch/click events for context menu
             setupMessageEvents(messageDiv);
-            
             messagesArea.appendChild(messageDiv);
             scrollToBottom();
-            
             saveToHistory(text, type, sender);
         }
 
         function setupMessageEvents(messageElement) {
             if (isMobile) {
-                // Mobile: Long press for context menu
                 messageElement.addEventListener('touchstart', handleTouchStart);
                 messageElement.addEventListener('touchend', handleTouchEnd);
                 messageElement.addEventListener('touchmove', handleTouchMove);
             } else {
-                // Desktop: Right-click for context menu
                 messageElement.addEventListener('contextmenu', handleRightClick);
                 messageElement.addEventListener('click', handleMessageClick);
             }
             
-            // Add hover effect for desktop
             if (!isMobile) {
                 messageElement.addEventListener('mouseenter', () => {
                     messageElement.style.opacity = '0.9';
@@ -1046,46 +1064,32 @@
         }
 
         function handleMessageClick(e) {
-            // Clear selection if not clicking on a button
             if (!e.target.closest('.message-action-btn') && !e.target.closest('.quick-command')) {
                 closeContextMenu();
             }
         }
 
         function showContextMenu(messageElement, x, y) {
-            // Close any open context menu
             closeContextMenu();
             
-            // Select this message
             document.querySelectorAll('.message').forEach(msg => {
                 msg.classList.remove('selected');
             });
             messageElement.classList.add('selected');
             selectedMessage = messageElement;
             
-            // Position and show context menu
             const contextMenu = document.getElementById('messageContextMenu');
             contextMenu.classList.add('active');
             
-            // Adjust position to stay within viewport
             const menuWidth = contextMenu.offsetWidth;
             const menuHeight = contextMenu.offsetHeight;
             
-            let posX = x;
-            let posY = y;
-            
-            if (posX + menuWidth > window.innerWidth) {
-                posX = window.innerWidth - menuWidth - 10;
-            }
-            
-            if (posY + menuHeight > window.innerHeight) {
-                posY = window.innerHeight - menuHeight - 10;
-            }
+            let posX = Math.min(x, window.innerWidth - menuWidth - 10);
+            let posY = Math.min(y, window.innerHeight - menuHeight - 10);
             
             contextMenu.style.left = posX + 'px';
             contextMenu.style.top = posY + 'px';
             
-            // Add click outside listener
             setTimeout(() => {
                 document.addEventListener('click', closeContextMenuOnClickOutside);
             }, 10);
@@ -1114,11 +1118,9 @@
             if (selectedMessage) {
                 const text = selectedMessage.dataset.text || selectedMessage.querySelector('.message-text').textContent;
                 
-                // Use modern clipboard API
                 navigator.clipboard.writeText(text).then(() => {
                     showNotification('Message copied to clipboard!', 'success');
                 }).catch(err => {
-                    // Fallback for older browsers
                     const textArea = document.createElement('textarea');
                     textArea.value = text;
                     document.body.appendChild(textArea);
@@ -1159,16 +1161,7 @@
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`(.*?)`/g, '<code>$1</code>')
-                .replace(/\n/g, '<br>')
-                .replace(/🎓/g, '🎓')
-                .replace(/📚/g, '📚')
-                .replace(/✅/g, '✅')
-                .replace(/❌/g, '❌')
-                .replace(/📝/g, '📝')
-                .replace(/🎯/g, '🎯')
-                .replace(/📊/g, '📊')
-                .replace(/👋/g, '👋')
-                .replace(/🤖/g, '🤖');
+                .replace(/\n/g, '<br>');
         }
 
         function extractQuickActions(text) {
@@ -1281,13 +1274,9 @@
         function setupEventListeners() {
             const input = document.getElementById('messageInput');
             
-            // Focus input on load
             input.focus();
-            
-            // Auto-resize input
             input.addEventListener('input', () => autoResize(input));
             
-            // Scroll to bottom when input is focused on mobile
             if (isMobile) {
                 input.addEventListener('focus', () => {
                     setTimeout(() => {
@@ -1296,7 +1285,6 @@
                 });
             }
             
-            // Handle keyboard show/hide on mobile
             if (isMobile) {
                 window.addEventListener('orientationchange', () => {
                     setTimeout(() => {
@@ -1305,7 +1293,6 @@
                 });
             }
             
-            // Prevent context menu on the whole page (except messages)
             document.addEventListener('contextmenu', (e) => {
                 if (!e.target.closest('.message')) {
                     e.preventDefault();
@@ -1330,7 +1317,6 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Create notification element
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -1349,7 +1335,6 @@
             notification.textContent = message;
             document.body.appendChild(notification);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 notification.style.animation = 'slideIn 0.3s ease reverse';
                 setTimeout(() => notification.remove(), 300);
