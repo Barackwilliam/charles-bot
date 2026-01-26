@@ -346,57 +346,349 @@ const examsData = {
 
 
 
-        'reading_skills': {
-            id: 'english_reading',
-            title: {
-                en: 'FINAL EXAMINATION – READING SKILLS',
-                sw: 'MTIHANI WA MWISHO – USOMAJI',
-                fr: 'EXAMEN FINAL – COMPÉTENCES DE LECTURE'
-            },
-            time: '2 Hours',
-            totalMarks: 100,
-            questions: [
-                {
-                    number: 1,
-                    text: {
-                        en: 'Read the passage and answer the questions.\n\n"The Value of Education\nEducation plays an important role in the life of every person. It helps people gain knowledge, develop skills, and build confidence."',
-                        sw: 'Soma kifungu na ujibu maswali.\n\n"Thamani ya Elimu\nElimu ina jukumu muhimu katika maisha ya kila mtu. Inasaidia watu kupata ujuzi, kuendeleza ujuzi, na kujenga ujasiri."',
-                        fr: 'Lisez le passage et répondez aux questions.\n\n"La Valeur de l\'Éducation\nL\'éducation joue un rôle important dans la vie de chaque personne. Elle aide les gens à acquérir des connaissances, à développer des compétences et à renforcer la confiance."'
-                    },
-                    subQuestions: [
-                        {
-                            text: { en: 'What role does education play?', sw: 'Elimu ina jukumu gani?', fr: 'Quel rôle joue l\'éducation?' },
-                            answer: { en: 'Education plays an important role in people\'s lives.', sw: 'Elimu ina jukumu muhimu katika maisha ya watu.', fr: 'L\'éducation joue un rôle important dans la vie des gens.' }
-                        },
-                        {
-                            text: { en: 'Mention one benefit of education.', sw: 'Taja faida moja ya elimu.', fr: 'Mentionnez un bénéfice de l\'éducation.' },
-                            answer: { en: 'Education helps people gain knowledge.', sw: 'Elimu inasaidia watu kupata ujuzi.', fr: 'L\'éducation aide les gens à acquérir des connaissances.' }
-                        },
-                        {
-                            text: { en: 'How does education help build confidence?', sw: 'Elimu inasaidia vipi kujenga ujasiri?', fr: 'Comment l\'éducation aide-t-elle à renforcer la confiance?' },
-                            answer: { en: 'Education builds confidence through learning and skill development.', sw: 'Elimu hujenga ujasiri kupitia kujifunza na ukuaji wa ujuzi.', fr: 'L\'éducation renforce la confiance par l\'apprentissage et le développement des compétences.' }
-                        }
-                    ]
-                },
-                // Add more questions
-            ],
-            instructions: {
-                en: 'GENERAL INSTRUCTIONS\n• Read all passages carefully before answering.\n• Answer ALL questions.\n• Each question carries FIVE (5) marks.\n• Each sub-question carries ONE (1) mark.\n• Write clear and complete answers.',
-                sw: 'MAELEKEZO YA JUMLA\n• Soma vifungu vyote kwa makini kabla ya kujibu.\n• Jibu maswali YOTE.\n• Kila swali lina alama TANO (5).\n• Kila swali ndogo lina alama MOJA (1).\n• Andika majibu yaliyo wazi na kamili.',
-                fr: 'INSTRUCTIONS GÉNÉRALES\n• Lisez tous les passages attentivement avant de répondre.\n• Répondez à TOUTES les questions.\n• Chaque question vaut CINQ (5) points.\n• Chaque sous-question vaut UN (1) point.\n• Écrivez des réponses claires et complètes.'
-            }
+
+
+
+
+    "reading_skills": {
+        "id": "english_reading",
+        "title": {
+            "en": "FINAL EXAMINATION – READING SKILLS",
+            "sw": "MTIHANI WA MWISHO – USOMAJI",
+            "fr": "EXAMEN FINAL – COMPÉTENCES DE LECTURE"
         },
+        "time": "2 Hours",
+        "totalMarks": 100,
+        "questions": [
+            {
+                "number": 1,
+                "text": {
+                    "en": "Read the passage 'The Value of Education' and answer TRUE or FALSE for each statement.",
+                    "sw": "Soma kifungu 'Thamani ya Elimu' na ujibu KWELI au SI KWELI kwa kila taarifa.",
+                    "fr": "Lisez le passage 'La Valeur de l'Éducation' et répondez VRAI ou FAUX pour chaque énoncé."
+                },
+                "subQuestions": [
+                    {
+                        "text": { "en": "Education plays an important role in people's lives.", "sw": "Elimu ina jukumu muhimu katika maisha ya watu.", "fr": "L'éducation joue un rôle important dans la vie des gens." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education helps people gain knowledge.", "sw": "Elimu inasaidia watu kupata ujuzi.", "fr": "L'éducation aide les gens à acquérir des connaissances." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education helps people lose confidence.", "sw": "Elimu inasaidia watu kupoteza ujasiri.", "fr": "L'éducation aide les gens à perdre confiance." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "An educated person can make better decisions.", "sw": "Mtu aliyeelimika anaweza kufanya maamuzi bora.", "fr": "Une personne éduquée peut prendre de meilleures décisions." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "An educated person cannot solve problems easily.", "sw": "Mtu aliyeelimika hawezi kutatua matatizo kwa urahisi.", "fr": "Une personne éduquée ne peut pas résoudre facilement les problèmes." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Education is learned only in schools.", "sw": "Elimu hujifunzwa shuleni pekee.", "fr": "L'éducation s'apprend uniquement à l'école." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "People can learn from books and the internet.", "sw": "Watu wanaweza kujifunza kutoka kwa vitabu na intaneti.", "fr": "Les gens peuvent apprendre à partir de livres et d'internet." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "People cannot learn from daily experiences.", "sw": "Watu hawawezi kujifunza kutokana na uzoefu wa kila siku.", "fr": "Les gens ne peuvent pas apprendre des expériences quotidiennes." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Schools provide guidance.", "sw": "Shule hutoa mwongozo.", "fr": "Les écoles fournissent des conseils." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Schools do not provide discipline.", "sw": "Shule hazitoi nidhamu.", "fr": "Les écoles ne fournissent pas de discipline." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Schools provide structured learning.", "sw": "Shule hutoa ujifunzaji uliopangwa.", "fr": "Les écoles fournissent un apprentissage structuré." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Students who attend school regularly perform better.", "sw": "Wanafunzi wanaohudhuria shule kwa ukawaida hufanya vyema zaidi.", "fr": "Les élèves qui fréquentent régulièrement l'école réussissent mieux." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Regular school attendance helps future careers.", "sw": "Uwepo wa kawaida shule husaidia kazi za baadaye.", "fr": "La fréquentation régulière de l'école aide les carrières futures." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education helps reduce poverty.", "sw": "Elimu inasaidia kupunguza umaskini.", "fr": "L'éducation aide à réduire la pauvreté." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education makes living standards worse.", "sw": "Elimu hufanya viwango vya maisha kuwa mabaya zaidi.", "fr": "L'éducation aggrave le niveau de vie." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Educated people can find better jobs.", "sw": "Watu walioelimika wanaweza kupata kazi bora.", "fr": "Les personnes éduquées peuvent trouver de meilleurs emplois." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Educated people cannot support their families.", "sw": "Watu walioelimika hawawezi kuwasaidia familia zao.", "fr": "Les personnes éduquées ne peuvent pas subvenir aux besoins de leur famille." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Education helps improve living standards.", "sw": "Elimu inasaidia kuboresha viwango vya maisha.", "fr": "L'éducation aide à améliorer le niveau de vie." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education should not be encouraged.", "sw": "Elimu haipaswi kutiwa moyo.", "fr": "L'éducation ne devrait pas être encouragée." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Education should be encouraged for everyone.", "sw": "Elimu inapaswa kutiwa moyo kwa kila mtu.", "fr": "L'éducation devrait être encouragée pour tous." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education helps people develop skills.", "sw": "Elimu inasaidia watu kuendeleza ujuzi.", "fr": "L'éducation aide les gens à développer des compétences." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education makes people make bad decisions.", "sw": "Elimu hufanya watu wafanye maamuzi mabaya.", "fr": "L'éducation fait que les gens prennent de mauvaises décisions." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    },
+                    {
+                        "text": { "en": "Education helps people build confidence.", "sw": "Elimu inasaidia watu kujenga ujasiri.", "fr": "L'éducation aide les gens à renforcer la confiance." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education helps people solve problems.", "sw": "Elimu inasaidia watu kutatua matatizo.", "fr": "L'éducation aide les gens à résoudre les problèmes." },
+                        "answer": { "en": "TRUE", "sw": "KWELI", "fr": "VRAI" }
+                    },
+                    {
+                        "text": { "en": "Education has no importance in life.", "sw": "Elimu haina umuhimu wowote katika maisha.", "fr": "L'éducation n'a aucune importance dans la vie." },
+                        "answer": { "en": "FALSE", "sw": "SI KWELI", "fr": "FAUX" }
+                    }
+                ]
+            },
+            {
+                "number": 2,
+                "text": {
+                    "en": "Read the passage 'A Day in the Life of a Student' and choose the correct answer from the options given.",
+                    "sw": "Soma kifungu 'Siku Katika Maisha ya Mwanafunzi' na chagua jibu sahihi kutoka kwa chaguo zilizotolewa.",
+                    "fr": "Lisez le passage 'Une Journée dans la Vie d'un Étudiant' et choisissez la bonne réponse parmi les options données."
+                },
+                "subQuestions": [
+                    {
+                        "text": { 
+                            "en": "James is a student at:\nA. Bright School\nB. City Academy\nC. Charles Academy\nD. Green School", 
+                            "sw": "James ni mwanafunzi wa:\nA. Shule ya Bright\nB. Chuo cha City\nC. Chuo cha Charles\nD. Shule ya Green", 
+                            "fr": "James est étudiant à:\nA. École Bright\nB. Académie City\nC. Académie Charles\nD. École Green" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James wakes up:\nA. late every morning\nB. early every morning\nC. slowly every morning\nD. at night every morning", 
+                            "sw": "James huamka:\nA. marehemu kila asubuhi\nB. mapema kila asubuhi\nC. polepole kila asubuhi\nD. usiku kila asubuhi", 
+                            "fr": "James se réveille:\nA. tard chaque matin\nB. tôt chaque matin\nC. lentement chaque matin\nD. la nuit chaque matin" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James prepares for his:\nA. games in the morning\nB. meals in the morning\nC. lessons in the morning\nD. sleep in the morning", 
+                            "sw": "James hujiandaa kwa:\nA. michezo yake asubuhi\nB. milo yake asubuhi\nC. masomo yake asubuhi\nD. kulala kwake asubuhi", 
+                            "fr": "James se prépare pour ses:\nA. jeux le matin\nB. repas le matin\nC. leçons le matin\nD. sommeil le matin" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "After breakfast, James:\nA. sleeps\nB. reviews his notes\nC. plays football\nD. goes out", 
+                            "sw": "Baada ya kiamsha kinywa, James:\nA. analala\nB. hakiki maelezo yake\nC. anaicheza mpira wa miguu\nD. anatoka nje", 
+                            "fr": "Après le petit-déjeuner, James:\nA. dort\nB. revise ses notes\nC. joue au football\nD. sort" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James attends classes through:\nA. radio\nB. television\nC. WhatsApp\nD. books", 
+                            "sw": "James huhudhuria madarasa kupitia:\nA. redio\nB. televisheni\nC. WhatsApp\nD. vitabu", 
+                            "fr": "James assiste aux cours par:\nA. radio\nB. télévision\nC. WhatsApp\nD. livres" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James watches during the day:\nA. cartoons\nB. movies\nC. recorded videos\nD. news", 
+                            "sw": "James huangalia wakati wa mchana:\nA. katuni\nB. filamu\nC. video zilizorekodiwa\nD. habari", 
+                            "fr": "James regarde pendant la journée:\nA. dessins animés\nB. films\nC. vidéos enregistrées\nD. actualités" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James completes exercises sent by his:\nA. friends\nB. parents\nC. teachers\nD. brothers", 
+                            "sw": "James hukamilisha mazoezi yaliyotumwa na:\nA. marafiki zake\nB. wazazi wake\nC. walimu wake\nD. ndugu zake", 
+                            "fr": "James termine les exercices envoyés par ses:\nA. amis\nB. parents\nC. enseignants\nD. frères" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "In the evening, James:\nA. plays games\nB. revises his lessons\nC. sleeps early\nD. travels", 
+                            "sw": "Jioni, James:\nA. hucheza michezo\nB. hukariri masomo yake\nC. hulala mapema\nD. anasafiri", 
+                            "fr": "Le soir, James:\nA. joue à des jeux\nB. revise ses leçons\nC. se couche tôt\nD. voyage" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James asks questions when he does not:\nA. eat\nB. sleep\nC. understand\nD. walk", 
+                            "sw": "James huuliza maswali wakati ha:\nA. kuli\nB. kulali\nC. kuelewi\nD. kutembee", 
+                            "fr": "James pose des questions quand il ne:\nA. mange pas\nB. dort pas\nC. comprend pas\nD. marche pas" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James believes that lead to success:\nA. money and power\nB. food and rest\nC. discipline and hard work\nD. games and friends", 
+                            "sw": "James anaamini kuwa husababisha mafanikio:\nA. pesa na nguvu\nB. chakula na kupumzika\nC. nidhamu na kazi ngumu\nD. michezo na marafiki", 
+                            "fr": "James croit que mènent au succès:\nA. argent et pouvoir\nB. nourriture et repos\nC. discipline et travail acharné\nD. jeux et amis" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James hopes to achieve his:\nA. fears\nB. games\nC. dreams\nD. holidays", 
+                            "sw": "James anatumai kufikia:\nA. hofu zake\nB. michezo yake\nC. ndoto zake\nD. likizo zake", 
+                            "fr": "James espère réaliser ses:\nA. craintes\nB. jeux\nC. rêves\nD. vacances" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James wants to help his:\nA. teachers\nB. friends\nC. family\nD. community", 
+                            "sw": "James anataka kusaidia:\nA. walimu wake\nB. marafiki zake\nC. familia yake\nD. jamii yake", 
+                            "fr": "James veut aider sa:\nA. enseignants\nB. amis\nC. famille\nD. communauté" 
+                        },
+                        "answer": { "en": "D", "sw": "D", "fr": "D" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James attends classes:\nA. physical\nB. holiday\nC. online\nD. weekend", 
+                            "sw": "James huhudhuria madarasa ya:\nA. mwili\nB. likizo\nC. mtandaoni\nD. wikendi", 
+                            "fr": "James suit des cours:\nA. physiques\nB. vacances\nC. en ligne\nD. week-end" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James studies using videos:\nA. music\nB. funny\nC. recorded\nD. short", 
+                            "sw": "James husoma kwa kutumia video za:\nA. muziki\nB. za kuchekesha\nC. zilizorekodiwa\nD. fupi", 
+                            "fr": "James étudie en utilisant des vidéos:\nA. musique\nB. drôles\nC. enregistrées\nD. courtes" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James revises what he has:\nA. eaten\nB. learned\nC. lost\nD. forgotten", 
+                            "sw": "James hukariri kile ambacho ame:\nA. kula\nB. jifunza\nC. poteza\nD. sahau", 
+                            "fr": "James révise ce qu'il a:\nA. mangé\nB. appris\nC. perdu\nD. oublié" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James studies because he wants to:\nA. sleep\nB. succeed\nC. travel\nD. play", 
+                            "sw": "James husoma kwa sababu anataka:\nA. kulala\nB. kufaulu\nC. kusafiri\nD. kucheza", 
+                            "fr": "James étudie parce qu'il veut:\nA. dormir\nB. réussir\nC. voyager\nD. jouer" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James prepares for lessons in the:\nA. afternoon\nB. evening\nC. morning\nD. night", 
+                            "sw": "James hujiandaa kwa masomo katika:\nA. alasiri\nB. jioni\nC. asubuhi\nD. usiku", 
+                            "fr": "James se prépare pour les leçons le:\nA. après-midi\nB. soir\nC. matin\nD. nuit" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James attends classes after:\nA. lunch\nB. dinner\nC. breakfast\nD. sleep", 
+                            "sw": "James huhudhuria madarasa baada ya:\nA. chakula cha mchana\nB. chakula cha jioni\nC. kiamsha kinywa\nD. kulala", 
+                            "fr": "James assiste aux cours après:\nA. déjeuner\nB. dîner\nC. petit-déjeuner\nD. sommeil" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James asks questions in the:\nA. classroom\nB. group\nC. market\nD. home", 
+                            "sw": "James huuliza maswali katika:\nA. darasani\nB. kikundi\nC. soko\nD. nyumbani", 
+                            "fr": "James pose des questions dans le:\nA. salle de classe\nB. groupe\nC. marché\nD. maison" 
+                        },
+                        "answer": { "en": "B", "sw": "B", "fr": "B" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James believes discipline is important for:\nA. rest\nB. food\nC. success\nD. play", 
+                            "sw": "James anaamini nidhamu ni muhimu kwa:\nA. kupumzika\nB. chakula\nC. mafanikio\nD. kucheza", 
+                            "fr": "James croit que la discipline est importante pour:\nA. se reposer\nB. nourriture\nC. succès\nD. jouer" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James wants to help his community in the:\nA. past\nB. present\nC. future\nD. morning", 
+                            "sw": "James anataka kusaidia jamii yake katika:\nA. zamani\nB. sasa\nC. baadaye\nD. asubuhi", 
+                            "fr": "James veut aider sa communauté dans le:\nA. passé\nB. présent\nC. futur\nD. matin" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James studies mainly using learning:\nA. radio\nB. school only\nC. online\nD. games", 
+                            "sw": "James husoma haswa kwa kutumia ujifunzaji wa:\nA. redio\nB. shule pekee\nC. mtandaoni\nD. michezo", 
+                            "fr": "James étudie principalement en utilisant l'apprentissage:\nA. radio\nB. uniquement scolaire\nC. en ligne\nD. jeux" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James watches videos sent by his:\nA. friends\nB. parents\nC. teachers\nD. students", 
+                            "sw": "James huangalia video zinazotumwa na:\nA. marafiki zake\nB. wazazi wake\nC. walimu wake\nD. wanafunzi wake", 
+                            "fr": "James regarde des vidéos envoyées par ses:\nA. amis\nB. parents\nC. enseignants\nD. étudiants" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James hopes to use education to achieve his:\nA. toys\nB. fears\nC. dreams\nD. meals", 
+                            "sw": "James anatumai kutumia elimu kufikia:\nA. toyoyi zake\nB. hofu zake\nC. ndoto zake\nD. milo yake", 
+                            "fr": "James espère utiliser l'éducation pour réaliser ses:\nA. jouets\nB. craintes\nC. rêves\nD. repas" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    },
+                    {
+                        "text": { 
+                            "en": "James uses his education to help his:\nA. pets\nB. toys\nC. community\nD. games", 
+                            "sw": "James hutumia elimu yake kusaidia:\nA. wanyama wa kipenzi wake\nB. toyoyi zake\nC. jamii yake\nD. michezo yake", 
+                            "fr": "James utilise son éducation pour aider sa:\nA. animaux de compagnie\nB. jouets\nC. communauté\nD. jeux" 
+                        },
+                        "answer": { "en": "C", "sw": "C", "fr": "C" }
+                    }
+                ]
+            }
+        ],
+        "instructions": {
+            "en": "GENERAL INSTRUCTIONS\n• Read the passages carefully before answering.\n• Answer ALL questions.\n• Write TRUE or FALSE for each statement in Section A.\n• Choose the correct answer for Multiple Choice questions.\n• Each TRUE/FALSE question carries 2 marks.\n• Each Multiple Choice question carries 2 marks.",
+            "sw": "MAELEKEZO YA JUMLA\n• Soma vifungu kwa makini kabla ya kujibu.\n• Jibu maswali YOTE.\n• Andika KWELI au SI KWELI kwa kila taarifa katika Sehemu A.\n• Chagua jibu sahihi kwa maswali ya Chaguo Nyingi.\n• Kila swali la KWELI/SI KWELI lina alama 2.\n• Kila swali la Chaguo Nyingi lina alama 2.",
+            "fr": "INSTRUCTIONS GÉNÉRALES\n• Lisez attentivement les passages avant de répondre.\n• Répondez à TOUTES les questions.\n• Écrivez VRAI ou FAUX pour chaque énoncé de la Section A.\n• Choisissez la bonne réponse pour les questions à choix multiples.\n• Chaque question VRAI/FAUX vaut 2 points.\n• Chaque question à choix multiples vaut 2 points."
+        }
+    },
 
-
-
-
-
-
-
-
-
-
-
+        
 
 
 
