@@ -1,28 +1,10 @@
-// web-bot.js - Charles Academy Web Bot (Complete Fixed Version for Render.com)
+// web-bot.js - Charles Academy Web Bot (Fixed Version)
 require('dotenv').config();
-
-// ==================== FIX DEBUG MODULE ISSUE ====================
-// Kwanza, tuhakikisha module ya debug inapatikana
-try {
-    // Jaribu kurequire debug
-    require('debug');
-    console.log('✅ debug module loaded successfully');
-} catch (error) {
-    console.log('⚠️  debug module not found, creating fallback...');
-    // Tengeza simple debug function kama module haipo
-    global.debug = function(namespace) {
-        return function(...args) {
-            if (process.env.DEBUG === '*' || process.env.DEBUG === namespace) {
-                console.log(`[DEBUG:${namespace}]`, ...args);
-            }
-        };
-    };
-}
 
 // ==================== WEB SERVER SETUP ====================
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || process.env.WEB_PORT || 8080;
+const PORT = process.env.WEB_PORT || 8080;
 
 // Middleware
 app.use(express.json());
@@ -36,146 +18,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// ==================== IMPORT MODULES WITH FALLBACKS ====================
-let studentRegistration, learningDb, examHandler, learningSession, learningCommands;
-
-// Import studentRegistration with fallback
-try {
-    studentRegistration = require('./studentRegistration');
-    console.log('✅ studentRegistration module loaded');
-} catch (error) {
-    console.log('⚠️  studentRegistration not found, using fallback');
-    studentRegistration = {
-        isRegistering: (jid) => false,
-        handleRegistrationStep: async (jid, text, language) => `Registration fallback for ${jid}: ${text}`,
-        isStudentRegistered: async (jid) => ({ isRegistered: false, data: null }),
-        startRegistration: (jid, language) => `Welcome! Registration fallback. Type your name to start.`,
-        registrationState: {},
-        saveExamResult: async (jid, examData) => { console.log('Fallback: Exam result saved', examData); return true; }
-    };
-}
-
-// Import learningDb with fallback
-try {
-    learningDb = require('./learningDb');
-    console.log('✅ learningDb module loaded');
-} catch (error) {
-    console.log('⚠️  learningDb not found, using fallback');
-    learningDb = {
-        setStudentLanguage: async (jid, language) => true,
-        getStudentStats: async (jid) => ({ 
-            completedLessons: 0, 
-            averageScore: 0, 
-            passedExams: 0, 
-            totalExams: 0 
-        }),
-        getCourses: async (language) => ({ 
-            data: [
-                { id: '1', name: 'English', icon: '🇬🇧', description: 'Learn English language' },
-                { id: '2', name: 'Kiswahili', icon: '🇹🇿', description: 'Jifunze Kiswahili' },
-                { id: '3', name: 'Graphics', icon: '🎨', description: 'Learn graphic design' },
-                { id: '4', name: 'Web Development', icon: '🌐', description: 'Learn web development' }
-            ] 
-        })
-    };
-}
-
-// Import examHandler with fallback
-try {
-    examHandler = require('./examHandler');
-    console.log('✅ examHandler module loaded');
-} catch (error) {
-    console.log('⚠️  examHandler not found, using fallback');
-    examHandler = {
-        hasActiveExam: (jid) => false,
-        cancelExam: (jid) => {},
-        initUserState: (jid) => {},
-        userStates: new Map(),
-        examSessions: new Map(),
-        getExamMenu: (language) => 'Exam system fallback menu',
-        handleUserInput: (jid, text, language) => ({ type: 'error', data: 'Exam system not available' }),
-        submitAnswer: (jid, answer) => ({ error: 'Exam system not available' }),
-        getExamResults: (jid) => null,
-        getExamResultText: (results, language) => 'Exam results fallback',
-        getCurrentQuestion: (jid) => null,
-        formatExamQuestion: (question, language) => 'Question fallback'
-    };
-}
-
-// Import learningSession with fallback
-try {
-    learningSession = require('./learningSession');
-    console.log('✅ learningSession module loaded');
-} catch (error) {
-    console.log('⚠️  learningSession not found, using fallback');
-    learningSession = {
-        getSession: (jid) => ({ currentActivity: null, questions: [], currentQuestionIndex: 0 }),
-        clearSession: (jid) => {},
-        startSession: (jid, type, data) => {},
-        getCurrentQuestion: (jid) => null,
-        getCurrentQuestionIndex: (jid) => 0,
-        checkAnswer: (jid, answer) => ({ correct: false }),
-        getSessionStats: (jid) => ({ correct: 0, totalQuestions: 0, timeElapsed: 0 })
-    };
-}
-
-// Import learningCommands with fallback
-try {
-    learningCommands = require('./learningCommands');
-    console.log('✅ learningCommands module loaded');
-} catch (error) {
-    console.log('⚠️  learningCommands not found, using fallback');
-    learningCommands = {
-        getExercise: async (courseId, language) => {
-            const exercises = {
-                '1': {
-                    name: 'English Exercise',
-                    questions: [
-                        {
-                            text: 'What is the capital of Tanzania?',
-                            options: ['Nairobi', 'Dodoma', 'Kampala', 'Dar es Salaam'],
-                            correctAnswer: 'B',
-                            type: 'multiple_choice'
-                        },
-                        {
-                            text: 'The plural of "child" is "children". True or False?',
-                            correctAnswer: 'True',
-                            type: 'true_false'
-                        }
-                    ]
-                },
-                '2': {
-                    name: 'Kiswahili Exercise',
-                    questions: [
-                        {
-                            text: '"Jina lako nani?" in English means:',
-                            options: ['What is your name?', 'How are you?', 'Where do you live?', 'What time is it?'],
-                            correctAnswer: 'A',
-                            type: 'multiple_choice'
-                        }
-                    ]
-                }
-            };
-            return exercises[courseId] || null;
-        },
-        getTest: async (testLevel, language) => {
-            const tests = {
-                '1': {
-                    name: 'Beginner Test',
-                    questions: [
-                        {
-                            text: '2 + 2 = ?',
-                            options: ['3', '4', '5', '6'],
-                            correctAnswer: 'B',
-                            type: 'multiple_choice'
-                        }
-                    ]
-                }
-            };
-            return tests[testLevel] || null;
-        }
-    };
-}
+// ==================== IMPORT MODULES ====================
+const studentRegistration = require('./studentRegistration');
+const learningDb = require('./learningDb');
+const examHandler = require('./examHandler');
+const learningSession = require('./learningSession');
+const learningCommands = require('./learningCommands');
 
 // ==================== WEB BOT CORE ====================
 class WebBot {
@@ -200,7 +48,7 @@ class WebBot {
             res.status(200).json({ 
                 status: 'healthy', 
                 bot: 'Charles Academy Web Bot',
-                version: '3.0.0',
+                version: '2.6.0',
                 timestamp: new Date().toISOString(),
                 features: 'Full WhatsApp Bot functionality without WhatsApp',
                 database: 'Connected (Same as WhatsApp bot)'
@@ -354,92 +202,8 @@ class WebBot {
             }
         });
         
-        // Dashboard data endpoints
-        app.get('/api/dashboard/students', async (req, res) => {
-            try {
-                const { data, error } = await this.getSupabaseData('students');
-                if (error) throw error;
-                res.json({ success: true, data: data || [] });
-            } catch (error) {
-                res.status(500).json({ success: false, error: error.message });
-            }
-        });
-        
-        app.get('/api/dashboard/exams', async (req, res) => {
-            try {
-                const { data, error } = await this.getSupabaseData('exam_results');
-                if (error) throw error;
-                res.json({ success: true, data: data || [] });
-            } catch (error) {
-                res.status(500).json({ success: false, error: error.message });
-            }
-        });
-        
-        app.get('/api/dashboard/stats', async (req, res) => {
-            try {
-                const stats = await this.calculateStats();
-                res.json({ success: true, data: stats });
-            } catch (error) {
-                res.status(500).json({ success: false, error: error.message });
-            }
-        });
-        
         // Start Express server
         this.startServer();
-    }
-    
-    async getSupabaseData(table) {
-        try {
-            const { createClient } = require('@supabase/supabase-js');
-            const supabaseUrl = process.env.SUPABASE_URL || 'https://naycamtrebtnntoelucs.supabase.co';
-            const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5heWNhbXRyZWJ0bm50b2VsdWNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY2MzA1MzIsImV4cCI6MjAyMjIwNjUzMn0.UlMqfUn8oY_GpjfdSLg1_97Kv-fA6ntiCx8k8IGQIlA';
-            
-            const supabase = createClient(supabaseUrl, supabaseKey);
-            
-            const { data, error } = await supabase
-                .from(table)
-                .select('*')
-                .order('registered_at' in table ? 'registered_at' : 'completed_at', { ascending: false })
-                .limit(50);
-            
-            return { data, error };
-        } catch (error) {
-            return { data: [], error };
-        }
-    }
-    
-    async calculateStats() {
-        try {
-            const { data: students } = await this.getSupabaseData('students');
-            const { data: exams } = await this.getSupabaseData('exam_results');
-            
-            let averageScore = 0;
-            let passRate = 0;
-            
-            if (exams && exams.length > 0) {
-                const totalScore = exams.reduce((sum, exam) => sum + (parseFloat(exam.score) || 0), 0);
-                averageScore = (totalScore / exams.length).toFixed(1);
-                
-                const passedExams = exams.filter(exam => exam.passed === true).length;
-                passRate = Math.round((passedExams / exams.length) * 100);
-            }
-            
-            return {
-                totalStudents: students?.length || 0,
-                totalExams: exams?.length || 0,
-                averageScore: averageScore,
-                passRate: passRate,
-                updatedAt: new Date().toISOString()
-            };
-        } catch (error) {
-            return {
-                totalStudents: 0,
-                totalExams: 0,
-                averageScore: 0,
-                passRate: 0,
-                updatedAt: new Date().toISOString()
-            };
-        }
     }
     
     startServer() {
@@ -462,6 +226,12 @@ class WebBot {
             console.log('\n📝 Press Ctrl+C to stop the server\n');
         });
     }
+    
+
+
+
+
+
     
     // ============================================
     // CORE MESSAGE HANDLER - SAME LOGIC AS WHATSAPP

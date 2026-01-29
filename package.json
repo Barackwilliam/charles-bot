@@ -1,35 +1,39 @@
 {
-  "name": "charles-academy-dashboard",
-  "version": "2.0.0",
-  "description": "Charles Academy Exam Dashboard with Web Bot",
+  "name": "charles-academy-web-bot",
+  "version": "3.0.0",
+  "description": "Charles Academy Web Bot - Complete Version with All Features",
   "main": "web-bot.js",
   "scripts": {
     "start": "node web-bot.js",
     "dev": "nodemon web-bot.js",
-    "test": "jest",
     "build": "npm install",
     "deploy": "npm run build && npm start",
-    "dashboard": "node dashboard.js",
-    "web-bot": "node web-bot.js",
-    "combined": "node server.js"
+    "render-build": "npm install"
   },
+  "keywords": [
+    "education",
+    "bot",
+    "learning",
+    "exams",
+    "academy",
+    "whatsapp"
+  ],
+  "author": "Charles Academy",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
-    "ejs": "^3.1.9",
-    "@supabase/supabase-js": "^2.38.0",
-    "dotenv": "^16.3.1",
     "cors": "^2.8.5",
-    "helmet": "^7.0.0",
-    "compression": "^1.7.4",
-    "morgan": "^1.10.0",
-    "nodemon": "^3.0.1",
-    "winston": "^3.10.0"
+    "dotenv": "^16.3.1",
+    "debug": "^4.3.4",
+    "body-parser": "^1.20.2",
+    "@supabase/supabase-js": "^2.38.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
-  },
-  "keywords": ["education", "dashboard", "exam", "learning", "bot"],
-  "author": "Charles Academy",
-  "license": "MIT"
+  }
 }
