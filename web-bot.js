@@ -2,9 +2,19 @@
 require('dotenv').config();
 
 // ==================== WEB SERVER SETUP ====================
-const express = require('express');
-const app = express();
+// Fix for Express 4.21.0 issue
+let express, app;
+try {
+    express = require('express');
+    app = express();
+} catch (error) {
+    // Fallback for newer versions
+    const expressModule = require('express');
+    express = expressModule.default || expressModule;
+    app = express();
+}
 const PORT = process.env.WEB_PORT || 8080;
+// =========================================================
 
 // Middleware
 app.use(express.json());
@@ -226,12 +236,6 @@ class WebBot {
             console.log('\n📝 Press Ctrl+C to stop the server\n');
         });
     }
-    
-
-
-
-
-
     
     // ============================================
     // CORE MESSAGE HANDLER - SAME LOGIC AS WHATSAPP
