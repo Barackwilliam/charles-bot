@@ -1,5 +1,4 @@
 // web-bot.js - Charles Academy Web Bot (Fixed Version)
-// ==================== LOAD ENVIRONMENT VARIABLES ====================
 require('dotenv').config();
 
 // ==================== WEB SERVER SETUP ====================
