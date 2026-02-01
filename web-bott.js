@@ -1,6 +1,23 @@
-// web-bot.js - Charles Academy Web Bot (Fixed Version - NO Express server)
+// web-bot.js - Charles Academy Web Bot (Fixed Version)
 // ==================== LOAD ENVIRONMENT VARIABLES ====================
 require('dotenv').config();
+
+// ==================== WEB SERVER SETUP ====================
+const express = require('express');
+const app = express();
+const PORT = process.env.WEB_PORT || 8080;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+// CORS for web access
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 // ==================== IMPORT MODULES ====================
 const studentRegistration = require('./studentRegistration');
@@ -16,9 +33,210 @@ class WebBot {
         
         // Store web users (same structure as WhatsApp users)
         this.webUsers = new Map();
+        
+        // Setup Express routes
+        this.setupRoutes();
     }
     
-    // ==================== API METHODS ====================
+    setupRoutes() {
+        // Home page
+        app.get('/', (req, res) => {
+            res.sendFile(__dirname + '/public/index.html');
+        });
+        
+        // Health check endpoint
+        app.get('/health', (req, res) => {
+            res.status(200).json({ 
+                status: 'healthy', 
+                bot: 'Charles Academy Web Bot',
+                version: '2.6.0',
+                timestamp: new Date().toISOString(),
+                features: 'Full WhatsApp Bot functionality without WhatsApp',
+                database: 'Connected (Same as WhatsApp bot)'
+            });
+        });
+        
+        // Bot info endpoint
+        app.get('/info', (req, res) => {
+            res.status(200).json({
+                name: 'Charles Academy Web Bot',
+                academy: 'Charles Academy',
+                support: '+255750910158',
+                owner: '+255750910158',
+                database: 'Connected (Supabase)',
+                status: 'operational',
+                users: this.webUsers.size
+            });
+        });
+        
+        // API: Send message (CORE FUNCTIONALITY)
+        app.post('/api/send', async (req, res) => {
+            try {
+                const { message, sessionId } = req.body;
+                
+                if (!message || message.trim() === '') {
+                    return res.json({
+                        success: false,
+                        error: 'Message cannot be empty'
+                    });
+                }
+                
+                console.log(`🌐 Web message from ${sessionId || 'new user'}: "${message}"`);
+                
+                // Process message
+                const response = await this.handleWebMessage(sessionId, message.trim());
+                
+                res.json({
+                    success: true,
+                    sessionId: response.userId,
+                    response: response.message,
+                    timestamp: new Date().toISOString(),
+                    userStatus: response.userStatus
+                });
+                
+            } catch (error) {
+                console.error('API Error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
+        // API: Get user info
+        app.get('/api/user/:sessionId', async (req, res) => {
+            try {
+                const { sessionId } = req.params;
+                
+                if (!sessionId) {
+                    return res.json({
+                        success: false,
+                        error: 'Session ID required'
+                    });
+                }
+                
+                const jid = `web_${sessionId}@web.chat`;
+                const user = this.webUsers.get(jid);
+                
+                if (user) {
+                    // Check registration status
+                    const { isRegistered, data } = await studentRegistration.isStudentRegistered(jid);
+                    
+                    res.json({
+                        success: true,
+                        registered: isRegistered,
+                        studentData: data || null,
+                        language: user.language || 'en',
+                        lastActive: user.lastActive
+                    });
+                } else {
+                    res.json({
+                        success: true,
+                        registered: false,
+                        language: 'en'
+                    });
+                }
+                
+            } catch (error) {
+                console.error('User info error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
+        // API: Reset session
+        app.post('/api/reset', (req, res) => {
+            try {
+                const { sessionId } = req.body;
+                
+                if (sessionId) {
+                    const jid = `web_${sessionId}@web.chat`;
+                    
+                    // Clear all states
+                    if (this.webUsers.has(jid)) {
+                        this.webUsers.delete(jid);
+                    }
+                    
+                    examHandler.cancelExam(jid);
+                    learningSession.clearSession(jid);
+                    
+                    // Clear registration state
+                    if (studentRegistration.registrationState) {
+                        delete studentRegistration.registrationState[jid];
+                    }
+                }
+                
+                res.json({
+                    success: true,
+                    message: 'Session reset successfully'
+                });
+                
+            } catch (error) {
+                console.error('Reset error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
+        // API: Get user history
+        app.get('/api/history/:sessionId', (req, res) => {
+            try {
+                const { sessionId } = req.params;
+                const jid = `web_${sessionId}@web.chat`;
+                const user = this.webUsers.get(jid);
+                
+                res.json({
+                    success: true,
+                    history: user?.history || []
+                });
+                
+            } catch (error) {
+                console.error('History error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
+        // Start Express server
+        this.startServer();
+    }
+    
+    startServer() {
+        app.listen(PORT, () => {
+            console.log('='.repeat(60));
+            console.log('🌐 CHARLES ACADEMY WEB BOT');
+            console.log('='.repeat(60));
+            console.log(`📱 URL: http://localhost:${PORT}`);
+            console.log(`🔗 API: http://localhost:${PORT}/api/send`);
+            console.log(`🏥 Health: http://localhost:${PORT}/health`);
+            console.log(`ℹ️ Info: http://localhost:${PORT}/info`);
+            console.log('='.repeat(60));
+            console.log(`🎯 Features: Full WhatsApp Bot functionality`);
+            console.log(`📊 Database: Same database as WhatsApp bot`);
+            console.log(`👥 Users: Web users stored with prefix "web_"`);
+            console.log(`🔄 Real-time: Same exam system, same registration`);
+            console.log('='.repeat(60));
+            console.log('\n🚀 Web Bot is ready! Users can access directly via browser.');
+            console.log('🔑 No WhatsApp scanning required!');
+            console.log('\n📝 Press Ctrl+C to stop the server\n');
+        });
+    }
+    
+
+
+
+
+
+    
+    // ============================================
+    // CORE MESSAGE HANDLER - SAME LOGIC AS WHATSAPP
+    // ============================================
     async handleWebMessage(sessionId, text) {
         // Generate or use session ID
         let userId = sessionId;
@@ -526,128 +744,9 @@ class WebBot {
         return this.getErrorText(language);
     }
     
-    // ==================== USER MANAGEMENT ====================
-    async getUserInfo(sessionId) {
-        try {
-            const jid = `web_${sessionId}@web.chat`;
-            const user = this.webUsers.get(jid);
-            
-            if (user) {
-                // Check registration status
-                const { isRegistered, data } = await studentRegistration.isStudentRegistered(jid);
-                
-                return {
-                    success: true,
-                    registered: isRegistered,
-                    studentData: data || null,
-                    language: user.language || 'en',
-                    lastActive: user.lastActive
-                };
-            } else {
-                return {
-                    success: true,
-                    registered: false,
-                    language: 'en'
-                };
-            }
-            
-        } catch (error) {
-            console.error('User info error:', error);
-            return {
-                success: false,
-                error: 'Internal server error'
-            };
-        }
-    }
-    
-    async resetSession(sessionId) {
-        try {
-            if (sessionId) {
-                const jid = `web_${sessionId}@web.chat`;
-                
-                // Clear all states
-                if (this.webUsers.has(jid)) {
-                    this.webUsers.delete(jid);
-                }
-                
-                examHandler.cancelExam(jid);
-                learningSession.clearSession(jid);
-                
-                // Clear registration state
-                if (studentRegistration.registrationState) {
-                    delete studentRegistration.registrationState[jid];
-                }
-            }
-            
-            return {
-                success: true,
-                message: 'Session reset successfully'
-            };
-            
-        } catch (error) {
-            console.error('Reset error:', error);
-            return {
-                success: false,
-                error: 'Internal server error'
-            };
-        }
-    }
-    
-    async getUserHistory(sessionId) {
-        try {
-            const jid = `web_${sessionId}@web.chat`;
-            const user = this.webUsers.get(jid);
-            
-            return {
-                success: true,
-                history: user?.history || []
-            };
-            
-        } catch (error) {
-            console.error('History error:', error);
-            return {
-                success: false,
-                error: 'Internal server error'
-            };
-        }
-    }
-    
-    // ==================== HELPER FUNCTIONS ====================
-    generateSessionId() {
-        return 'web_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-    }
-    
-    ensureUserExists(jid) {
-        if (!this.webUsers.has(jid)) {
-            this.webUsers.set(jid, {
-                id: jid,
-                language: 'en',
-                registered: false,
-                lastActive: new Date().toISOString(),
-                history: [],
-                studentData: null,
-                session: {}
-            });
-        }
-    }
-    
-    saveToHistory(jid, question, answer) {
-        const user = this.webUsers.get(jid);
-        if (user) {
-            user.history.push({
-                question: question,
-                answer: answer,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Keep only last 100 messages
-            if (user.history.length > 100) {
-                user.history = user.history.slice(-100);
-            }
-        }
-    }
-    
-    // ==================== OLD FUNCTIONS (SAME AS WHATSAPP) ====================
+    // ============================================
+    // OLD FUNCTIONS (SAME AS WHATSAPP)
+    // ============================================
     async startExercise(jid, courseId, language) {
         try {
             const exercise = await learningCommands.getExercise(courseId, language);
@@ -737,8 +836,46 @@ class WebBot {
         }
     }
     
-    // ==================== TEXT FUNCTIONS (SAME AS WHATSAPP BOT) ====================
-    // (All text functions remain exactly the same)
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    generateSessionId() {
+        return 'web_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+    
+    ensureUserExists(jid) {
+        if (!this.webUsers.has(jid)) {
+            this.webUsers.set(jid, {
+                id: jid,
+                language: 'en',
+                registered: false,
+                lastActive: new Date().toISOString(),
+                history: [],
+                studentData: null,
+                session: {}
+            });
+        }
+    }
+    
+    saveToHistory(jid, question, answer) {
+        const user = this.webUsers.get(jid);
+        if (user) {
+            user.history.push({
+                question: question,
+                answer: answer,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Keep only last 100 messages
+            if (user.history.length > 100) {
+                user.history = user.history.slice(-100);
+            }
+        }
+    }
+    
+    // ============================================
+    // TEXT FUNCTIONS (SAME AS WHATSAPP BOT)
+    // ============================================
     getWelcomeText(language) {
         const texts = {
             'en': `🎓 *Welcome to Charles Academy!*\n\n` +
@@ -769,9 +906,9 @@ class WebBot {
         const texts = {
             'en': `🌍 *Choose Your Language*\n\n` +
                   `Type one of these words:\n\n` +
-                  `ENGLISH 🇬🇧 - For English language\n` +
-                  `KISWAHILI 🇹🇿 - For Kiswahili language\n` +
-                  `FRANÇAIS 🇫🇷 - For French language\n\n` +
+                  `ENGLISH  - For English language\n` +
+                  `KISWAHILI  - For Kiswahili language\n` +
+                  `FRANÇAIS  - For French language\n\n` +
                   `*Example:* Type "ENGLISH" to set English`,
             
             'sw': `🌍 *Chagua Lugha Yako*\n\n` +
@@ -799,7 +936,6 @@ class WebBot {
                   `🎓 EXAM - Take an exam (NEW!)\n` +
                   `🧪 EXERCISE - Practice exercises\n` +
                   `📝 TEST - Take a test\n` +
-                  `📊 PROGRESS - My progress\n` +
                   `🌍 LANGUAGE - Change language\n` +
                   `❓ HELP - Show all commands\n` +
                   `🆘 SUPPORT - Help & Support\n\n` +
@@ -812,7 +948,6 @@ class WebBot {
                   `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
                   `🧪 MAZOEZI - Fanya mazoezi\n` +
                   `📝 TEST - Fanya mtihani\n` +
-                  `📊 MAENDELEO - Angalia maendeleo yako\n` +
                   `🌍 LUGHA - Badilisha lugha\n` +
                   `❓ USAIDIZI - Onyesha amri zote\n` +
                   `🆘 MSADA - Usaidizi na msaada\n\n` +
@@ -825,7 +960,6 @@ class WebBot {
                   `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
                   `🧪 EXERCICE - Faire des exercices\n` +
                   `📝 TEST - Passer un test\n` +
-                  `📊 PROGRÈS - Mes progrès\n` +
                   `🌍 LANGUE - Changer de langue\n` +
                   `❓ AIDE - Afficher toutes les commandes\n` +
                   `🆘 SUPPORT - Aide et support\n\n` +
@@ -845,7 +979,6 @@ class WebBot {
                   `🔹 MENU - Main menu\n` +
                   `🔹 HELP - This help message\n` +
                   `🔹 SUPPORT - Contact support\n` +
-                  `🔹 PROGRESS - Your learning progress\n` +
                   `🔹 COURSES - Available courses\n` +
                   `🔹 LEARN - Start learning\n` +
                   `🔹 EXAM - NEW! Advanced exam system\n` +
@@ -855,7 +988,6 @@ class WebBot {
                   `• 4 Courses: English, Kiswahili, Graphics, Website\n` +
                   `• Multiple exams per course\n` +
                   `• Automatic scoring\n` +
-                  `• Progress tracking\n\n` +
                   `*Just type the word in CAPITAL LETTERS*`,
             
             'sw': `📚 *Charles Academy - USAIDIZI*\n\n` +
@@ -866,7 +998,6 @@ class WebBot {
                   `🔹 MENU - Menyu kuu\n` +
                   `🔹 HELP - Ujumbe huu wa usaidizi\n` +
                   `🔹 SUPPORT - Wasiliana na usaidizi\n` +
-                  `🔹 PROGRESS - Maendeleo yako ya kujifunza\n` +
                   `🔹 COURSES - Kozi zilizopo\n` +
                   `🔹 LEARN - Anza kujifunza\n` +
                   `🔹 EXAM - MPYA! Mfumo wa hali ya juu wa mitihani\n` +
@@ -887,7 +1018,6 @@ class WebBot {
                   `🔹 MENU - Menu principal\n` +
                   `🔹 HELP - Ce message d'aide\n` +
                   `🔹 SUPPORT - Contacter le support\n` +
-                  `🔹 PROGRESS - Vos progrès d'apprentissage\n` +
                   `🔹 COURSES - Cours disponibles\n` +
                   `🔹 LEARN - Commencer à apprendre\n` +
                   `🔹 EXAM - NOUVEAU ! Système d'examen avancé\n` +
@@ -902,27 +1032,34 @@ class WebBot {
         };
         return texts[language] || texts['en'];
     }
+
     
     getSupportText(language) {
         const texts = {
             'en': `❓ *HELP & SUPPORT*\n\n` +
                   `For any assistance, contact us:\n\n` +
-                  `📞 *Support:* +255750910158\n` +
-                  `📧 *Email:* support@charlesacademy.com\n\n` +
+                  `📞 *Support:* +255784020105\n` +
+                  `📞 *Support:* +25762700128\n` +
+                  `📧 *Email:* support@charlesacademy.com\n` +
+                  `📧 *Email:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Available:* Monday-Friday, 8AM-6PM\n\n` +
                   `Type MENU to return to main menu`,
             
             'sw': `❓ *USAIDIZI NA MSADA*\n\n` +
                   `Kwa usaidizi wowote, wasiliana nasi:\n\n` +
-                  `📞 *Usaidizi:* +255750910158\n` +
-                  `📧 *Barua pepe:* support@charlesacademy.com\n\n` +
+                  `📞 *Usaidizi:* +255784020105\n` +
+                  `📞 *Usaidizi:* +25762700128\n` +
+                  `📧 *Barua pepe:* support@charlesacademy.com\n` +
+                  `📧 *Barua pepe:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Inapatikana:* Jumatatu-Ijumaa, 8AM-6PM\n\n` +
                   `Andika MENU kurudi kwenye menyu kuu`,
             
             'fr': `❓ *AIDE ET SUPPORT*\n\n` +
                   `Pour toute assistance, contactez-nous:\n\n` +
-                  `📞 *Support:* +255750910158\n` +
-                  `📧 *Email:* support@charlesacademy.com\n\n` +
+                  `📞 *Support:* +255784020105\n` +
+                  `📞 *Support:* +25762700128\n` +
+                  `📧 *Email:* support@charlesacademy.com\n` +
+                  `📧 *Email:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Disponible:* Lundi-Vendredi, 8h-18h\n\n` +
                   `Tapez MENU pour retourner au menu principal`
         };
@@ -1331,8 +1468,15 @@ class WebBot {
     }
 }
 
-// ==================== CREATE WEB BOT ====================
+// ==================== CREATE AND START WEB BOT ====================
 const webBot = new WebBot();
 
-// Export for use in server.js
+// Handle server shutdown gracefully
+process.on('SIGINT', () => {
+    console.log('\n\n🛑 Shutting down Web Bot gracefully...');
+    console.log('👋 Goodbye!');
+    process.exit(0);
+});
+
+//? Export for testing
 module.exports = webBot;
