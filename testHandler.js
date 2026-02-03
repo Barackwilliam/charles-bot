@@ -31,7 +31,7 @@ class TestHandler {
             en: `📝 *TEST SELECTION*\n\n` +
                 `Select a test level by typing:\n\n` +
                 `🧠 TEST 1 - English Test one\n` +
-                `📘 TEST 2 - Intermediate Level\n` +
+                `📘 TEST 2 - English Test two\n` +
                 `🎓 TEST 3 - Advanced Level\n` +
                 `🏆 TEST 4 - Expert Level\n\n` +
                 `*Type the test number in CAPITAL LETTERS*\n` +
@@ -49,7 +49,7 @@ class TestHandler {
             fr: `📝 *SÉLECTION DE TEST*\n\n` +
                 `Sélectionnez un niveau de test en tapant:\n\n` +
                 `🧠 TEST 1 - Niveau Débutant\n` +
-                `📘 TEST 2 - Niveau Intermédiaire\n` +
+                `📘 TEST 2 - Deuxième Contrôle d’Anglais\n` +
                 `🎓 TEST 3 - Niveau Avancé\n` +
                 `🏆 TEST 4 - Niveau Expert\n\n` +
                 `*Tapez le numéro du test en MAJUSCULES*\n` +
@@ -101,7 +101,7 @@ class TestHandler {
             'TEST 3': '3',
             'TEST 4': '4',
             'TEST BEGINNER': '1',
-            'TEST INTERMEDIATE': '2',
+            'ENGLISH TEST TWO': '2',
             'TEST ADVANCED': '3',
             'TEST EXPERT': '4'
         };
@@ -123,7 +123,7 @@ class TestHandler {
             'TEST 3': '3',
             'TEST 4': '4',
             'TEST BEGINNER': '1',
-            'TEST INTERMEDIATE': '2',
+            'ENGLISH TEST TWO': '2',
             'TEST ADVANCED': '3',
             'TEST EXPERT': '4'
         };
