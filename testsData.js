@@ -875,198 +875,1183 @@ const testsData = {
     }
 },
 
-    // ==================== TEST 3: ADVANCED ====================
+
     '3': {
-        id: 'test_advanced',
-        title: {
-            en: 'ADVANCED LEVEL TEST',
-            sw: 'MTIHANI WA KIWANGO CHA JUU',
-            fr: 'TEST NIVEAU AVANCÉ'
+        "id": "english_test_three",
+        "title": {
+            "en": "ENGLISH TEST 3 (CONJUNCTIONS)",
+            "sw": "MTIHANI WA KIINGEREZA WA TATU (VIUNGANISHI)",
+            "fr": "TEST D'ANGLAIS NUMÉRO 3 (CONJONCTIONS)"
         },
-        time: '60 minutes',
-        totalMarks: 100,
-        questions: [
+        "time": "60 minutes",
+        "totalMarks": 100,
+        "questions": [
             {
-                number: 1,
-                text: {
-                    en: 'Advanced English - Choose the correct answer.',
-                    sw: 'Kiingereza cha Juu - Chagua jibu sahihi.',
-                    fr: 'Anglais avancé - Choisissez la bonne réponse.'
+                "number": 1,
+                "text": {
+                    "en": "SECTION A: TRUE / FALSE (20 questions - 40 marks)",
+                    "sw": "SEHEMU A: KWELI / SI KWELI (Maswali 20 - Alama 40)",
+                    "fr": "SECTION A: VRAI / FAUX (20 questions - 40 points)"
                 },
-                subQuestions: [
+                "subQuestions": [
                     {
-                        text: { 
-                            en: 'If I _____ you, I would study harder.\nA. am\nB. was\nC. were\nD. be', 
-                            sw: 'Kama mimi _____ wewe, ningesoma kwa bidii zaidi.\nA. ni\nB. nilikuwa\nC. ningekuwa\nD. kuwa', 
-                            fr: 'Si je _____ toi, j\'étudierais plus dur.\nA. suis\nB. étais\nC. étais\nD. être' 
+                        "text": {
+                            "en": "\"And\" is a conjunction.",
+                            "sw": "\"And\" ni kiunganishi.",
+                            "fr": "\"And\" est une conjonction."
                         },
-                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'She _____ working here since 2010.\nA. has been\nB. have been\nC. is\nD. was', 
-                            sw: 'Yeye _____ kufanya kazi hapa tangu 2010.\nA. amekuwa\nB. wamekuwa\nC. ni\nD. alikuwa', 
-                            fr: 'Elle _____ travaille ici depuis 2010.\nA. a été\nB. ont été\nC. est\nD. était' 
+                        "text": {
+                            "en": "\"But\" is a conjunction.",
+                            "sw": "\"But\" ni kiunganishi.",
+                            "fr": "\"But\" est une conjonction."
                         },
-                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'By next year, I _____ my degree.\nA. complete\nB. completed\nC. will complete\nD. will have completed', 
-                            sw: 'Kufikia mwaka ujao, mimi _____ shahada yangu.\nA. kamili\nB. nilikamilisha\nC. nitakamilisha\nD. nitakuwa nimekamilisha', 
-                            fr: 'D\'ici l\'année prochaine, je _____ mon diplôme.\nA. compléter\nB. ai complété\nC. compléterai\nD. aurai complété' 
+                        "text": {
+                            "en": "\"Because\" is a conjunction.",
+                            "sw": "\"Because\" ni kiunganishi.",
+                            "fr": "\"Because\" est une conjonction."
                         },
-                        answer: { en: 'D', sw: 'D', fr: 'D' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'The book _____ by the student.\nA. read\nB. reads\nC. is reading\nD. is being read', 
-                            sw: 'Kitabu _____ na mwanafunzi.\nA. soma\nB. inasoma\nC. kinasomwa\nD. kimekusomwa', 
-                            fr: 'Le livre _____ par l\'étudiant.\nA. lire\nB. lit\nC. est en train de lire\nD. est en train d\'être lu' 
+                        "text": {
+                            "en": "\"Although\" is a conjunction.",
+                            "sw": "\"Although\" ni kiunganishi.",
+                            "fr": "\"Although\" est une conjonction."
                         },
-                        answer: { en: 'D', sw: 'C', fr: 'D' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"So\" is a conjunction.",
+                            "sw": "\"So\" ni kiunganishi.",
+                            "fr": "\"So\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Until\" is a conjunction.",
+                            "sw": "\"Until\" ni kiunganishi.",
+                            "fr": "\"Until\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Unless\" is a conjunction.",
+                            "sw": "\"Unless\" ni kiunganishi.",
+                            "fr": "\"Unless\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"While\" is a conjunction.",
+                            "sw": "\"While\" ni kiunganishi.",
+                            "fr": "\"While\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Before\" is a conjunction.",
+                            "sw": "\"Before\" ni kiunganishi.",
+                            "fr": "\"Before\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"After\" is a conjunction.",
+                            "sw": "\"After\" ni kiunganishi.",
+                            "fr": "\"After\" est une conjonction."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"And\" is used to show contrast.",
+                            "sw": "\"And\" inatumika kuonyesha tofauti.",
+                            "fr": "\"And\" est utilisé pour montrer un contraste."
+                        },
+                        "answer": {
+                            "en": "FALSE",
+                            "sw": "SI KWELI",
+                            "fr": "FAUX"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"But\" is used to show contrast.",
+                            "sw": "\"But\" inatumika kuonyesha tofauti.",
+                            "fr": "\"But\" est utilisé pour montrer un contraste."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Because\" shows reason.",
+                            "sw": "\"Because\" inaonyesha sababu.",
+                            "fr": "\"Because\" montre une raison."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"So\" shows result.",
+                            "sw": "\"So\" inaonyesha matokeo.",
+                            "fr": "\"So\" montre un résultat."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Or\" shows choice.",
+                            "sw": "\"Or\" inaonyesha chaguo.",
+                            "fr": "\"Or\" montre un choix."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Although\" shows contrast.",
+                            "sw": "\"Although\" inaonyesha tofauti.",
+                            "fr": "\"Although\" montre un contraste."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Until\" shows time.",
+                            "sw": "\"Until\" inaonyesha wakati.",
+                            "fr": "\"Until\" montre le temps."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"While\" shows time.",
+                            "sw": "\"While\" inaonyesha wakati.",
+                            "fr": "\"While\" montre le temps."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"Unless\" shows condition.",
+                            "sw": "\"Unless\" inaonyesha sharti.",
+                            "fr": "\"Unless\" montre une condition."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "\"And\" shows addition.",
+                            "sw": "\"And\" inaonyesha kuongeza.",
+                            "fr": "\"And\" montre une addition."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     }
                 ]
             },
             {
-                number: 2,
-                text: {
-                    en: 'Science Questions',
-                    sw: 'Maswali ya Sayansi',
-                    fr: 'Questions scientifiques'
+                "number": 2,
+                "text": {
+                    "en": "SECTION B: MULTIPLE CHOICE - Choose the correct conjunction (A, B, C, or D) (20 questions - 40 marks)",
+                    "sw": "SEHEMU B: CHAGUO NYINGI - Chagua kiunganishi sahihi (A, B, C, au D) (Maswali 20 - Alama 40)",
+                    "fr": "SECTION B: CHOIX MULTIPLE - Choisissez la conjonction correcte (A, B, C, ou D) (20 questions - 40 points)"
                 },
-                subQuestions: [
+                "subQuestions": [
                     {
-                        text: { 
-                            en: 'What is the chemical symbol for water?\nA. O2\nB. CO2\nC. H2O\nD. NaCl', 
-                            sw: 'Alama ya kikemikali ya maji ni ipi?\nA. O2\nB. CO2\nC. H2O\nD. NaCl', 
-                            fr: 'Quel est le symbole chimique de l\'eau?\nA. O2\nB. CO2\nC. H2O\nD. NaCl' 
+                        "text": {
+                            "en": "I wanted to go out ____ it was raining heavily.\nA. and\nB. but\nC. because\nD. or",
+                            "sw": "Nilitaka kutoka nje ____ ilikuwa inanyesha sana.\nA. and\nB. but\nC. because\nD. or",
+                            "fr": "Je voulais sortir ____ il pleuvait beaucoup.\nA. and\nB. but\nC. because\nD. or"
                         },
-                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'Which planet is known as the Red Planet?\nA. Venus\nB. Mars\nC. Jupiter\nD. Saturn', 
-                            sw: 'Sayari ipi inajulikana kama Sayari Nyekundu?\nA. Zuhura\nB. Mirihi\nC. Mshtarii\nD. Zohali', 
-                            fr: 'Quelle planète est connue sous le nom de Planète Rouge?\nA. Vénus\nB. Mars\nC. Jupiter\nD. Saturne' 
+                        "text": {
+                            "en": "She studied hard ____ she passed the examination.\nA. because\nB. so\nC. but\nD. or",
+                            "sw": "Alisoma kwa bidii ____ alipita mtihani.\nA. because\nB. so\nC. but\nD. or",
+                            "fr": "Elle a étudié dur ____ elle a réussi l'examen.\nA. because\nB. so\nC. but\nD. or"
                         },
-                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'What force pulls objects toward Earth?\nA. Magnetism\nB. Gravity\nC. Friction\nD. Electricity', 
-                            sw: 'Nguvu ipi huvuta vitu kuelekea Dunia?\nA. Umeme\nB. Uvutano\nC. Msuguano\nD. Umeme', 
-                            fr: 'Quelle force attire les objets vers la Terre?\nA. Magnétisme\nB. Gravité\nC. Friction\nD. Électricité' 
+                        "text": {
+                            "en": "He is poor ____ honest.\nA. but\nB. and\nC. because\nD. or",
+                            "sw": "Yeye ni maskini ____ mwaminifu.\nA. but\nB. and\nC. because\nD. or",
+                            "fr": "Il est pauvre ____ honnête.\nA. but\nB. and\nC. because\nD. or"
                         },
-                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "We stayed at home ____ the weather was bad.\nA. because\nB. but\nC. or\nD. and",
+                            "sw": "Tulikaa nyumbani ____ hali ya hewa ilikuwa mbaya.\nA. because\nB. but\nC. or\nD. and",
+                            "fr": "Nous sommes restés à la maison ____ le temps était mauvais.\nA. because\nB. but\nC. or\nD. and"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "You can come with us ____ you finish your work early.\nA. unless\nB. if\nC. because\nD. but",
+                            "sw": "Unaweza kuja na sisi ____ utamaliza kazi yako mapema.\nA. unless\nB. if\nC. because\nD. but",
+                            "fr": "Vous pouvez venir avec nous ____ vous finissez votre travail tôt.\nA. unless\nB. if\nC. because\nD. but"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I was tired ____ I continued working.\nA. but\nB. because\nC. so\nD. or",
+                            "sw": "Nilichoka ____ niliendelea kufanya kazi.\nA. but\nB. because\nC. so\nD. or",
+                            "fr": "J'étais fatigué ____ j'ai continué à travailler.\nA. but\nB. because\nC. so\nD. or"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She did not attend the class ____ she was sick.\nA. so\nB. because\nC. but\nD. and",
+                            "sw": "Hakuhudhuria darasani ____ alikuwa mgonjwa.\nA. so\nB. because\nC. but\nD. and",
+                            "fr": "Elle n'a pas assisté au cours ____ elle était malade.\nA. so\nB. because\nC. but\nD. and"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Hurry up ____ you will be late for school.\nA. or\nB. and\nC. because\nD. but",
+                            "sw": "Harakisha ____ utachelewa shuleni.\nA. or\nB. and\nC. because\nD. but",
+                            "fr": "Dépêche-toi ____ tu seras en retard pour l'école.\nA. or\nB. and\nC. because\nD. but"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I like English ____ I want to speak it fluently.\nA. because\nB. but\nC. or\nD. although",
+                            "sw": "Napenda Kiingereza ____ nataka kuizungumza kwa ufasaha.\nA. because\nB. but\nC. or\nD. although",
+                            "fr": "J'aime l'anglais ____ je veux le parler couramment.\nA. because\nB. but\nC. or\nD. although"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "He failed the exam ____ he studied very little.\nA. but\nB. because\nC. and\nD. so",
+                            "sw": "Alifeli mtihani ____ alisoma kidogo sana.\nA. but\nB. because\nC. and\nD. so",
+                            "fr": "Il a échoué à l'examen ____ il a très peu étudié.\nA. but\nB. because\nC. and\nD. so"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "You can either stay here ____ go home.\nA. and\nB. or\nC. but\nD. so",
+                            "sw": "Unaweza ama kukaa hapa ____ kurudi nyumbani.\nA. and\nB. or\nC. but\nD. so",
+                            "fr": "Vous pouvez soit rester ici ____ rentrer à la maison.\nA. and\nB. or\nC. but\nD. so"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "We continued playing ____ it was raining.\nA. because\nB. although\nC. so\nD. and",
+                            "sw": "Tuliendelea kucheza ____ ilikuwa inanyesha.\nA. because\nB. although\nC. so\nD. and",
+                            "fr": "Nous avons continué à jouer ____ il pleuvait.\nA. because\nB. although\nC. so\nD. and"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Study hard ____ you will fail.\nA. or\nB. and\nC. because\nD. but",
+                            "sw": "Soma kwa bidii ____ utafeli.\nA. or\nB. and\nC. because\nD. but",
+                            "fr": "Étudie dur ____ tu échoueras.\nA. or\nB. and\nC. because\nD. but"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She smiled ____ she was sad.\nA. although\nB. because\nC. so\nD. and",
+                            "sw": "Alitabasamu ____ alikuwa na huzuni.\nA. although\nB. because\nC. so\nD. and",
+                            "fr": "Elle a souri ____ elle était triste.\nA. although\nB. because\nC. so\nD. and"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I will wait ____ you arrive.\nA. until\nB. because\nC. but\nD. or",
+                            "sw": "Nitangoja ____ utafika.\nA. until\nB. because\nC. but\nD. or",
+                            "fr": "J'attendrai ____ tu arriveras.\nA. until\nB. because\nC. but\nD. or"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "He speaks loudly ____ he is angry.\nA. because\nB. but\nC. or\nD. and",
+                            "sw": "Anaongea kwa sauti kubwa ____ yeye ni mwenye hasira.\nA. because\nB. but\nC. or\nD. and",
+                            "fr": "Il parle fort ____ il est en colère.\nA. because\nB. but\nC. or\nD. and"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I called him ____ he did not answer.\nA. but\nB. and\nC. so\nD. because",
+                            "sw": "Nilimwita ____ hakujibu.\nA. but\nB. and\nC. so\nD. because",
+                            "fr": "Je l'ai appelé ____ il n'a pas répondu.\nA. but\nB. and\nC. so\nD. because"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She laughed ____ she was tired.\nA. although\nB. because\nC. and\nD. so",
+                            "sw": "Alicheka ____ alikuwa amechoka.\nA. although\nB. because\nC. and\nD. so",
+                            "fr": "Elle a ri ____ elle était fatiguée.\nA. although\nB. because\nC. and\nD. so"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I waited ____ he arrived.\nA. until\nB. because\nC. but\nD. or",
+                            "sw": "Nilimngoja ____ alifika.\nA. until\nB. because\nC. but\nD. or",
+                            "fr": "J'ai attendu ____ il est arrivé.\nA. until\nB. because\nC. but\nD. or"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "We will go ____ the weather is good.\nA. if\nB. but\nC. so\nD. because",
+                            "sw": "Tutaenda ____ hali ya hewa ni nzuri.\nA. if\nB. but\nC. so\nD. because",
+                            "fr": "Nous irons ____ le temps est bon.\nA. if\nB. but\nC. so\nD. because"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    }
+                ]
+            },
+            {
+                "number": 3,
+                "text": {
+                    "en": "SECTION C: ONE WORD ANSWER - Fill in the blank with ONE conjunction only (10 questions - 20 marks)",
+                    "sw": "SEHEMU C: JIBU LA NENO MOJA - Jaza nafasi na kiunganishi MOJA tu (Maswali 10 - Alama 20)",
+                    "fr": "SECTION C: RÉPONSE EN UN MOT - Remplissez le vide avec UNE conjonction seulement (10 questions - 20 points)"
+                },
+                "subQuestions": [
+                    {
+                        "text": {
+                            "en": "I stayed at home ______ it was raining.",
+                            "sw": "Nilikaa nyumbani ______ ilikuwa inanyesha.",
+                            "fr": "Je suis resté à la maison ______ il pleuvait."
+                        },
+                        "answer": {
+                            "en": "because",
+                            "sw": "kwa sababu",
+                            "fr": "parce que"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She tried hard ______ she failed.",
+                            "sw": "Alijaribu kwa bidii ______ alishindwa.",
+                            "fr": "Elle a essayé dur ______ elle a échoué."
+                        },
+                        "answer": {
+                            "en": "but",
+                            "sw": "lakini",
+                            "fr": "mais"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "We will go ______ the weather is good.",
+                            "sw": "Tutaenda ______ hali ya hewa ni nzuri.",
+                            "fr": "Nous irons ______ le temps est bon."
+                        },
+                        "answer": {
+                            "en": "if",
+                            "sw": "ikiwa",
+                            "fr": "si"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "He rested ______ he finished work.",
+                            "sw": "Alipumzika ______ alimaliza kazi.",
+                            "fr": "Il s'est reposé ______ il a terminé son travail."
+                        },
+                        "answer": {
+                            "en": "after",
+                            "sw": "baada ya",
+                            "fr": "après"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She laughed ______ she was tired.",
+                            "sw": "Alicheka ______ alikuwa amechoka.",
+                            "fr": "Elle a ri ______ elle était fatiguée."
+                        },
+                        "answer": {
+                            "en": "although",
+                            "sw": "ingawa",
+                            "fr": "bien que"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I waited ______ he arrived.",
+                            "sw": "Nilimngoja ______ alifika.",
+                            "fr": "J'ai attendu ______ il est arrivé."
+                        },
+                        "answer": {
+                            "en": "until",
+                            "sw": "mpaka",
+                            "fr": "jusqu'à ce que"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "He was sick ______ he stayed home.",
+                            "sw": "Alikuwa mgonjwa ______ alikaa nyumbani.",
+                            "fr": "Il était malade ______ il est resté à la maison."
+                        },
+                        "answer": {
+                            "en": "so",
+                            "sw": "kwa hivyo",
+                            "fr": "donc"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "You can come ______ you are busy.",
+                            "sw": "Unaweza kuja ______ umejaa shughuli.",
+                            "fr": "Vous pouvez venir ______ vous êtes occupé."
+                        },
+                        "answer": {
+                            "en": "although",
+                            "sw": "ingawa",
+                            "fr": "bien que"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "She studied ______ her friends played.",
+                            "sw": "Alisoma ______ marafiki wake walicheza.",
+                            "fr": "Elle a étudié ______ ses amis jouaient."
+                        },
+                        "answer": {
+                            "en": "while",
+                            "sw": "wakati",
+                            "fr": "pendant que"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "I called ______ I left.",
+                            "sw": "Niliita ______ niliondoka.",
+                            "fr": "J'ai appelé ______ je suis parti."
+                        },
+                        "answer": {
+                            "en": "and",
+                            "sw": "na",
+                            "fr": "et"
+                        }
                     }
                 ]
             }
         ],
-        instructions: {
-            en: 'ADVANCED LEVEL TEST INSTRUCTIONS\n• Answer all questions carefully.\n• Time: 60 minutes\n• Each correct answer = 2 marks\n• Passing score: 75%',
-            sw: 'MAELEKEZO YA MTIHANI WA KIWANGO CHA JUU\n• Jibu maswali yote kwa makini.\n• Muda: dakika 60\n• Kila jibu sahihi = alama 2\n• Alama ya kupita: 75%',
-            fr: 'INSTRUCTIONS DU TEST AVANCÉ\n• Répondez à toutes les questions soigneusement.\n• Temps: 60 minutes\n• Chaque bonne réponse = 2 points\n• Score de passage: 75%'
+        "instructions": {
+            "en": "CHARLES ACADEMY – ENGLISH TEST 4 (CONJUNCTIONS)\n\nINSTRUCTIONS\n• Answer ALL questions.\n• Choose the correct answer.\n• Write ONE word only where required.\n• No sentences or paragraphs.\n• Write letter only corresponding to answer on multiple choice.\n• Time: 60 minutes\n• Total Marks: 100\n• Passing score: 60%",
+            "sw": "CHARLES ACADEMY – MTIHANI WA KIINGEREZA WA NNE (VIUNGANISHI)\n\nMAELEKEZO\n• Jibu maswali YOTE.\n• Chagua jibu sahihi.\n• Andika neno MOJA tu inapohitajika.\n• Hakuna sentensi au aya ndefu.\n• Andika herufi tu inayolingana na jibu kwenye chaguo nyingi.\n• Muda: dakika 60\n• Jumla ya Alama: 100\n• Alama ya kupita: 60%",
+            "fr": "CHARLES ACADEMY – TEST D'ANGLAIS NUMÉRO 4 (CONJONCTIONS)\n\nINSTRUCTIONS\n• Répondez à TOUTES les questions.\n• Choisissez la bonne réponse.\n• Écrivez UN mot seulement là où c'est requis.\n• Pas de phrases ou de paragraphes.\n• Écrivez seulement la lettre correspondant à la réponse pour le choix multiple.\n• Temps: 60 minutes\n• Total des points: 100\n• Score de passage: 60%"
+        },
+        "markingGuide": {
+            "en": {
+                "sectionA": [
+                    "TRUE", "TRUE", "TRUE", "TRUE", "TRUE",
+                    "TRUE", "TRUE", "TRUE", "TRUE", "TRUE",
+                    "FALSE", "TRUE", "TRUE", "TRUE", "TRUE",
+                    "TRUE", "TRUE", "TRUE", "TRUE", "TRUE"
+                ],
+                "sectionB": [
+                    "B", "B", "A", "A", "B",
+                    "A", "B", "A", "A", "B",
+                    "B", "B", "A", "A", "A",
+                    "A", "A", "B", "A", "A"
+                ],
+                "sectionC": [
+                    "because", "but", "if", "after", "although",
+                    "until", "so", "although", "while", "and"
+                ]
+            },
+            "sw": {
+                "sectionA": [
+                    "KWELI", "KWELI", "KWELI", "KWELI", "KWELI",
+                    "KWELI", "KWELI", "KWELI", "KWELI", "KWELI",
+                    "SI KWELI", "KWELI", "KWELI", "KWELI", "KWELI",
+                    "KWELI", "KWELI", "KWELI", "KWELI", "KWELI"
+                ],
+                "sectionB": [
+                    "B", "B", "A", "A", "B",
+                    "A", "B", "A", "A", "B",
+                    "B", "B", "A", "A", "A",
+                    "A", "A", "B", "A", "A"
+                ],
+                "sectionC": [
+                    "kwa sababu", "lakini", "ikiwa", "baada ya", "ingawa",
+                    "mpaka", "kwa hivyo", "ingawa", "wakati", "na"
+                ]
+            },
+            "fr": {
+                "sectionA": [
+                    "VRAI", "VRAI", "VRAI", "VRAI", "VRAI",
+                    "VRAI", "VRAI", "VRAI", "VRAI", "VRAI",
+                    "FAUX", "VRAI", "VRAI", "VRAI", "VRAI",
+                    "VRAI", "VRAI", "VRAI", "VRAI", "VRAI"
+                ],
+                "sectionB": [
+                    "B", "B", "A", "A", "B",
+                    "A", "B", "A", "A", "B",
+                    "B", "B", "A", "A", "A",
+                    "A", "A", "B", "A", "A"
+                ],
+                "sectionC": [
+                    "parce que", "mais", "si", "après", "bien que",
+                    "jusqu'à ce que", "donc", "bien que", "pendant que", "et"
+                ]
+            }
         }
-    },
+    }
+,
 
     // ==================== TEST 4: EXPERT ====================
+    
+    
     '4': {
-        id: 'test_expert',
-        title: {
-            en: 'EXPERT LEVEL TEST',
-            sw: 'MTIHANI WA KIWANGO CHA MTAALAMU',
-            fr: 'TEST NIVEAU EXPERT'
+        "id": "english_test_four",
+        "title": {
+            "en": "ENGLISH TEST 4 (READING SKILLS)",
+            "sw": "MTIHANI WA KIINGEREZA WA FOUR (UJUMBE WA KUSOMA)",
+            "fr": "TEST D'ANGLAIS NUMÉRO 4 (COMPÉTENCES DE LECTURE)"
         },
-        time: '90 minutes',
-        totalMarks: 150,
-        questions: [
+        "time": "60 minutes",
+        "totalMarks": 100,
+        "questions": [
             {
-                number: 1,
-                text: {
-                    en: 'Expert English Grammar - Fill in the blanks.',
-                    sw: 'Sarufi ya Kiingereza ya Mtaalamu - Jaza nafasi.',
-                    fr: 'Grammaire anglaise experte - Remplissez les blancs.'
+                "number": 1,
+                "text": {
+                    "en": "SECTION A: TRUE / FALSE (10 questions - 20 marks)",
+                    "sw": "SEHEMU A: KWELI / SI KWELI (Maswali 10 - Alama 20)",
+                    "fr": "SECTION A: VRAI / FAUX (10 questions - 20 points)"
                 },
-                subQuestions: [
+                "subQuestions": [
                     {
-                        text: { 
-                            en: 'He _____ (work) here for ten years before he retired.', 
-                            sw: 'Yeye _____ (fanya kazi) hapa kwa miaka kumi kabla ya kustaafu.', 
-                            fr: 'Il _____ (travailler) ici pendant dix ans avant de prendre sa retraite.' 
+                        "text": {
+                            "en": "Reading improves vocabulary.",
+                            "sw": "Kusoma kunaboresha msamiati.",
+                            "fr": "La lecture améliore le vocabulaire."
                         },
-                        answer: { en: 'had worked', sw: 'alikuwa amefanya kazi', fr: 'avait travaillé' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'If she _____ (study) harder, she would have passed.', 
-                            sw: 'Kama yeye _____ (soma) kwa bidii zaidi, angefaulu.', 
-                            fr: 'Si elle _____ (étudier) plus dur, elle aurait réussi.' 
+                        "text": {
+                            "en": "Students must understand every word to comprehend a text.",
+                            "sw": "Wanafunzi lazima waelewe kila neno ili kuelewa maandishi.",
+                            "fr": "Les élèves doivent comprendre chaque mot pour comprendre un texte."
                         },
-                        answer: { en: 'had studied', sw: 'angalisoma', fr: 'avait étudié' }
+                        "answer": {
+                            "en": "FALSE",
+                            "sw": "SI KWELI",
+                            "fr": "FAUX"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'By the time you arrive, we _____ (finish) the project.', 
-                            sw: 'Kufikia wakati utakapofika, sisi _____ (kamilisha) mradi.', 
-                            fr: 'D\'ici ton arrivée, nous _____ (terminer) le projet.' 
+                        "text": {
+                            "en": "Reading helps learners express ideas.",
+                            "sw": "Kusoma kunasaidia wanafunzi kuelezea mawazo.",
+                            "fr": "La lecture aide les apprenants à exprimer des idées."
                         },
-                        answer: { en: 'will have finished', sw: 'tutakuwa tumekamilisha', fr: 'aurons terminé' }
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "People read emails and news every day.",
+                            "sw": "Watu husoma barua pepe na habari kila siku.",
+                            "fr": "Les gens lisent des e-mails et des nouvelles tous les jours."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading has no effect on school performance.",
+                            "sw": "Kusoma hakuna athari kwa utendaji shuleni.",
+                            "fr": "La lecture n'a aucun effet sur les performances scolaires."
+                        },
+                        "answer": {
+                            "en": "FALSE",
+                            "sw": "SI KWELI",
+                            "fr": "FAUX"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading regularly makes students confident.",
+                            "sw": "Kusoma mara kwa mara kunawafanya wanafunzi wawe na ujasiri.",
+                            "fr": "Lire régulièrement rend les élèves confiants."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading is limited only to books.",
+                            "sw": "Kusoma kuna mipaka kwenye vitabu tu.",
+                            "fr": "La lecture se limite uniquement aux livres."
+                        },
+                        "answer": {
+                            "en": "FALSE",
+                            "sw": "SI KWELI",
+                            "fr": "FAUX"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Learners can guess meanings from context.",
+                            "sw": "Wanafunzi wanaweza kukisia maana kutoka kwa muktadha.",
+                            "fr": "Les apprenants peuvent deviner les significations à partir du contexte."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Short daily reading has no impact on learning.",
+                            "sw": "Kusoma kwa muda mfupi kila siku hakuna athari kwa kujifunza.",
+                            "fr": "Une lecture quotidienne courte n'a aucun impact sur l'apprentissage."
+                        },
+                        "answer": {
+                            "en": "FALSE",
+                            "sw": "SI KWELI",
+                            "fr": "FAUX"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Students who read often understand instructions better.",
+                            "sw": "Wanafunzi ambao husoma mara nyingi huelewa maagizo vizuri zaidi.",
+                            "fr": "Les élèves qui lisent souvent comprennent mieux les instructions."
+                        },
+                        "answer": {
+                            "en": "TRUE",
+                            "sw": "KWELI",
+                            "fr": "VRAI"
+                        }
                     }
                 ]
             },
             {
-                number: 2,
-                text: {
-                    en: 'Logic and Reasoning',
-                    sw: 'Mantiki na Ufahamu',
-                    fr: 'Logique et Raisonnement'
+                "number": 2,
+                "text": {
+                    "en": "SECTION B: MULTIPLE CHOICE - Choose the correct answer (A, B, or C) (10 questions - 30 marks)",
+                    "sw": "SEHEMU B: CHAGUO NYINGI - Chagua jibu sahihi (A, B, au C) (Maswali 10 - Alama 30)",
+                    "fr": "SECTION B: CHOIX MULTIPLE - Choisissez la bonne réponse (A, B, ou C) (10 questions - 30 points)"
                 },
-                subQuestions: [
+                "subQuestions": [
                     {
-                        text: { 
-                            en: 'All cats are animals. Some animals are pets. Therefore:\nA. All cats are pets\nB. Some cats are pets\nC. No cats are pets\nD. All pets are cats', 
-                            sw: 'Paka wote ni wanyama. Baadhi ya wanyama ni wanyama wa kipenzi. Kwa hivyo:\nA. Paka wote ni wanyama wa kipenzi\nB. Baadhi ya paka ni wanyama wa kipenzi\nC. Hakuna paka yeyote ni wanyama wa kipenzi\nD. Wanyama wote wa kipenzi ni paka', 
-                            fr: 'Tous les chats sont des animaux. Certains animaux sont des animaux de compagnie. Par conséquent:\nA. Tous les chats sont des animaux de compagnie\nB. Certains chats sont des animaux de compagnie\nC. Aucun chat n\'est un animal de compagnie\nD. Tous les animaux de compagnie sont des chats' 
+                        "text": {
+                            "en": "Reading helps learners to:\nA. forget words\nB. improve vocabulary\nC. waste time",
+                            "sw": "Kusoma kunasaidia wanafunzi kwa:\nA. kusahau maneno\nB. kuboresha msamiati\nC. kupoteza muda",
+                            "fr": "La lecture aide les apprenants à:\nA. oublier les mots\nB. améliorer le vocabulaire\nC. perdre du temps"
                         },
-                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
                     },
                     {
-                        text: { 
-                            en: 'If A > B and B > C, then:\nA. A > C\nB. A < C\nC. A = C\nD. Cannot determine', 
-                            sw: 'Kama A > B na B > C, basi:\nA. A > C\nB. A < C\nC. A = C\nD. Haiwezi kubainishwa', 
-                            fr: 'Si A > B et B > C, alors:\nA. A > C\nB. A < C\nC. A = C\nD. Ne peut pas déterminer' 
+                        "text": {
+                            "en": "Students become confident in reading by:\nA. avoiding books\nB. reading regularly\nC. memorizing words only",
+                            "sw": "Wanafunzi wanakuwa na ujasiri katika kusoma kwa:\nA. kuepuka vitabu\nB. kusoma mara kwa mara\nC. kukariri maneno tu",
+                            "fr": "Les élèves deviennent confiants en lecture en:\nA. évitant les livres\nB. lisant régulièrement\nC. mémorisant uniquement les mots"
                         },
-                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "The passage says reading is important because it helps people:\nA. sleep well\nB. think clearly\nC. travel faster",
+                            "sw": "Ujumbe unasema kusoma ni muhimu kwa sababu kunawasaidia watu:\nA. kulala vizuri\nB. kufikiri kwa uwazi\nC. kusafiri haraka",
+                            "fr": "Le passage dit que la lecture est importante car elle aide les gens à:\nA. bien dormir\nB. penser clairement\nC. voyager plus vite"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading is limited to books only.\nA. True\nB. False",
+                            "sw": "Kusoma kuna mipaka kwenye vitabu tu.\nA. Kweli\nB. Si Kweli",
+                            "fr": "La lecture se limite uniquement aux livres.\nA. Vrai\nB. Faux"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "The best title for this passage is:\nA. Books and Exams\nB. The Importance of Reading\nC. Online Learning",
+                            "sw": "Kichwa bora cha ujumbe huu ni:\nA. Vitabu na Mitihani\nB. Umuhimu wa Kusoma\nC. Kujifunza Mtandaoni",
+                            "fr": "Le meilleur titre pour ce passage est:\nA. Livres et Examens\nB. L'Importance de la Lecture\nC. Apprentissage en Ligne"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Learners can understand a text without knowing every word by:\nA. guessing from context\nB. memorizing all words\nC. skipping difficult texts",
+                            "sw": "Wanafunzi wanaweza kuelewa maandishi bila kujua kila neno kwa:\nA. kukisia kutoka kwa muktadha\nB. kukariri maneno yote\nC. kuruka maandishi magumu",
+                            "fr": "Les apprenants peuvent comprendre un texte sans connaître chaque mot en:\nA. devinant à partir du contexte\nB. mémorisant tous les mots\nC. sautant les textes difficiles"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading messages, news, and online articles helps learners:\nA. improve vocabulary\nB. waste time\nC. forget what they read",
+                            "sw": "Kusoma ujumbe, habari, na makala mtandaoni kunawasaidia wanafunzi:\nA. kuboresha msamiati\nB. kupoteza muda\nC. kusahau waliyosoma",
+                            "fr": "Lire des messages, des nouvelles et des articles en ligne aide les apprenants à:\nA. améliorer le vocabulaire\nB. perdre du temps\nC. oublier ce qu'ils ont lu"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Regular reading helps learners to:\nA. be more confident\nB. be lazy\nC. avoid thinking",
+                            "sw": "Kusoma kwa kawaida kunawasaidia wanafunzi:\nA. kuwa na ujasiri zaidi\nB. kuwa wavivu\nC. kuepuka kufikiri",
+                            "fr": "La lecture régulière aide les apprenants à:\nA. être plus confiants\nB. être paresseux\nC. éviter de penser"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Daily reading even for a short time:\nA. makes no difference\nB. helps language ability\nC. only helps in exams",
+                            "sw": "Kusoma kila siku hata kwa muda mfupi:\nA. hakuna tofauti\nB. kunasaidia uwezo wa lugha\nC. kunasaidia tu katika mitihani",
+                            "fr": "La lecture quotidienne, même pendant un court moment:\nA. ne fait aucune différence\nB. aide les capacités linguistiques\nC. n'aide que pour les examens"
+                        },
+                        "answer": {
+                            "en": "B",
+                            "sw": "B",
+                            "fr": "B"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Students who read often perform better in school because:\nA. they understand instructions better\nB. they memorize everything\nC. they sleep less",
+                            "sw": "Wanafunzi ambao husoma mara nyingi hufanya vizuri zaidi shuleni kwa sababu:\nA. huelewa maagizo vizuri zaidi\nB. wanakumbuka kila kitu\nC. hulala chini",
+                            "fr": "Les élèves qui lisent souvent réussissent mieux à l'école car:\nA. ils comprennent mieux les instructions\nB. ils mémorisent tout\nC. ils dorment moins"
+                        },
+                        "answer": {
+                            "en": "A",
+                            "sw": "A",
+                            "fr": "A"
+                        }
                     }
                 ]
             },
             {
-                number: 3,
-                text: {
-                    en: 'Essay Question (Write a short paragraph)',
-                    sw: 'Swali la Insha (Andika kifungu kifupi)',
-                    fr: 'Question de rédaction (Écrivez un court paragraphe)'
+                "number": 3,
+                "text": {
+                    "en": "SECTION C: ONE WORD ANSWER - Fill in the blank with ONE word only (5 questions - 10 marks)",
+                    "sw": "SEHEMU C: JIBU LA NENO MOJA - Jaza nafasi na neno MOJA tu (Maswali 5 - Alama 10)",
+                    "fr": "SECTION C: RÉPONSE EN UN MOT - Remplissez le vide avec UN mot seulement (5 questions - 10 points)"
                 },
-                subQuestions: [
+                "subQuestions": [
                     {
-                        text: { 
-                            en: 'Explain why education is important for personal development.', 
-                            sw: 'Eleza kwa nini elimu ni muhimu kwa maendeleo ya kibinafsi.', 
-                            fr: 'Expliquez pourquoi l\'éducation est importante pour le développement personnel.' 
+                        "text": {
+                            "en": "Another word for 'benefit' is ______.",
+                            "sw": "Neno lingine la 'faida' ni ______.",
+                            "fr": "Un autre mot pour 'bénéfice' est ______."
                         },
-                        answer: { en: '[Student should write a paragraph explaining the importance of education]', sw: '[Mwanafunzi aandike kifungu akielezea umuhimu wa elimu]', fr: '[L\'étudiant doit écrire un paragraphe expliquant l\'importance de l\'éducation]' }
+                        "answer": {
+                            "en": "advantage",
+                            "sw": "faida",
+                            "fr": "avantage"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Another word for 'understand' is ______.",
+                            "sw": "Neno lingine la 'kuelewa' ni ______.",
+                            "fr": "Un autre mot pour 'comprendre' est ______."
+                        },
+                        "answer": {
+                            "en": "comprehend",
+                            "sw": "elewa",
+                            "fr": "comprendre"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Another word for 'afraid or unsure' is ______.",
+                            "sw": "Neno lingine la 'hofu au kutokuwa na uhakika' ni ______.",
+                            "fr": "Un autre mot pour 'peur ou incertain' est ______."
+                        },
+                        "answer": {
+                            "en": "insecure",
+                            "sw": "wasiwasi",
+                            "fr": "insecure"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Another word for 'limited' is ______.",
+                            "sw": "Neno lingine la 'mdogo' ni ______.",
+                            "fr": "Un autre mot pour 'limité' est ______."
+                        },
+                        "answer": {
+                            "en": "restricted",
+                            "sw": "mepesi",
+                            "fr": "restreint"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Another word for 'learner' is ______.",
+                            "sw": "Neno lingine la 'mwanafunzi' ni ______.",
+                            "fr": "Un autre mot pour 'apprenant' est ______."
+                        },
+                        "answer": {
+                            "en": "student",
+                            "sw": "mwanafunzi",
+                            "fr": "étudiant"
+                        }
+                    }
+                ]
+            },
+            {
+                "number": 4,
+                "text": {
+                    "en": "SECTION D: MATCHING - Match Column A with Column B (5 questions - 10 marks)",
+                    "sw": "SEHEMU D: KULINGANISHA - Linganisha Safu A na Safu B (Maswali 5 - Alama 10)",
+                    "fr": "SECTION D: ASSOCIATION - Assortissez la Colonne A avec la Colonne B (5 questions - 10 points)"
+                },
+                "subQuestions": [
+                    {
+                        "text": {
+                            "en": "Reading improves vocabulary → __________",
+                            "sw": "Kusoma kunaboresha msamiati → __________",
+                            "fr": "La lecture améliore le vocabulaire → __________"
+                        },
+                        "answer": {
+                            "en": "Skill",
+                            "sw": "Ujuzi",
+                            "fr": "Compétence"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Guessing meaning from context → __________",
+                            "sw": "Kukisia maana kutoka kwa muktadha → __________",
+                            "fr": "Devinette de sens à partir du contexte → __________"
+                        },
+                        "answer": {
+                            "en": "Strategy",
+                            "sw": "Mkakati",
+                            "fr": "Stratégie"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Emails and news → __________",
+                            "sw": "Barua pepe na habari → __________",
+                            "fr": "E-mails et nouvelles → __________"
+                        },
+                        "answer": {
+                            "en": "Materials",
+                            "sw": "Vifaa",
+                            "fr": "Matériaux"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Reading daily → __________",
+                            "sw": "Kusoma kila siku → __________",
+                            "fr": "Lecture quotidienne → __________"
+                        },
+                        "answer": {
+                            "en": "Habit",
+                            "sw": "Tabia",
+                            "fr": "Habitude"
+                        }
+                    },
+                    {
+                        "text": {
+                            "en": "Learners → __________",
+                            "sw": "Wanafunzi → __________",
+                            "fr": "Apprenants → __________"
+                        },
+                        "answer": {
+                            "en": "People",
+                            "sw": "Watu",
+                            "fr": "Personnes"
+                        }
                     }
                 ]
             }
         ],
-        instructions: {
-            en: 'EXPERT LEVEL TEST INSTRUCTIONS\n• Answer all questions thoroughly.\n• Essay questions require complete paragraphs.\n• Time: 90 minutes\n• Passing score: 80%',
-            sw: 'MAELEKEZO YA MTIHANI WA KIWANGO CHA MTAALAMU\n• Jibu maswali yote kwa kina.\n• Maswali ya insha yanahitaji vifungu kamili.\n• Muda: dakika 90\n• Alama ya kupita: 80%',
-            fr: 'INSTRUCTIONS DU TEST EXPERT\n• Répondez à toutes les questions de manière approfondie.\n• Les questions de rédaction nécessitent des paragraphes complets.\n• Temps: 90 minutes\n• Score de passage: 80%'
+        "instructions": {
+            "en": "CHARLES ACADEMY – ENGLISH TEST 3 (READING SKILLS)\n\nINSTRUCTIONS\n• Read the passage carefully.\n• Answer ALL questions.\n• Use ONE word only where required.\n• Circle the correct answer for multiple-choice questions.\n• No long paragraph writing.\n• Time: 60 minutes\n• Total Marks: 100\n• Passing score: 60%",
+            "sw": "CHARLES ACADEMY – MTIHANI WA KIINGEREZA WA TATU (UJUMBE WA KUSOMA)\n\nMAELEKEZO\n• Soma ujumbe kwa makini.\n• Jibu maswali YOTE.\n• Tumia neno MOJA tu inapohitajika.\n• Zungusha jibu sahihi kwa maswali ya chaguo nyingi.\n• Hakuna uandishi wa aya ndefu.\n• Muda: dakika 60\n• Jumla ya Alama: 100\n• Alama ya kupita: 60%",
+            "fr": "CHARLES ACADEMY – TEST D'ANGLAIS NUMÉRO 3 (COMPÉTENCES DE LECTURE)\n\nINSTRUCTIONS\n• Lisez le passage attentivement.\n• Répondez à TOUTES les questions.\n• Utilisez UN mot seulement là où c'est requis.\n• Encerclez la bonne réponse pour les questions à choix multiples.\n• Pas de rédaction de paragraphe long.\n• Temps: 60 minutes\n• Total des points: 100\n• Score de passage: 60%"
+        },
+        "markingGuide": {
+            "en": {
+                "sectionA": [
+                    "TRUE", "FALSE", "TRUE", "TRUE", "FALSE",
+                    "TRUE", "FALSE", "TRUE", "FALSE", "TRUE"
+                ],
+                "sectionB": [
+                    "B", "B", "B", "B", "B",
+                    "A", "A", "A", "B", "A"
+                ],
+                "sectionC": [
+                    "advantage", "comprehend", "insecure", "restricted", "student"
+                ],
+                "sectionD": [
+                    "Skill", "Strategy", "Materials", "Habit", "People"
+                ]
+            },
+            "sw": {
+                "sectionA": [
+                    "KWELI", "SI KWELI", "KWELI", "KWELI", "SI KWELI",
+                    "KWELI", "SI KWELI", "KWELI", "SI KWELI", "KWELI"
+                ],
+                "sectionB": [
+                    "B", "B", "B", "B", "B",
+                    "A", "A", "A", "B", "A"
+                ],
+                "sectionC": [
+                    "faida", "elewa", "wasiwasi", "mepesi", "mwanafunzi"
+                ],
+                "sectionD": [
+                    "Ujuzi", "Mkakati", "Vifaa", "Tabia", "Watu"
+                ]
+            },
+            "fr": {
+                "sectionA": [
+                    "VRAI", "FAUX", "VRAI", "VRAI", "FAUX",
+                    "VRAI", "FAUX", "VRAI", "FAUX", "VRAI"
+                ],
+                "sectionB": [
+                    "B", "B", "B", "B", "B",
+                    "A", "A", "A", "B", "A"
+                ],
+                "sectionC": [
+                    "avantage", "comprendre", "insecure", "restreint", "étudiant"
+                ],
+                "sectionD": [
+                    "Compétence", "Stratégie", "Matériaux", "Habitude", "Personnes"
+                ]
+            }
         }
-    },
-
+    }
+,
     // ==================== TEST 5: ENGLISH TEST ONE ====================
     '5': {
         id: 'english_test_one',

@@ -32,8 +32,8 @@ class TestHandler {
                 `Select a test level by typing:\n\n` +
                 `🧠 TEST 1 - English Test one\n` +
                 `📘 TEST 2 - English Test two\n` +
-                `🎓 TEST 3 - Advanced Level\n` +
-                `🏆 TEST 4 - Expert Level\n\n` +
+                `🎓 TEST 3 - ENGLISH TEST 3 (CONJUNCTIONS)\n` +
+                `🏆 TEST 4 - ENGLISH TEST 4 (READING SKILLS)\n\n` +
                 `*Type the test number in CAPITAL LETTERS*\n` +
                 `Example: Type "TEST 1" for Beginner test`,
                 
@@ -41,8 +41,8 @@ class TestHandler {
                 `Chagua kiwango cha mtihani kwa kuandika:\n\n` +
                 `🧠 TEST 1 - Kiwango cha Mwanzo\n` +
                 `📘 TEST 2 - Kiwango cha Kati\n` +
-                `🎓 TEST 3 - Kiwango cha Juu\n` +
-                `🏆 TEST 4 - Kiwango cha Mtaalamu\n\n` +
+                `🎓 TEST 3 - MTIHANI WA KIINGEREZA WA TATU (VIUNGANISHI)\n` +
+                `🏆 TEST 4 - MTIHANI WA KIINGEREZA WA FOUR (UJUMBE WA KUSOMA)\n\n` +
                 `*Andika nambari ya mtihani kwa HERUFI KUBWA*\n` +
                 `Mfano: Andika "TEST 1" kwa mtihani wa mwanzo`,
                 
@@ -50,8 +50,8 @@ class TestHandler {
                 `Sélectionnez un niveau de test en tapant:\n\n` +
                 `🧠 TEST 1 - Niveau Débutant\n` +
                 `📘 TEST 2 - Deuxième Contrôle d’Anglais\n` +
-                `🎓 TEST 3 - Niveau Avancé\n` +
-                `🏆 TEST 4 - Niveau Expert\n\n` +
+                `🎓 TEST 3 - TEST D'ANGLAIS NUMÉRO 3 (CONJONCTIONS)\n` +
+                `🏆 TEST 4 - TEST D'ANGLAIS NUMÉRO 4 (COMPÉTENCES DE LECTURE)\n\n` +
                 `*Tapez le numéro du test en MAJUSCULES*\n` +
                 `Exemple: Tapez "TEST 1" pour le test débutant`
         };
@@ -102,7 +102,7 @@ class TestHandler {
             'TEST 4': '4',
             'TEST BEGINNER': '1',
             'ENGLISH TEST TWO': '2',
-            'TEST ADVANCED': '3',
+            'ENGLISH TEST 3': '3',
             'TEST EXPERT': '4'
         };
         
@@ -124,7 +124,7 @@ class TestHandler {
             'TEST 4': '4',
             'TEST BEGINNER': '1',
             'ENGLISH TEST TWO': '2',
-            'TEST ADVANCED': '3',
+            'ENGLISH TEST 3': '3',
             'TEST EXPERT': '4'
         };
         
