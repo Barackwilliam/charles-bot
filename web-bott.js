@@ -1,4 +1,4 @@
-// web-bot.js - Charles Academy Web Bot (Fixed Version)
+// web-bot.js - Charles Academy Web Bot (Enhanced Version with Test Handler)
 // ==================== LOAD ENVIRONMENT VARIABLES ====================
 require('dotenv').config();
 
@@ -25,6 +25,8 @@ const learningDb = require('./learningDb');
 const examHandler = require('./examHandler');
 const learningSession = require('./learningSession');
 const learningCommands = require('./learningCommands');
+const testHandler = require('./testHandler');
+const testsData = require('./testsData');
 
 // ==================== WEB BOT CORE ====================
 class WebBot {
@@ -49,10 +51,11 @@ class WebBot {
             res.status(200).json({ 
                 status: 'healthy', 
                 bot: 'Charles Academy Web Bot',
-                version: '2.6.0',
+                version: '2.6.1',
                 timestamp: new Date().toISOString(),
                 features: 'Full WhatsApp Bot functionality without WhatsApp',
-                database: 'Connected (Same as WhatsApp bot)'
+                database: 'Connected (Same as WhatsApp bot)',
+                modules: ['registration', 'learning', 'exam', 'test', 'exercises']
             });
         });
         
@@ -65,7 +68,9 @@ class WebBot {
                 owner: '+255750910158',
                 database: 'Connected (Supabase)',
                 status: 'operational',
-                users: this.webUsers.size
+                users: this.webUsers.size,
+                activeTests: testHandler.testSessions.size,
+                activeExams: examHandler.examSessions ? examHandler.examSessions.size : 0
             });
         });
         
@@ -127,7 +132,9 @@ class WebBot {
                         registered: isRegistered,
                         studentData: data || null,
                         language: user.language || 'en',
-                        lastActive: user.lastActive
+                        lastActive: user.lastActive,
+                        activeTest: testHandler.getActiveTestInfo(jid),
+                        activeExam: examHandler.hasActiveExam ? examHandler.hasActiveExam(jid) : false
                     });
                 } else {
                     res.json({
@@ -159,8 +166,21 @@ class WebBot {
                         this.webUsers.delete(jid);
                     }
                     
-                    examHandler.cancelExam(jid);
-                    learningSession.clearSession(jid);
+                    if (examHandler.cancelExam) {
+                        examHandler.cancelExam(jid);
+                    }
+                    
+                    if (learningSession.clearSession) {
+                        learningSession.clearSession(jid);
+                    }
+                    
+                    if (testHandler.cancelTest) {
+                        testHandler.cancelTest(jid);
+                    }
+                    
+                    if (testHandler.clearUserState) {
+                        testHandler.clearUserState(jid);
+                    }
                     
                     // Clear registration state
                     if (studentRegistration.registrationState) {
@@ -203,6 +223,40 @@ class WebBot {
             }
         });
         
+        // API: Get available tests
+        app.get('/api/tests', (req, res) => {
+            try {
+                const language = req.query.lang || 'en';
+                const tests = [];
+                
+                Object.keys(testsData).forEach(key => {
+                    const test = testsData[key];
+                    tests.push({
+                        id: key,
+                        title: test.title[language] || test.title.en,
+                        time: test.time,
+                        totalMarks: test.totalMarks,
+                        level: key === '1' ? 'Beginner' : 
+                               key === '2' ? 'Intermediate' : 
+                               key === '3' ? 'Advanced' : 'Expert',
+                        questions: test.questions.length
+                    });
+                });
+                
+                res.json({
+                    success: true,
+                    tests: tests
+                });
+                
+            } catch (error) {
+                console.error('Tests API error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
         // Start Express server
         this.startServer();
     }
@@ -210,17 +264,19 @@ class WebBot {
     startServer() {
         app.listen(PORT, () => {
             console.log('='.repeat(60));
-            console.log('🌐 CHARLES ACADEMY WEB BOT');
+            console.log('🌐 CHARLES ACADEMY WEB BOT (ENHANCED)');
             console.log('='.repeat(60));
             console.log(`📱 URL: http://localhost:${PORT}`);
             console.log(`🔗 API: http://localhost:${PORT}/api/send`);
             console.log(`🏥 Health: http://localhost:${PORT}/health`);
             console.log(`ℹ️ Info: http://localhost:${PORT}/info`);
+            console.log(`🧪 Tests: http://localhost:${PORT}/api/tests`);
             console.log('='.repeat(60));
             console.log(`🎯 Features: Full WhatsApp Bot functionality`);
             console.log(`📊 Database: Same database as WhatsApp bot`);
             console.log(`👥 Users: Web users stored with prefix "web_"`);
-            console.log(`🔄 Real-time: Same exam system, same registration`);
+            console.log(`📝 Tests: 4 levels (Beginner to Expert)`);
+            console.log(`🎓 Exams: Full exam system`);
             console.log('='.repeat(60));
             console.log('\n🚀 Web Bot is ready! Users can access directly via browser.');
             console.log('🔑 No WhatsApp scanning required!');
@@ -228,14 +284,8 @@ class WebBot {
         });
     }
     
-
-
-
-
-
-    
     // ============================================
-    // CORE MESSAGE HANDLER - SAME LOGIC AS WHATSAPP
+    // CORE MESSAGE HANDLER - WITH TEST HANDLER INTEGRATION
     // ============================================
     async handleWebMessage(sessionId, text) {
         // Generate or use session ID
@@ -255,7 +305,7 @@ class WebBot {
         user.lastActive = new Date().toISOString();
         
         // ======================================
-        // STEP 1: CHECK REGISTRATION (SAME LOGIC)
+        // STEP 1: CHECK REGISTRATION
         // ======================================
         if (studentRegistration.isRegistering(jid)) {
             console.log(`📝 Web user ${userId} is registering`);
@@ -322,7 +372,7 @@ class WebBot {
         const upperText = text.toUpperCase().trim();
         
         // ======================================
-        // LANGUAGE SELECTION (SAME)
+        // LANGUAGE SELECTION
         // ======================================
         if (upperText === 'ENGLISH') {
             user.language = 'en';
@@ -361,9 +411,23 @@ class WebBot {
         }
         
         // ======================================
-        // CHECK FOR ACTIVE EXAM (SAME)
+        // CHECK FOR ACTIVE TEST (NEW!)
         // ======================================
-        if (examHandler.hasActiveExam(jid)) {
+        if (testHandler.hasActiveTest(jid)) {
+            console.log(`🧪 User ${userId} has active test`);
+            const response = await this.handleTestResponse(jid, text, user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // CHECK FOR ACTIVE EXAM
+        // ======================================
+        if (examHandler.hasActiveExam && examHandler.hasActiveExam(jid)) {
             console.log(`📝 User ${userId} has active exam`);
             const response = await this.handleExamResponse(jid, text, user.language);
             this.saveToHistory(jid, text, response);
@@ -375,7 +439,7 @@ class WebBot {
         }
         
         // ======================================
-        // MAIN KEYWORDS (SAME)
+        // MAIN KEYWORDS
         // ======================================
         if (upperText === 'MENU') {
             const response = this.getMenuText(user.language);
@@ -456,10 +520,72 @@ class WebBot {
         }
         
         // ======================================
-        // HANDLE EXAM RESPONSES (SAME)
+        // TEST COMMAND (NEW!)
         // ======================================
-        if (examHandler.hasActiveExam(jid) || 
-            (examHandler.userStates.has(jid) && examHandler.userStates.get(jid).step !== 'idle')) {
+        if (upperText === 'TEST') {
+            console.log(`🧪 Starting test system for ${userId}`);
+            testHandler.initUserState(jid);
+            const userState = testHandler.userStates.get(jid);
+            userState.step = 'selecting_test';
+            userState.language = user.language;
+            
+            const response = testHandler.getTestMenu(user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // Handle direct test commands
+        const testMap = {
+            'TEST 1': '1',
+            'TEST 2': '2', 
+            'TEST 3': '3',
+            'TEST 4': '4',
+            'TEST BEGINNER': '1',
+            'TEST INTERMEDIATE': '2',
+            'TEST ADVANCED': '3',
+            'TEST EXPERT': '4'
+        };
+        
+        if (testMap[upperText]) {
+            console.log(`🧪 Direct test command: ${upperText} for ${userId}`);
+            testHandler.initUserState(jid);
+            const userState = testHandler.userStates.get(jid);
+            userState.selectedTest = testMap[upperText];
+            userState.language = user.language;
+            
+            const response = await this.handleTestSelection(jid, testMap[upperText], user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // HANDLE TEST RESPONSES (NEW!)
+        // ======================================
+        if (testHandler.hasActiveTest(jid) || 
+            (testHandler.userStates.has(jid) && testHandler.userStates.get(jid).step !== 'idle')) {
+            
+            const response = await this.handleTestResponse(jid, text, user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // HANDLE EXAM RESPONSES
+        // ======================================
+        if ((examHandler.hasActiveExam && examHandler.hasActiveExam(jid)) || 
+            (examHandler.userStates && examHandler.userStates.has(jid) && examHandler.userStates.get(jid).step !== 'idle')) {
             
             const response = await this.handleExamResponse(jid, text, user.language);
             this.saveToHistory(jid, text, response);
@@ -471,18 +597,8 @@ class WebBot {
         }
         
         // ======================================
-        // OLD COMMANDS (SAME - FOR COMPATIBILITY)
+        // OLD COMMANDS (FOR COMPATIBILITY)
         // ======================================
-        if (upperText === 'TEST') {
-            const response = this.getTestText(user.language);
-            this.saveToHistory(jid, text, response);
-            return {
-                userId: userId,
-                message: response,
-                userStatus: 'registered'
-            };
-        }
-        
         if (upperText === 'EXERCISE') {
             const response = this.getExerciseText(user.language);
             this.saveToHistory(jid, text, response);
@@ -534,49 +650,8 @@ class WebBot {
             };
         }
         
-        // Test levels
-        if (upperText === 'TEST 1' || upperText === 'TEST BEGINNER') {
-            const response = await this.startTest(jid, '1', user.language);
-            this.saveToHistory(jid, text, response);
-            return {
-                userId: userId,
-                message: response,
-                userStatus: 'registered'
-            };
-        }
-        
-        if (upperText === 'TEST 2' || upperText === 'TEST INTERMEDIATE') {
-            const response = await this.startTest(jid, '2', user.language);
-            this.saveToHistory(jid, text, response);
-            return {
-                userId: userId,
-                message: response,
-                userStatus: 'registered'
-            };
-        }
-        
-        if (upperText === 'TEST 3' || upperText === 'TEST ADVANCED') {
-            const response = await this.startTest(jid, '3', user.language);
-            this.saveToHistory(jid, text, response);
-            return {
-                userId: userId,
-                message: response,
-                userStatus: 'registered'
-            };
-        }
-        
-        if (upperText === 'TEST 4' || upperText === 'TEST EXPERT') {
-            const response = await this.startTest(jid, '4', user.language);
-            this.saveToHistory(jid, text, response);
-            return {
-                userId: userId,
-                message: response,
-                userStatus: 'registered'
-            };
-        }
-        
         // ======================================
-        // READY COMMAND (SAME)
+        // READY COMMAND
         // ======================================
         if (upperText === 'READY') {
             const session = learningSession.getSession(jid);
@@ -595,11 +670,14 @@ class WebBot {
         }
         
         // ======================================
-        // CANCEL COMMAND (SAME)
+        // CANCEL COMMAND
         // ======================================
         if (upperText === 'CANCEL' || upperText === 'STOP') {
             learningSession.clearSession(jid);
-            examHandler.cancelExam(jid);
+            if (examHandler.cancelExam) examHandler.cancelExam(jid);
+            if (testHandler.cancelTest) testHandler.cancelTest(jid);
+            if (testHandler.clearUserState) testHandler.clearUserState(jid);
+            
             const response = this.getCancelText(user.language);
             this.saveToHistory(jid, text, response);
             return {
@@ -610,7 +688,7 @@ class WebBot {
         }
         
         // ======================================
-        // GREETINGS (SAME)
+        // GREETINGS
         // ======================================
         if (text.toLowerCase().match(/^(hi|hello|hey|hujambo|bonjour|salut|mambo)/)) {
             const response = this.getWelcomeText(user.language);
@@ -623,7 +701,7 @@ class WebBot {
         }
         
         // ======================================
-        // LANGUAGE SELECTION REQUEST (SAME)
+        // LANGUAGE SELECTION REQUEST
         // ======================================
         if (text.toLowerCase().match(/^(language|lugha|langue|change language)/)) {
             const response = this.getLanguageSelectionText(user.language);
@@ -636,7 +714,7 @@ class WebBot {
         }
         
         // ======================================
-        // HANDLE OLD SESSION RESPONSES (SAME)
+        // HANDLE OLD SESSION RESPONSES
         // ======================================
         const session = learningSession.getSession(jid);
         if (session.currentActivity && text.length > 0) {
@@ -650,7 +728,7 @@ class WebBot {
         }
         
         // ======================================
-        // DEFAULT RESPONSE (SAME)
+        // DEFAULT RESPONSE
         // ======================================
         if (text.length > 2) {
             const response = this.getDefaultResponseText(user.language);
@@ -673,7 +751,125 @@ class WebBot {
     }
     
     // ============================================
-    // EXAM HANDLING (SAME LOGIC AS WHATSAPP)
+    // TEST HANDLING (NEW!)
+    // ============================================
+    async handleTestResponse(jid, text, language) {
+        const upperText = text.toUpperCase().trim();
+        
+        // Handle CANCEL
+        if (upperText === 'CANCEL' || upperText === 'STOP') {
+            testHandler.cancelTest(jid);
+            testHandler.clearUserState(jid);
+            return this.getCancelText(language);
+        }
+        
+        // Handle through testHandler
+        const result = testHandler.handleUserInput(jid, text, language);
+        
+        if (!result || !result.type) {
+            return this.getErrorText(language);
+        }
+        
+        switch (result.type) {
+            case 'show_menu':
+            case 'test_cancelled':
+            case 'invalid_choice':
+            case 'error':
+                return result.data;
+                
+            case 'test_started':
+                return result.data;
+                
+            case 'test_response':
+                const answerResult = testHandler.submitAnswer(jid, text);
+                
+                if (answerResult.error) {
+                    return this.getErrorText(language);
+                }
+                
+                if (answerResult.isComplete) {
+                    // Test completed
+                    const testResults = testHandler.getTestResults(jid);
+                    const resultText = testHandler.getTestResultText(testResults, language);
+                    
+                    // Save results to database if available
+                    if (testResults && studentRegistration.saveExamResult) {
+                        const testData = {
+                            title: testResults.title,
+                            course: 'General Test',
+                            examId: testResults.testId,
+                            score: testResults.score,
+                            totalQuestions: testResults.totalQuestions,
+                            correctAnswers: testResults.correctAnswers,
+                            timeTaken: testResults.timeTaken,
+                            startTime: Date.now() - (testResults.timeTaken * 60000),
+                            language: language,
+                            level: testResults.level
+                        };
+                        
+                        await studentRegistration.saveExamResult(jid, testData);
+                        console.log(`💾 Test results saved for ${jid}`);
+                    }
+                    
+                    testHandler.cancelTest(jid);
+                    testHandler.clearUserState(jid);
+                    return resultText;
+                    
+                } else if (answerResult.nextQuestion) {
+                    const question = testHandler.getCurrentQuestion(jid);
+                    if (question) {
+                        return testHandler.formatTestQuestion(question, language);
+                    }
+                }
+                break;
+                
+            case 'invalid':
+            default:
+                return this.getErrorText(language);
+        }
+        
+        return this.getErrorText(language);
+    }
+    
+    async handleTestSelection(jid, testId, language) {
+        const test = testsData[testId];
+        
+        if (!test) {
+            return this.getErrorText(language);
+        }
+        
+        // Start the test
+        const testSession = testHandler.startTest(jid, testId, language);
+        
+        if (testSession.error) {
+            return this.getErrorText(language);
+        }
+        
+        // Clear user state
+        testHandler.clearUserState(jid);
+        
+        // Get test instructions and first question
+        const instructions = testHandler.getTestInstructions(jid);
+        const question = testHandler.getCurrentQuestion(jid);
+        
+        let startText = `📝 *${testSession.testSession.title}*\n\n`;
+        startText += `⏰ Time: ${testSession.testSession.time}\n`;
+        startText += `📊 Total Marks: ${testSession.testSession.totalMarks}\n`;
+        startText += `📋 Level: ${testHandler.getLevelName(testId, language)}\n\n`;
+        startText += `*Instructions:*\n${instructions}\n\n`;
+        
+        if (question) {
+            startText += `*First Question:*\n\n`;
+            startText += testHandler.formatTestQuestion(question, language);
+        }
+        
+        startText += `\n\nType your answer or CANCEL to stop.`;
+        
+        return startText;
+    }
+    
+    // ============================================
+    // EXAM HANDLING
     // ============================================
     async handleExamResponse(jid, text, language) {
         const upperText = text.toUpperCase().trim();
@@ -712,7 +908,7 @@ class WebBot {
                     const resultText = examHandler.getExamResultText(examResults, language);
                     
                     // Save results to database
-                    if (examResults) {
+                    if (examResults && studentRegistration.saveExamResult) {
                         const examData = {
                             title: examResults.title,
                             course: examResults.course,
@@ -745,7 +941,7 @@ class WebBot {
     }
     
     // ============================================
-    // OLD FUNCTIONS (SAME AS WHATSAPP)
+    // OLD FUNCTIONS
     // ============================================
     async startExercise(jid, courseId, language) {
         try {
@@ -758,21 +954,6 @@ class WebBot {
             }
         } catch (error) {
             console.error('Exercise error:', error);
-            return this.getErrorText(language);
-        }
-    }
-    
-    async startTest(jid, testLevel, language) {
-        try {
-            const test = await learningCommands.getTest(testLevel, language);
-            if (test) {
-                learningSession.startSession(jid, 'test', test);
-                return this.getTestStartText(language, test.name, test.questions.length);
-            } else {
-                return this.getErrorText(language);
-            }
-        } catch (error) {
-            console.error('Test error:', error);
             return this.getErrorText(language);
         }
     }
@@ -874,7 +1055,7 @@ class WebBot {
     }
     
     // ============================================
-    // TEXT FUNCTIONS (SAME AS WHATSAPP BOT)
+    // TEXT FUNCTIONS
     // ============================================
     getWelcomeText(language) {
         const texts = {
@@ -933,38 +1114,44 @@ class WebBot {
             'en': `🎓 *Charles Academy - Main Menu*\n\n` +
                   `Available options:\n\n` +
                   `📚 LEARN - Start learning\n` +
-                  `🎓 EXAM - Take an exam (NEW!)\n` +
+                  `🎓 EXAM - Take an exam\n` +
+                  `🧪 TEST - Take a test (NEW!)\n` +
                   `🧪 EXERCISE - Practice exercises\n` +
-                  `📝 TEST - Take a test\n` +
                   `🌍 LANGUAGE - Change language\n` +
+                  `📊 PROGRESS - Your progress\n` +
+                  `📚 COURSES - Available courses\n` +
                   `❓ HELP - Show all commands\n` +
                   `🆘 SUPPORT - Help & Support\n\n` +
                   `*Type the word in CAPITAL LETTERS*\n` +
-                  `Example: Type "EXAM" for new exam system`,
+                  `Example: Type "TEST" for test system`,
             
             'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
                   `Chaguo zilizopo:\n\n` +
                   `📚 JIFUNZE - Anza kujifunza\n` +
-                  `🎓 MTIHANI - Fanya mtihani (MPYA!)\n` +
+                  `🎓 MTIHANI - Fanya mtihani\n` +
+                  `🧪 TEST - Fanya mtihani (MPYA!)\n` +
                   `🧪 MAZOEZI - Fanya mazoezi\n` +
-                  `📝 TEST - Fanya mtihani\n` +
                   `🌍 LUGHA - Badilisha lugha\n` +
+                  `📊 MAENDELEO - Maendeleo yako\n` +
+                  `📚 KOZI - Kozi zilizopo\n` +
                   `❓ USAIDIZI - Onyesha amri zote\n` +
                   `🆘 MSADA - Usaidizi na msaada\n\n` +
                   `*Andika neno kwa HERUFI KUBWA*\n` +
-                  `Mfano: Andika "MTIHANI" kwa mfumo mpya wa mitihani`,
+                  `Mfano: Andika "TEST" kwa mfumo wa mitihani`,
             
             'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
                   `Options disponibles:\n\n` +
                   `📚 APPRENDRE - Commencer à apprendre\n` +
-                  `🎓 EXAMEN - Passer un examen (NOUVEAU!)\n` +
+                  `🎓 EXAMEN - Passer un examen\n` +
+                  `🧪 TEST - Passer un test (NOUVEAU!)\n` +
                   `🧪 EXERCICE - Faire des exercices\n` +
-                  `📝 TEST - Passer un test\n` +
                   `🌍 LANGUE - Changer de langue\n` +
+                  `📊 PROGRÈS - Votre progression\n` +
+                  `📚 COURS - Cours disponibles\n` +
                   `❓ AIDE - Afficher toutes les commandes\n` +
                   `🆘 SUPPORT - Aide et support\n\n` +
                   `*Tapez le mot en MAJUSCULES*\n` +
-                  `Exemple: Tapez "EXAMEN" pour le nouveau système d'examen`
+                  `Exemple: Tapez "TEST" pour le système de test`
         };
         return texts[language] || texts['en'];
     }
@@ -981,13 +1168,15 @@ class WebBot {
                   `🔹 SUPPORT - Contact support\n` +
                   `🔹 COURSES - Available courses\n` +
                   `🔹 LEARN - Start learning\n` +
-                  `🔹 EXAM - NEW! Advanced exam system\n` +
+                  `🔹 EXAM - Advanced exam system\n` +
+                  `🔹 TEST - NEW! Test system (4 levels)\n` +
                   `🔹 EXERCISE - Practice exercises\n` +
-                  `🔹 TEST - Take a test\n\n` +
-                  `*EXAM SYSTEM FEATURES:*\n` +
-                  `• 4 Courses: English, Kiswahili, Graphics, Website\n` +
-                  `• Multiple exams per course\n` +
+                  `🔹 PROGRESS - Your learning progress\n\n` +
+                  `*TEST SYSTEM FEATURES:*\n` +
+                  `• 4 Levels: Beginner to Expert\n` +
+                  `• Multiple question types\n` +
                   `• Automatic scoring\n` +
+                  `• Progress tracking\n\n` +
                   `*Just type the word in CAPITAL LETTERS*`,
             
             'sw': `📚 *Charles Academy - USAIDIZI*\n\n` +
@@ -1000,12 +1189,13 @@ class WebBot {
                   `🔹 SUPPORT - Wasiliana na usaidizi\n` +
                   `🔹 COURSES - Kozi zilizopo\n` +
                   `🔹 LEARN - Anza kujifunza\n` +
-                  `🔹 EXAM - MPYA! Mfumo wa hali ya juu wa mitihani\n` +
+                  `🔹 EXAM - Mfumo wa hali ya juu wa mitihani\n` +
+                  `🔹 TEST - MPYA! Mfumo wa mitihani (viwango 4)\n` +
                   `🔹 EXERCISE - Fanya mazoezi\n` +
-                  `🔹 TEST - Fanya mtihani\n\n` +
+                  `🔹 PROGRESS - Maendeleo yako ya kujifunza\n\n` +
                   `*VIPENGELE VYA MFUMO WA MTIHANI:*\n` +
-                  `• Kozi 4: Kiingereza, Kiswahili, Michoro, Tovuti\n` +
-                  `• Mitihani mingi kwa kila kozi\n` +
+                  `• Viwango 4: Mwanzo hadi Mtaalamu\n` +
+                  `• Aina mbalimbali za maswali\n` +
                   `• Upimaji wa kiotomatiki\n` +
                   `• Ufuatiliaji wa maendeleo\n\n` +
                   `*Andika tu neno kwa HERUFI KUBWA*`,
@@ -1020,19 +1210,19 @@ class WebBot {
                   `🔹 SUPPORT - Contacter le support\n` +
                   `🔹 COURSES - Cours disponibles\n` +
                   `🔹 LEARN - Commencer à apprendre\n` +
-                  `🔹 EXAM - NOUVEAU ! Système d'examen avancé\n` +
+                  `🔹 EXAM - Système d'examen avancé\n` +
+                  `🔹 TEST - NOUVEAU ! Système de test (4 niveaux)\n` +
                   `🔹 EXERCISE - Faire des exercices\n` +
-                  `🔹 TEST - Passer un test\n\n` +
-                  `*FONCTIONNALITÉS DU SYSTÈME D'EXAMEN:*\n` +
-                  `• 4 Cours: Anglais, Kiswahili, Graphisme, Site Web\n` +
-                  `• Plusieurs examens par cours\n` +
+                  `🔹 PROGRESS - Votre progression d'apprentissage\n\n` +
+                  `*FONCTIONNALITÉS DU SYSTÈME DE TEST:*\n` +
+                  `• 4 Niveaux: Débutant à Expert\n` +
+                  `• Plusieurs types de questions\n` +
                   `• Notation automatique\n` +
                   `• Suivi des progrès\n\n` +
                   `*Tapez simplement le mot en MAJUSCULES*`
         };
         return texts[language] || texts['en'];
     }
-
     
     getSupportText(language) {
         const texts = {
@@ -1127,70 +1317,6 @@ class WebBot {
         return texts[language] || texts['en'];
     }
     
-    getTestText(language) {
-        const texts = {
-            'en': `📝 *TAKE A TEST*\n\n` +
-                  `Select test level:\n\n` +
-                  `TEST 1 / TEST BEGINNER\n` +
-                  `TEST 2 / TEST INTERMEDIATE\n` +
-                  `TEST 3 / TEST ADVANCED\n` +
-                  `TEST 4 / TEST EXPERT\n\n` +
-                  `*Type the test name in CAPITAL LETTERS*\n` +
-                  `Example: Type "TEST 1" for Beginner test`,
-            
-            'sw': `📝 *FANYA MTIHANI*\n\n` +
-                  `Chagua kiwango cha mtihani:\n\n` +
-                  `TEST 1 / TEST BEGINNER\n` +
-                  `TEST 2 / TEST INTERMEDIATE\n` +
-                  `TEST 3 / TEST ADVANCED\n` +
-                  `TEST 4 / TEST EXPERT\n\n` +
-                  `*Andika jina la mtihani kwa HERUFI KUBWA*\n` +
-                  `Mfano: Andika "TEST 1" kwa mtihani wa mwanzo`,
-            
-            'fr': `📝 *PASSER UN TEST*\n\n` +
-                  `Sélectionnez le niveau du test:\n\n` +
-                  `TEST 1 / TEST BEGINNER\n` +
-                  `TEST 2 / TEST INTERMEDIATE\n` +
-                  `TEST 3 / TEST ADVANCED\n` +
-                  `TEST 4 / TEST EXPERT\n\n` +
-                  `*Tapez le nom du test en MAJUSCULES*\n` +
-                  `Exemple: Tapez "TEST 1" pour le test débutant`
-        };
-        return texts[language] || texts['en'];
-    }
-    
-    getTestStartText(language, testName, questionCount) {
-        const texts = {
-            'en': `📝 *${testName} Started*\n\n` +
-                  `You will answer ${questionCount} questions.\n` +
-                  `Type READY to begin or CANCEL to stop.\n\n` +
-                  `*Test Instructions:*\n` +
-                  `• Answer all questions\n` +
-                  `• For multiple choice, reply with A, B, C, or D\n` +
-                  `• For True/False, reply with True or False\n` +
-                  `• Passing score is 70%`,
-            
-            'sw': `📝 *${testName} Limeanza*\n\n` +
-                  `Utajibu maswali ${questionCount}.\n` +
-                  `Andika READY kuanza au CANCEL kusitisha.\n\n` +
-                  `*Maagizo ya Mtihani:*\n` +
-                  `• Jibu maswali yote\n` +
-                  `• Kwa chaguo nyingi, jibu kwa A, B, C, au D\n` +
-                  `• Kwa Kweli/Sio Kweli, jibu kwa True au False\n` +
-                  `• Alama ya kupita ni 70%`,
-            
-            'fr': `📝 *${testName} Commencé*\n\n` +
-                  `Vous répondrez à ${questionCount} questions.\n` +
-                  `Tapez READY pour commencer ou CANCEL pour arrêter.\n\n` +
-                  `*Instructions du Test:*\n` +
-                  `• Répondez à toutes les questions\n` +
-                  `• Pour les choix multiples, répondez avec A, B, C ou D\n` +
-                  `• Pour Vrai/Faux, répondez avec True ou False\n` +
-                  `• Le score de passage est de 70%`
-        };
-        return texts[language] || texts['en'];
-    }
-    
     getLearnText(language) {
         const texts = {
             'en': `📖 *START LEARNING*\n\n` +
@@ -1218,7 +1344,8 @@ class WebBot {
             progressMsg = `📊 *Your Learning Progress*\n\n`;
             progressMsg += `✅ Completed Lessons: ${progress.completedLessons}\n`;
             progressMsg += `🏆 Average Score: ${progress.averageScore}%\n`;
-            progressMsg += `🎓 Exams Passed: ${progress.passedExams}/${progress.totalExams}\n\n`;
+            progressMsg += `🎓 Exams Passed: ${progress.passedExams}/${progress.totalExams}\n`;
+            progressMsg += `🧪 Tests Taken: ${progress.totalTests || 0}\n\n`;
             
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 No completed lessons yet.\n`;
@@ -1231,7 +1358,8 @@ class WebBot {
             progressMsg = `📊 *Maendeleo Yako ya Kujifunza*\n\n`;
             progressMsg += `✅ Masomo Yamalizika: ${progress.completedLessons}\n`;
             progressMsg += `🏆 Wastani wa Alama: ${progress.averageScore}%\n`;
-            progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams}/${progress.totalExams}\n\n`;
+            progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams}/${progress.totalExams}\n`;
+            progressMsg += `🧪 Mitihani Iliochukuliwa: ${progress.totalTests || 0}\n\n`;
             
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 Bila masomo yaliyokamilika bado.\n`;
@@ -1244,7 +1372,8 @@ class WebBot {
             progressMsg = `📊 *Vos Progrès d'Apprentissage*\n\n`;
             progressMsg += `✅ Leçons Terminées: ${progress.completedLessons}\n`;
             progressMsg += `🏆 Score Moyen: ${progress.averageScore}%\n`;
-            progressMsg += `🎓 Examens Réussis: ${progress.passedExams}/${progress.totalExams}\n\n`;
+            progressMsg += `🎓 Examens Réussis: ${progress.passedExams}/${progress.totalExams}\n`;
+            progressMsg += `🧪 Tests Passés: ${progress.totalTests || 0}\n\n`;
             
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 Aucune leçon terminée pour le moment.\n`;
@@ -1391,24 +1520,6 @@ class WebBot {
         return langTexts[type] || langTexts['multiple_choice'];
     }
     
-    getProgressText(language, current, total) {
-        const texts = {
-            'en': `📊 Progress: ${current}/${total}`,
-            'sw': `📊 Maendeleo: ${current}/${total}`,
-            'fr': `📊 Progrès: ${current}/${total}`
-        };
-        return texts[language] || texts['en'];
-    }
-    
-    getSessionCompleteText(language) {
-        const texts = {
-            'en': 'Session completed! Type MENU to return to main menu.',
-            'sw': 'Kikao kimekamilika! Andika MENU kurudi kwenye menyu kuu.',
-            'fr': 'Session terminée! Tapez MENU pour retourner au menu principal.'
-        };
-        return texts[language] || texts['en'];
-    }
-    
     getResultText(language, score, stats) {
         let resultMsg = '';
         
@@ -1424,7 +1535,7 @@ class WebBot {
                 resultMsg += `Congratulations! You've demonstrated good understanding.\n\n`;
             } else {
                 resultMsg += `❌ *NEEDS IMPROVEMENT*\n\n`;
-                resultMsg += `We recommend practicing more with EXERCISE.\n\n`;
+                resultMsg += `We recommend practicing more with EXERCISE or TEST.\n\n`;
             }
             
             resultMsg += `Type MENU to continue learning.`;
@@ -1441,7 +1552,7 @@ class WebBot {
                 resultMsg += `Hongera! Umeonyesha uelewa mzuri.\n\n`;
             } else {
                 resultMsg += `❌ *INAHITAJI KUBORESHA*\n\n`;
-                resultMsg += `Tunapendekeza ujizoeze zaidi kwa EXERCISE.\n\n`;
+                resultMsg += `Tunapendekeza ujizoeze zaidi kwa EXERCISE au TEST.\n\n`;
             }
             
             resultMsg += `Andika MENU kuendelea kujifunza.`;
@@ -1458,7 +1569,7 @@ class WebBot {
                 resultMsg += `Félicitations! Vous avez démontré une bonne compréhension.\n\n`;
             } else {
                 resultMsg += `❌ *BESOIN D'AMÉLIORATION*\n\n`;
-                resultMsg += `Nous recommandons de pratiquer davantage avec EXERCISE.\n\n`;
+                resultMsg += `Nous recommandons de pratiquer davantage avec EXERCISE ou TEST.\n\n`;
             }
             
             resultMsg += `Tapez MENU pour continuer à apprendre.`;
@@ -1478,5 +1589,5 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-//? Export for testing
+// Export for testing
 module.exports = webBot;

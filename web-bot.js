@@ -1,4 +1,4 @@
-// web-bot.js - Charles Academy Web Bot (Enhanced Version with Test Handler)
+// web-bot.js - Charles Academy Web Bot (Enhanced Version with Test Handler and LEARN Feature)
 // ==================== LOAD ENVIRONMENT VARIABLES ====================
 require('dotenv').config();
 
@@ -27,6 +27,8 @@ const learningSession = require('./learningSession');
 const learningCommands = require('./learningCommands');
 const testHandler = require('./testHandler');
 const testsData = require('./testsData');
+const learnHandler = require('./learnHandler'); // ADDED: Learn Handler
+const learnsData = require('./learnsData'); // ADDED: Learns Data
 
 // ==================== WEB BOT CORE ====================
 class WebBot {
@@ -51,11 +53,11 @@ class WebBot {
             res.status(200).json({ 
                 status: 'healthy', 
                 bot: 'Charles Academy Web Bot',
-                version: '2.6.1',
+                version: '2.7.0', // Updated version
                 timestamp: new Date().toISOString(),
                 features: 'Full WhatsApp Bot functionality without WhatsApp',
                 database: 'Connected (Same as WhatsApp bot)',
-                modules: ['registration', 'learning', 'exam', 'test', 'exercises']
+                modules: ['registration', 'learning', 'exam', 'test', 'exercises', 'daily_lessons'] // Added daily_lessons
             });
         });
         
@@ -70,7 +72,8 @@ class WebBot {
                 status: 'operational',
                 users: this.webUsers.size,
                 activeTests: testHandler.testSessions.size,
-                activeExams: examHandler.examSessions ? examHandler.examSessions.size : 0
+                activeExams: examHandler.examSessions ? examHandler.examSessions.size : 0,
+                activeLearning: learnHandler.userStates ? learnHandler.userStates.size : 0 // Added
             });
         });
         
@@ -134,7 +137,8 @@ class WebBot {
                         language: user.language || 'en',
                         lastActive: user.lastActive,
                         activeTest: testHandler.getActiveTestInfo(jid),
-                        activeExam: examHandler.hasActiveExam ? examHandler.hasActiveExam(jid) : false
+                        activeExam: examHandler.hasActiveExam ? examHandler.hasActiveExam(jid) : false,
+                        activeLearning: learnHandler.userStates ? learnHandler.userStates.has(jid) : false // Added
                     });
                 } else {
                     res.json({
@@ -180,6 +184,11 @@ class WebBot {
                     
                     if (testHandler.clearUserState) {
                         testHandler.clearUserState(jid);
+                    }
+                    
+                    // Clear learn handler state
+                    if (learnHandler.clearUserState) {
+                        learnHandler.clearUserState(jid);
                     }
                     
                     // Clear registration state
@@ -257,6 +266,26 @@ class WebBot {
             }
         });
         
+        // API: Get available courses for learning
+        app.get('/api/courses/learn', (req, res) => {
+            try {
+                const language = req.query.lang || 'en';
+                const courses = learnHandler.getCourses(language);
+                
+                res.json({
+                    success: true,
+                    courses: courses
+                });
+                
+            } catch (error) {
+                console.error('Courses API error:', error);
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error'
+                });
+            }
+        });
+        
         // Start Express server
         this.startServer();
     }
@@ -264,19 +293,21 @@ class WebBot {
     startServer() {
         app.listen(PORT, () => {
             console.log('='.repeat(60));
-            console.log('🌐 CHARLES ACADEMY WEB BOT (ENHANCED)');
+            console.log('🌐 CHARLES ACADEMY WEB BOT (ENHANCED WITH LEARN)');
             console.log('='.repeat(60));
             console.log(`📱 URL: http://localhost:${PORT}`);
             console.log(`🔗 API: http://localhost:${PORT}/api/send`);
             console.log(`🏥 Health: http://localhost:${PORT}/health`);
             console.log(`ℹ️ Info: http://localhost:${PORT}/info`);
             console.log(`🧪 Tests: http://localhost:${PORT}/api/tests`);
+            console.log(`📚 Learn: http://localhost:${PORT}/api/courses/learn`);
             console.log('='.repeat(60));
             console.log(`🎯 Features: Full WhatsApp Bot functionality`);
             console.log(`📊 Database: Same database as WhatsApp bot`);
             console.log(`👥 Users: Web users stored with prefix "web_"`);
             console.log(`📝 Tests: 4 levels (Beginner to Expert)`);
             console.log(`🎓 Exams: Full exam system`);
+            console.log(`📚 LEARN: Daily lessons with Google Drive links`);
             console.log('='.repeat(60));
             console.log('\n🚀 Web Bot is ready! Users can access directly via browser.');
             console.log('🔑 No WhatsApp scanning required!');
@@ -411,7 +442,24 @@ class WebBot {
         }
         
         // ======================================
-        // CHECK FOR ACTIVE TEST (NEW!)
+        // CHECK FOR ACTIVE LEARNING (NEW!)
+        // ======================================
+        if (learnHandler.userStates && learnHandler.userStates.has(jid)) {
+            const learnState = learnHandler.userStates.get(jid);
+            if (learnState && learnState.step !== 'selecting_course') {
+                console.log(`📚 User ${userId} is in learning session`);
+                const response = await this.handleLearnResponse(jid, text, user.language);
+                this.saveToHistory(jid, text, response);
+                return {
+                    userId: userId,
+                    message: response,
+                    userStatus: 'registered'
+                };
+            }
+        }
+        
+        // ======================================
+        // CHECK FOR ACTIVE TEST
         // ======================================
         if (testHandler.hasActiveTest(jid)) {
             console.log(`🧪 User ${userId} has active test`);
@@ -493,8 +541,17 @@ class WebBot {
             };
         }
         
+        // ======================================
+        // LEARN COMMAND (UPDATED!)
+        // ======================================
         if (upperText === 'LEARN') {
-            const response = this.getLearnText(user.language);
+            console.log(`📚 Starting learning system for ${userId}`);
+            learnHandler.initUserState(jid);
+            const userState = learnHandler.userStates.get(jid);
+            userState.step = 'selecting_course';
+            userState.language = user.language;
+            
+            const response = learnHandler.getCoursesMenu(user.language);
             this.saveToHistory(jid, text, response);
             return {
                 userId: userId,
@@ -520,7 +577,7 @@ class WebBot {
         }
         
         // ======================================
-        // TEST COMMAND (NEW!)
+        // TEST COMMAND
         // ======================================
         if (upperText === 'TEST') {
             console.log(`🧪 Starting test system for ${userId}`);
@@ -530,6 +587,37 @@ class WebBot {
             userState.language = user.language;
             
             const response = testHandler.getTestMenu(user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // DIRECT COURSE SELECTION (NEW!)
+        // ======================================
+        const courseMap = {
+            'ENGLISH LANGUAGE': 'ENGLISH LANGUAGE',
+            'KISWAHILI LANGUAGE': 'KISWAHILI LANGUAGE',
+            'WEB DESIGN': 'WEB DESIGN',
+            'GRAPHIC DESIGN': 'GRAPHIC DESIGN',
+            'ENGLISH': 'ENGLISH LANGUAGE',
+            'KISWAHILI': 'KISWAHILI LANGUAGE',
+            'WEB': 'WEB DESIGN',
+            'GRAPHICS': 'GRAPHIC DESIGN'
+        };
+        
+        if (courseMap[upperText]) {
+            console.log(`📚 Direct course selection: ${upperText} for ${userId}`);
+            learnHandler.initUserState(jid);
+            const userState = learnHandler.userStates.get(jid);
+            userState.selectedCourse = courseMap[upperText];
+            userState.step = 'selecting_day';
+            userState.language = user.language;
+            
+            const response = learnHandler.getDaysMenu(courseMap[upperText], user.language, jid);
             this.saveToHistory(jid, text, response);
             return {
                 userId: userId,
@@ -567,7 +655,20 @@ class WebBot {
         }
         
         // ======================================
-        // HANDLE TEST RESPONSES (NEW!)
+        // HANDLE LEARNING RESPONSES (NEW!)
+        // ======================================
+        if (learnHandler.userStates.has(jid) && learnHandler.userStates.get(jid).step !== 'selecting_course') {
+            const response = await this.handleLearnResponse(jid, text, user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // HANDLE TEST RESPONSES
         // ======================================
         if (testHandler.hasActiveTest(jid) || 
             (testHandler.userStates.has(jid) && testHandler.userStates.get(jid).step !== 'idle')) {
@@ -677,6 +778,7 @@ class WebBot {
             if (examHandler.cancelExam) examHandler.cancelExam(jid);
             if (testHandler.cancelTest) testHandler.cancelTest(jid);
             if (testHandler.clearUserState) testHandler.clearUserState(jid);
+            if (learnHandler.clearUserState) learnHandler.clearUserState(jid);
             
             const response = this.getCancelText(user.language);
             this.saveToHistory(jid, text, response);
@@ -751,7 +853,44 @@ class WebBot {
     }
     
     // ============================================
-    // TEST HANDLING (NEW!)
+    // LEARN HANDLING (NEW!)
+    // ============================================
+    async handleLearnResponse(jid, text, language) {
+        const upperText = text.toUpperCase().trim();
+        
+        // Handle CANCEL
+        if (upperText === 'CANCEL' || upperText === 'STOP') {
+            const response = learnHandler.cancelLearning(jid);
+            learnHandler.clearUserState(jid);
+            return response;
+        }
+        
+        // Handle through learnHandler
+        const result = learnHandler.handleUserInput(jid, text, language);
+        
+        if (!result || !result.type) {
+            return learnHandler.getErrorResponse(language);
+        }
+        
+        switch (result.type) {
+            case 'show_courses':
+            case 'show_days':
+            case 'show_drive_link':
+            case 'access_denied':
+            case 'already_accessed':
+            case 'error':
+                return result.data;
+                
+            case 'show_progress':
+                return result.data;
+                
+            default:
+                return learnHandler.getErrorResponse(language);
+        }
+    }
+    
+    // ============================================
+    // TEST HANDLING
     // ============================================
     async handleTestResponse(jid, text, language) {
         const upperText = text.toUpperCase().trim();
@@ -1113,45 +1252,54 @@ class WebBot {
         const texts = {
             'en': `🎓 *Charles Academy - Main Menu*\n\n` +
                   `Available options:\n\n` +
-                  `📚 LEARN - Start learning\n` +
+                  `📚 LEARN - Access daily lessons (NEW!)\n` +
                   `🎓 EXAM - Take an exam\n` +
-                  `🧪 TEST - Take a test (NEW!)\n` +
+                  `🧪 TEST - Take a test\n` +
                   `🧪 EXERCISE - Practice exercises\n` +
                   `🌍 LANGUAGE - Change language\n` +
-                  `📊 PROGRESS - Your progress\n` +
-                  `📚 COURSES - Available courses\n` +
                   `❓ HELP - Show all commands\n` +
                   `🆘 SUPPORT - Help & Support\n\n` +
+                  `*NEW: LEARN System:*\n` +
+                  `• One lesson per day per course\n` +
+                  `• Google Drive notes access\n` +
+                  `• Sequential day unlocking\n` +
+                  `• Progress tracking\n\n` +
                   `*Type the word in CAPITAL LETTERS*\n` +
-                  `Example: Type "TEST" for test system`,
+                  `Example: Type "LEARN" for daily lessons`,
             
             'sw': `🎓 *Charles Academy - Menyu Kuu*\n\n` +
                   `Chaguo zilizopo:\n\n` +
-                  `📚 JIFUNZE - Anza kujifunza\n` +
+                  `📚 JIFUNZE - Pata masomo ya kila siku (MPYA!)\n` +
                   `🎓 MTIHANI - Fanya mtihani\n` +
-                  `🧪 TEST - Fanya mtihani (MPYA!)\n` +
+                  `🧪 TEST - Fanya mtihani\n` +
                   `🧪 MAZOEZI - Fanya mazoezi\n` +
                   `🌍 LUGHA - Badilisha lugha\n` +
-                  `📊 MAENDELEO - Maendeleo yako\n` +
-                  `📚 KOZI - Kozi zilizopo\n` +
                   `❓ USAIDIZI - Onyesha amri zote\n` +
                   `🆘 MSADA - Usaidizi na msaada\n\n` +
+                  `*MPYA: Mfumo wa JIFUNZE:*\n` +
+                  `• Somo moja kwa siku kwa kila kozi\n` +
+                  `• Ufikiaji wa maelezo ya Google Drive\n` +
+                  `• Kufungua siku kwa mpangilio\n` +
+                  `• Ufuatiliaji wa maendeleo\n\n` +
                   `*Andika neno kwa HERUFI KUBWA*\n` +
-                  `Mfano: Andika "TEST" kwa mfumo wa mitihani`,
+                  `Mfano: Andika "JIFUNZE" kwa masomo ya kila siku`,
             
             'fr': `🎓 *Charles Academy - Menu Principal*\n\n` +
                   `Options disponibles:\n\n` +
-                  `📚 APPRENDRE - Commencer à apprendre\n` +
+                  `📚 APPRENDRE - Accéder aux leçons quotidiennes (NOUVEAU!)\n` +
                   `🎓 EXAMEN - Passer un examen\n` +
-                  `🧪 TEST - Passer un test (NOUVEAU!)\n` +
+                  `🧪 TEST - Passer un test\n` +
                   `🧪 EXERCICE - Faire des exercices\n` +
                   `🌍 LANGUE - Changer de langue\n` +
-                  `📊 PROGRÈS - Votre progression\n` +
-                  `📚 COURS - Cours disponibles\n` +
                   `❓ AIDE - Afficher toutes les commandes\n` +
                   `🆘 SUPPORT - Aide et support\n\n` +
+                  `*NOUVEAU : Système APPRENDRE:*\n` +
+                  `• Une leçon par jour par cours\n` +
+                  `• Accès aux notes Google Drive\n` +
+                  `• Déblocage séquentiel des jours\n` +
+                  `• Suivi des progrès\n\n` +
                   `*Tapez le mot en MAJUSCULES*\n` +
-                  `Exemple: Tapez "TEST" pour le système de test`
+                  `Exemple: Tapez "APPRENDRE" pour les leçons quotidiennes`
         };
         return texts[language] || texts['en'];
     }
@@ -1166,12 +1314,16 @@ class WebBot {
                   `🔹 MENU - Main menu\n` +
                   `🔹 HELP - This help message\n` +
                   `🔹 SUPPORT - Contact support\n` +
-                  `🔹 COURSES - Available courses\n` +
-                  `🔹 LEARN - Start learning\n` +
+                  `🔹 LEARN - NEW! Daily lessons system\n` +
                   `🔹 EXAM - Advanced exam system\n` +
-                  `🔹 TEST - NEW! Test system (4 levels)\n` +
+                  `🔹 TEST - Test system (4 levels)\n` +
                   `🔹 EXERCISE - Practice exercises\n` +
-                  `🔹 PROGRESS - Your learning progress\n\n` +
+                  `*LEARN SYSTEM FEATURES:*\n` +
+                  `• 4 Courses: English, Kiswahili, Web Design, Graphic Design\n` +
+                  `• 5 Days per course (Day 1 to Day 5)\n` +
+                  `• Google Drive links for notes\n` +
+                  `• One lesson per day per course\n` +
+                  `• Sequential unlocking (Day 1 → Day 2 → etc.)\n\n` +
                   `*TEST SYSTEM FEATURES:*\n` +
                   `• 4 Levels: Beginner to Expert\n` +
                   `• Multiple question types\n` +
@@ -1187,12 +1339,16 @@ class WebBot {
                   `🔹 MENU - Menyu kuu\n` +
                   `🔹 HELP - Ujumbe huu wa usaidizi\n` +
                   `🔹 SUPPORT - Wasiliana na usaidizi\n` +
-                  `🔹 COURSES - Kozi zilizopo\n` +
-                  `🔹 LEARN - Anza kujifunza\n` +
+                  `🔹 LEARN - MPYA! Mfumo wa masomo ya kila siku\n` +
                   `🔹 EXAM - Mfumo wa hali ya juu wa mitihani\n` +
-                  `🔹 TEST - MPYA! Mfumo wa mitihani (viwango 4)\n` +
+                  `🔹 TEST - Mfumo wa mitihani (viwango 4)\n` +
                   `🔹 EXERCISE - Fanya mazoezi\n` +
-                  `🔹 PROGRESS - Maendeleo yako ya kujifunza\n\n` +
+                  `*VIPENGELE VYA MFUMO WA JIFUNZE:*\n` +
+                  `• Kozi 4: Kiingereza, Kiswahili, Ubunifu wa Tovuti, Ubunifu wa Michoro\n` +
+                  `• Siku 5 kwa kila kozi (Day 1 hadi Day 5)\n` +
+                  `• Viungo vya Google Drive kwa maelezo\n` +
+                  `• Somo moja kwa siku kwa kila kozi\n` +
+                  `• Kufungua kwa mpangilio (Day 1 → Day 2 → n.k.)\n\n` +
                   `*VIPENGELE VYA MFUMO WA MTIHANI:*\n` +
                   `• Viwango 4: Mwanzo hadi Mtaalamu\n` +
                   `• Aina mbalimbali za maswali\n` +
@@ -1208,12 +1364,16 @@ class WebBot {
                   `🔹 MENU - Menu principal\n` +
                   `🔹 HELP - Ce message d'aide\n` +
                   `🔹 SUPPORT - Contacter le support\n` +
-                  `🔹 COURSES - Cours disponibles\n` +
-                  `🔹 LEARN - Commencer à apprendre\n` +
+                  `🔹 LEARN - NOUVEAU ! Système de leçons quotidiennes\n` +
                   `🔹 EXAM - Système d'examen avancé\n` +
-                  `🔹 TEST - NOUVEAU ! Système de test (4 niveaux)\n` +
+                  `🔹 TEST - Système de test (4 niveaux)\n` +
                   `🔹 EXERCISE - Faire des exercices\n` +
-                  `🔹 PROGRESS - Votre progression d'apprentissage\n\n` +
+                  `*FONCTIONNALITÉS DU SYSTÈME APPRENDRE:*\n` +
+                  `• 4 Cours: Anglais, Kiswahili, Conception Web, Conception Graphique\n` +
+                  `• 5 Jours par cours (Day 1 à Day 5)\n` +
+                  `• Liens Google Drive pour les notes\n` +
+                  `• Une leçon par jour par cours\n` +
+                  `• Déblocage séquentiel (Day 1 → Day 2 → etc.)\n\n` +
                   `*FONCTIONNALITÉS DU SYSTÈME DE TEST:*\n` +
                   `• 4 Niveaux: Débutant à Expert\n` +
                   `• Plusieurs types de questions\n` +
@@ -1233,6 +1393,11 @@ class WebBot {
                   `📧 *Email:* support@charlesacademy.com\n` +
                   `📧 *Email:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Available:* Monday-Friday, 8AM-6PM\n\n` +
+                  `*LEARN System Issues:*\n` +
+                  `• Can't access Google Drive links\n` +
+                  `• Day not unlocking properly\n` +
+                  `• Progress not saving\n` +
+                  `• Any other technical issues\n\n` +
                   `Type MENU to return to main menu`,
             
             'sw': `❓ *USAIDIZI NA MSADA*\n\n` +
@@ -1242,6 +1407,11 @@ class WebBot {
                   `📧 *Barua pepe:* support@charlesacademy.com\n` +
                   `📧 *Barua pepe:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Inapatikana:* Jumatatu-Ijumaa, 8AM-6PM\n\n` +
+                  `*Matatizo ya Mfumo wa JIFUNZE:*\n` +
+                  `• Haiwezi kufikia viungo vya Google Drive\n` +
+                  `• Siku haifunguki ipasavyo\n` +
+                  `• Maendeleo hayahifadhiwi\n` +
+                  `• Matatizo mengine yoyote ya kiufundi\n\n` +
                   `Andika MENU kurudi kwenye menyu kuu`,
             
             'fr': `❓ *AIDE ET SUPPORT*\n\n` +
@@ -1251,6 +1421,11 @@ class WebBot {
                   `📧 *Email:* support@charlesacademy.com\n` +
                   `📧 *Email:* info.charlesacademy@gmail.com\n` +
                   `🕒 *Disponible:* Lundi-Vendredi, 8h-18h\n\n` +
+                  `*Problèmes du Système APPRENDRE:*\n` +
+                  `• Impossible d'accéder aux liens Google Drive\n` +
+                  `• Jour non débloqué correctement\n` +
+                  `• Progrès non sauvegardés\n` +
+                  `• Tout autre problème technique\n\n` +
                   `Tapez MENU pour retourner au menu principal`
         };
         return texts[language] || texts['en'];
@@ -1320,19 +1495,31 @@ class WebBot {
     getLearnText(language) {
         const texts = {
             'en': `📖 *START LEARNING*\n\n` +
-                  `First, choose a course:\n\n` +
-                  `Type: COURSES\n\n` +
-                  `Then select a course to see lessons.`,
+                  `Use the LEARN command to access daily lessons.\n\n` +
+                  `Available courses:\n` +
+                  `• ENGLISH LANGUAGE\n` +
+                  `• KISWAHILI LANGUAGE\n` +
+                  `• WEB DESIGN\n` +
+                  `• GRAPHIC DESIGN\n\n` +
+                  `Type "LEARN" to begin or choose a course directly.`,
             
             'sw': `📖 *ANZA KUJIFUNZA*\n\n` +
-                  `Kwanza, chagua kozi:\n\n` +
-                  `Andika: COURSES\n\n` +
-                  `Kisha chagua kozi kuona masomo.`,
+                  `Tumia amri ya LEARN kupata masomo ya kila siku.\n\n` +
+                  `Kozi zilizopo:\n` +
+                  `• ENGLISH LANGUAGE\n` +
+                  `• KISWAHILI LANGUAGE\n` +
+                  `• WEB DESIGN\n` +
+                  `• GRAPHIC DESIGN\n\n` +
+                  `Andika "LEARN" kuanza au chagua kozi moja kwa moja.`,
             
             'fr': `📖 *COMMENCER À APPRENDRE*\n\n` +
-                  `D'abord, choisissez un cours:\n\n` +
-                  `Tapez: COURSES\n\n` +
-                  `Puis sélectionnez un cours pour voir les leçons.`
+                  `Utilisez la commande LEARN pour accéder aux leçons quotidiennes.\n\n` +
+                  `Cours disponibles:\n` +
+                  `• ENGLISH LANGUAGE\n` +
+                  `• KISWAHILI LANGUAGE\n` +
+                  `• WEB DESIGN\n` +
+                  `• GRAPHIC DESIGN\n\n` +
+                  `Tapez "LEARN" pour commencer ou choisissez un cours directement.`
         };
         return texts[language] || texts['en'];
     }
@@ -1347,9 +1534,17 @@ class WebBot {
             progressMsg += `🎓 Exams Passed: ${progress.passedExams}/${progress.totalExams}\n`;
             progressMsg += `🧪 Tests Taken: ${progress.totalTests || 0}\n\n`;
             
+            // Get learning progress from learnHandler
+            if (learnHandler.getUserProgress) {
+                const learnProgress = learnHandler.getUserProgress(progress.studentId, language);
+                if (learnProgress && learnProgress.type === 'show_progress') {
+                    progressMsg += `📚 *Daily Lessons Progress:*\n${learnProgress.data}\n`;
+                }
+            }
+            
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 No completed lessons yet.\n`;
-                progressMsg += `Start learning with: COURSES`;
+                progressMsg += `Start learning with: LEARN`;
             }
             
             progressMsg += `\nKeep learning! 🚀`;
@@ -1361,9 +1556,17 @@ class WebBot {
             progressMsg += `🎓 Mitihani Iliyopita: ${progress.passedExams}/${progress.totalExams}\n`;
             progressMsg += `🧪 Mitihani Iliochukuliwa: ${progress.totalTests || 0}\n\n`;
             
+            // Get learning progress from learnHandler
+            if (learnHandler.getUserProgress) {
+                const learnProgress = learnHandler.getUserProgress(progress.studentId, language);
+                if (learnProgress && learnProgress.type === 'show_progress') {
+                    progressMsg += `📚 *Maendeleo ya Masomo ya Kila Siku:*\n${learnProgress.data}\n`;
+                }
+            }
+            
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 Bila masomo yaliyokamilika bado.\n`;
-                progressMsg += `Anza kujifunza kwa: COURSES`;
+                progressMsg += `Anza kujifunza kwa: LEARN`;
             }
             
             progressMsg += `\nEndelea kujifunza! 🚀`;
@@ -1375,9 +1578,17 @@ class WebBot {
             progressMsg += `🎓 Examens Réussis: ${progress.passedExams}/${progress.totalExams}\n`;
             progressMsg += `🧪 Tests Passés: ${progress.totalTests || 0}\n\n`;
             
+            // Get learning progress from learnHandler
+            if (learnHandler.getUserProgress) {
+                const learnProgress = learnHandler.getUserProgress(progress.studentId, language);
+                if (learnProgress && learnProgress.type === 'show_progress') {
+                    progressMsg += `📚 *Progrès des Leçons Quotidiennes:*\n${learnProgress.data}\n`;
+                }
+            }
+            
             if (progress.completedLessons === 0) {
                 progressMsg += `📝 Aucune leçon terminée pour le moment.\n`;
-                progressMsg += `Commencez à apprendre avec: COURSES`;
+                progressMsg += `Commencez à apprendre avec: LEARN`;
             }
             
             progressMsg += `\nContinuez à apprendre! 🚀`;
