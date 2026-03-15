@@ -629,13 +629,21 @@ class WebBot {
         // Handle direct test commands
         const testMap = {
             'TEST 1': '1',
-            'TEST 2': '2', 
+            'TEST 2': '2',
             'TEST 3': '3',
             'TEST 4': '4',
             'TEST BEGINNER': '1',
             'TEST INTERMEDIATE': '2',
             'TEST ADVANCED': '3',
-            'TEST EXPERT': '4'
+            'TEST EXPERT': '4',
+            'TEST 6': '6',
+            'TEST 7': '7',
+            'TEST 8': '8',
+            'TEST 9': '9',
+            'KISWAHILI 1': '6',
+            'KISWAHILI 2': '7',
+            'KISWAHILI 3': '8',
+            'KISWAHILI 4': '9'
         };
         
         if (testMap[upperText]) {
@@ -646,6 +654,60 @@ class WebBot {
             userState.language = user.language;
             
             const response = await this.handleTestSelection(jid, testMap[upperText], user.language);
+            this.saveToHistory(jid, text, response);
+            return {
+                userId: userId,
+                message: response,
+                userStatus: 'registered'
+            };
+        }
+        
+        // ======================================
+        // DIRECT EXAM SHORTCUTS (GRAPHICS & WEBSITE)
+        // ======================================
+        const directExamMap = {
+            // Graphics - Branding
+            'BRANDING': { course: 'graphics', exam: 'branding' },
+            'BRAND EXAM': { course: 'graphics', exam: 'branding' },
+            // Graphics - Canva & PixelLab
+            'PIXELLAB': { course: 'graphics', exam: 'pixellab' },
+            'CANVA': { course: 'graphics', exam: 'pixellab' },
+            'PIXELLAB CANVA': { course: 'graphics', exam: 'pixellab' },
+            'CANVA PIXELLAB': { course: 'graphics', exam: 'pixellab' },
+            'PIXELLAB & CANVA': { course: 'graphics', exam: 'pixellab' },
+            // Graphics - Design Principles
+            'DESIGN PRINCIPLES': { course: 'graphics', exam: 'principles' },
+            'PRINCIPLES': { course: 'graphics', exam: 'principles' },
+            // Graphics - Practical
+            'PRACTICAL FINAL': { course: 'graphics', exam: 'practical' },
+            'PRACTICAL': { course: 'graphics', exam: 'practical' },
+            // Website
+            'FINAL THEORY': { course: 'website', exam: 'theory' },
+            'WEBSITE THEORY': { course: 'website', exam: 'theory' },
+            // English exams
+            'WRITING SKILLS': { course: 'english', exam: 'writing_skills' },
+            'WRITING': { course: 'english', exam: 'writing_skills' },
+            'READING SKILLS': { course: 'english', exam: 'reading_skills' },
+            'READING': { course: 'english', exam: 'reading_skills' },
+            'ENGLISH GRAMMAR': { course: 'english', exam: 'grammar' },
+            'GRAMMAR': { course: 'english', exam: 'grammar' },
+            // Kiswahili exams
+            'KUSOMA': { course: 'kiswahili', exam: 'kusoma' },
+            'MAANDISHI': { course: 'kiswahili', exam: 'maandishi' },
+            'SARUFI': { course: 'kiswahili', exam: 'sarufi' },
+        };
+        
+        if (directExamMap[upperText]) {
+            const { course, exam } = directExamMap[upperText];
+            console.log(`🎓 Direct exam shortcut: ${upperText} → ${course}/${exam} for ${userId}`);
+            
+            examHandler.initUserState(jid);
+            const userState = examHandler.userStates.get(jid);
+            userState.selectedCourse = course;
+            userState.step = 'selecting_exam';
+            userState.language = user.language;
+            
+            const response = await this.handleDirectExam(jid, course, exam, user.language);
             this.saveToHistory(jid, text, response);
             return {
                 userId: userId,
@@ -968,6 +1030,33 @@ class WebBot {
         }
         
         return this.getErrorText(language);
+    }
+    
+    // ============================================
+    // DIRECT EXAM HANDLER
+    // ============================================
+    async handleDirectExam(jid, courseId, examId, language) {
+        const exam = examHandler.startExam(jid, courseId, examId, language);
+        
+        if (exam.error) {
+            return this.getErrorText(language);
+        }
+        
+        const instructions = examHandler.getExamInstructions(jid);
+        const question = examHandler.getCurrentQuestion(jid);
+        
+        let startText = `🎓 *${exam.examSession.title}*\n\n`;
+        startText += `⏰ Time: ${exam.examSession.time}\n`;
+        startText += `📊 Total Marks: ${exam.examSession.totalMarks}\n\n`;
+        startText += `📝 *Instructions:*\n${instructions}\n\n`;
+        
+        if (question) {
+            startText += `*First Question:*\n\n`;
+            startText += examHandler.formatExamQuestion(question, language);
+        }
+        
+        startText += `\n\nType your answer or CANCEL to stop.`;
+        return startText;
     }
     
     async handleTestSelection(jid, testId, language) {

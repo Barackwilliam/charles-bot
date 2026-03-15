@@ -2489,6 +2489,776 @@ const testsData = {
             sw: 'MAELEKEZO YA MTIHANI WA KIINGEREZA WA KWANZA\n• Jibu maswali YOTE.\n• Sehemu A: Andika KWELI au SI KWELI.\n• Sehemu B: Chagua jibu sahihi (A, B, C au D).\n• Muda: dakika 60\n• Jumla ya Alama: 100\n• Alama ya kupita: 60%',
             fr: 'INSTRUCTIONS DU TEST D\'ANGLAIS NUMÉRO UN\n• Répondez à TOUTES les questions.\n• Section A: Écrivez VRAI ou FAUX.\n• Section B: Choisissez la bonne réponse (A, B, C ou D).\n• Temps: 60 minutes\n• Total des points: 100\n• Score de passage: 60%'
         }
+    },
+
+    // ==================== TEST 6: KISWAHILI TEST ONE ====================
+    '6': {
+        id: 'kiswahili_test_one',
+        title: {
+            en: 'KISWAHILI TEST ONE',
+            sw: 'MTIHANI WA KISWAHILI WA KWANZA',
+            fr: 'TEST DE KISWAHILI NUMÉRO UN'
+        },
+        time: '60 minutes',
+        totalMarks: 50,
+        questions: [
+            {
+                number: 1,
+                text: {
+                    en: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nMaelekezo: Andika KWELI au SI KWELI.',
+                    sw: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nMaelekezo: Andika KWELI au SI KWELI.',
+                    fr: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nMaelekezo: Andika KWELI au SI KWELI.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Salamu "Habari za asubuhi" hutumika asubuhi.', sw: 'Salamu "Habari za asubuhi" hutumika asubuhi.', fr: 'Salamu "Habari za asubuhi" hutumika asubuhi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Nambari 12 kwa maneno ni kumi na mbili.', sw: 'Nambari 12 kwa maneno ni kumi na mbili.', fr: 'Nambari 12 kwa maneno ni kumi na mbili.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Nambari 37 kwa maneno ni thelathini na saba.', sw: 'Nambari 37 kwa maneno ni thelathini na saba.', fr: 'Nambari 37 kwa maneno ni thelathini na saba.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Sentensi ya utambulisho lazima iwe na jina la mtu.', sw: 'Sentensi ya utambulisho lazima iwe na jina la mtu.', fr: 'Sentensi ya utambulisho lazima iwe na jina la mtu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Shule ni mahali pa kujifunzia.', sw: 'Shule ni mahali pa kujifunzia.', fr: 'Shule ni mahali pa kujifunzia.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Soko ni mahali pa kununua na kuuza bidhaa.', sw: 'Soko ni mahali pa kununua na kuuza bidhaa.', fr: 'Soko ni mahali pa kununua na kuuza bidhaa.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Maktaba ni mahali pa kusoma vitabu.', sw: 'Maktaba ni mahali pa kusoma vitabu.', fr: 'Maktaba ni mahali pa kusoma vitabu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Mtu mwenye furaha huweza kucheka.', sw: 'Mtu mwenye furaha huweza kucheka.', fr: 'Mtu mwenye furaha huweza kucheka.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Hasira ni hisia nzuri kila wakati.', sw: 'Hasira ni hisia nzuri kila wakati.', fr: 'Hasira ni hisia nzuri kila wakati.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Simba ni mnyama wa porini.', sw: 'Simba ni mnyama wa porini.', fr: 'Simba ni mnyama wa porini.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi "kabla" kinaonyesha tukio lililotokea kwanza.', sw: 'Kiunganishi "kabla" kinaonyesha tukio lililotokea kwanza.', fr: 'Kiunganishi "kabla" kinaonyesha tukio lililotokea kwanza.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi "baada" kinaonyesha tukio lililofuata.', sw: 'Kiunganishi "baada" kinaonyesha tukio lililofuata.', fr: 'Kiunganishi "baada" kinaonyesha tukio lililofuata.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Ninakula" ni sentensi ya mda wa sasa.', sw: '"Ninakula" ni sentensi ya mda wa sasa.', fr: '"Ninakula" ni sentensi ya mda wa sasa.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Nilikula" ni sentensi ya mda uliopita.', sw: '"Nilikula" ni sentensi ya mda uliopita.', fr: '"Nilikula" ni sentensi ya mda uliopita.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Nitakula" ni sentensi ya mda wa ujao.', sw: '"Nitakula" ni sentensi ya mda wa ujao.', fr: '"Nitakula" ni sentensi ya mda wa ujao.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 2,
+                text: {
+                    en: 'SEHEMU B – CHAGUA JIBU SAHIHI (20 Alama)\nMaelekezo: Chagua jibu sahihi A, B, C, au D.',
+                    sw: 'SEHEMU B – CHAGUA JIBU SAHIHI (20 Alama)\nMaelekezo: Chagua jibu sahihi A, B, C, au D.',
+                    fr: 'SEHEMU B – CHAGUA JIBU SAHIHI (20 Alama)\nMaelekezo: Chagua jibu sahihi A, B, C, au D.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Salamu ya mchana ni ipi?\nA. Habari za asubuhi\nB. Habari za mchana\nC. Habari za usiku\nD. Kwaheri', sw: 'Salamu ya mchana ni ipi?\nA. Habari za asubuhi\nB. Habari za mchana\nC. Habari za usiku\nD. Kwaheri', fr: 'Salamu ya mchana ni ipi?\nA. Habari za asubuhi\nB. Habari za mchana\nC. Habari za usiku\nD. Kwaheri' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Nambari 145 kwa maneno ni:\nA. Mia moja arobaini na tano\nB. Mia moja hamsini\nC. Mia mbili arobaini na tano\nD. Mia moja arobaini', sw: 'Nambari 145 kwa maneno ni:\nA. Mia moja arobaini na tano\nB. Mia moja hamsini\nC. Mia mbili arobaini na tano\nD. Mia moja arobaini', fr: 'Nambari 145 kwa maneno ni:\nA. Mia moja arobaini na tano\nB. Mia moja hamsini\nC. Mia mbili arobaini na tano\nD. Mia moja arobaini' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Nambari 500 kwa maneno ni:\nA. Mia tano\nB. Mia nne\nC. Elfu moja\nD. Mia sita', sw: 'Nambari 500 kwa maneno ni:\nA. Mia tano\nB. Mia nne\nC. Elfu moja\nD. Mia sita', fr: 'Nambari 500 kwa maneno ni:\nA. Mia tano\nB. Mia nne\nC. Elfu moja\nD. Mia sita' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi sahihi ya utambulisho ni ipi?\nA. Jina langu ni Asha\nB. Maji ni baridi\nC. Kitabu kiko mezani\nD. Mbwa anakimbia', sw: 'Sentensi sahihi ya utambulisho ni ipi?\nA. Jina langu ni Asha\nB. Maji ni baridi\nC. Kitabu kiko mezani\nD. Mbwa anakimbia', fr: 'Sentensi sahihi ya utambulisho ni ipi?\nA. Jina langu ni Asha\nB. Maji ni baridi\nC. Kitabu kiko mezani\nD. Mbwa anakimbia' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Mahali pa kusoma vitabu ni:\nA. Sokoni\nB. Maktaba\nC. Shuleni\nD. Nyumbani', sw: 'Mahali pa kusoma vitabu ni:\nA. Sokoni\nB. Maktaba\nC. Shuleni\nD. Nyumbani', fr: 'Mahali pa kusoma vitabu ni:\nA. Sokoni\nB. Maktaba\nC. Shuleni\nD. Nyumbani' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Mahali pa kununua bidhaa ni:\nA. Sokoni\nB. Darasani\nC. Maktabani\nD. Hospitalini', sw: 'Mahali pa kununua bidhaa ni:\nA. Sokoni\nB. Darasani\nC. Maktabani\nD. Hospitalini', fr: 'Mahali pa kununua bidhaa ni:\nA. Sokoni\nB. Darasani\nC. Maktabani\nD. Hospitalini' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Neno linaloonyesha furaha ni:\nA. Hasira\nB. Tabasamu\nC. Huzuni\nD. Hofu', sw: 'Neno linaloonyesha furaha ni:\nA. Hasira\nB. Tabasamu\nC. Huzuni\nD. Hofu', fr: 'Neno linaloonyesha furaha ni:\nA. Hasira\nB. Tabasamu\nC. Huzuni\nD. Hofu' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno linaloonyesha hasira ni:\nA. Tabasamu\nB. Furaha\nC. Kukasirika\nD. Kucheka', sw: 'Neno linaloonyesha hasira ni:\nA. Tabasamu\nB. Furaha\nC. Kukasirika\nD. Kucheka', fr: 'Neno linaloonyesha hasira ni:\nA. Tabasamu\nB. Furaha\nC. Kukasirika\nD. Kucheka' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Mnyama wa porini ni:\nA. Simba\nB. Mbwa\nC. Paka\nD. Kuku', sw: 'Mnyama wa porini ni:\nA. Simba\nB. Mbwa\nC. Paka\nD. Kuku', fr: 'Mnyama wa porini ni:\nA. Simba\nB. Mbwa\nC. Paka\nD. Kuku' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi iko katika mda wa sasa?\nA. Ninakula\nB. Nilikula\nC. Nitakula\nD. Nimekula', sw: 'Sentensi ipi iko katika mda wa sasa?\nA. Ninakula\nB. Nilikula\nC. Nitakula\nD. Nimekula', fr: 'Sentensi ipi iko katika mda wa sasa?\nA. Ninakula\nB. Nilikula\nC. Nitakula\nD. Nimekula' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi iko katika mda uliopita?\nA. Nitacheka\nB. Nilicheka\nC. Ninacheka\nD. Nacheka', sw: 'Sentensi ipi iko katika mda uliopita?\nA. Nitacheka\nB. Nilicheka\nC. Ninacheka\nD. Nacheka', fr: 'Sentensi ipi iko katika mda uliopita?\nA. Nitacheka\nB. Nilicheka\nC. Ninacheka\nD. Nacheka' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi iko katika mda wa ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma', sw: 'Sentensi ipi iko katika mda wa ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma', fr: 'Sentensi ipi iko katika mda wa ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi cha wakati ni:\nA. kabla\nB. nyumba\nC. kitabu\nD. rafiki', sw: 'Kiunganishi cha wakati ni:\nA. kabla\nB. nyumba\nC. kitabu\nD. rafiki', fr: 'Kiunganishi cha wakati ni:\nA. kabla\nB. nyumba\nC. kitabu\nD. rafiki' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Neno "baada" linaonyesha:\nA. wakati uliopita\nB. wakati ujao\nC. tukio linalofuata\nD. tukio lisilo na mpangilio', sw: 'Neno "baada" linaonyesha:\nA. wakati uliopita\nB. wakati ujao\nC. tukio linalofuata\nD. tukio lisilo na mpangilio', fr: 'Neno "baada" linaonyesha:\nA. wakati uliopita\nB. wakati ujao\nC. tukio linalofuata\nD. tukio lisilo na mpangilio' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Neno "kabla" linaonyesha:\nA. tukio la kwanza\nB. tukio la mwisho\nC. tukio la sasa\nD. tukio lisilo na mpangilio', sw: 'Neno "kabla" linaonyesha:\nA. tukio la kwanza\nB. tukio la mwisho\nC. tukio la sasa\nD. tukio lisilo na mpangilio', fr: 'Neno "kabla" linaonyesha:\nA. tukio la kwanza\nB. tukio la mwisho\nC. tukio la sasa\nD. tukio lisilo na mpangilio' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    }
+                ]
+            },
+            {
+                number: 3,
+                text: {
+                    en: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nMaelekezo: Andika neno moja tu.',
+                    sw: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nMaelekezo: Andika neno moja tu.',
+                    fr: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nMaelekezo: Andika neno moja tu.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Salamu ya kuaga ni ______.', sw: 'Salamu ya kuaga ni ______.', fr: 'Salamu ya kuaga ni ______.' },
+                        answer: { en: 'Kwaheri', sw: 'Kwaheri', fr: 'Kwaheri' }
+                    },
+                    {
+                        text: { en: 'Nambari 12 kwa maneno ni ______.', sw: 'Nambari 12 kwa maneno ni ______.', fr: 'Nambari 12 kwa maneno ni ______.' },
+                        answer: { en: 'Kumi', sw: 'Kumi', fr: 'Kumi' }
+                    },
+                    {
+                        text: { en: 'Mahali pa kusoma vitabu ni ______.', sw: 'Mahali pa kusoma vitabu ni ______.', fr: 'Mahali pa kusoma vitabu ni ______.' },
+                        answer: { en: 'Maktaba', sw: 'Maktaba', fr: 'Maktaba' }
+                    },
+                    {
+                        text: { en: 'Mnyama wa porini ni ______.', sw: 'Mnyama wa porini ni ______.', fr: 'Mnyama wa porini ni ______.' },
+                        answer: { en: 'Simba', sw: 'Simba', fr: 'Simba' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi cha wakati ni ______.', sw: 'Kiunganishi cha wakati ni ______.', fr: 'Kiunganishi cha wakati ni ______.' },
+                        answer: { en: 'Kabla', sw: 'Kabla', fr: 'Kabla' }
+                    },
+                    {
+                        text: { en: 'Mtu anayefundisha shuleni ni ______.', sw: 'Mtu anayefundisha shuleni ni ______.', fr: 'Mtu anayefundisha shuleni ni ______.' },
+                        answer: { en: 'Mwalimu', sw: 'Mwalimu', fr: 'Mwalimu' }
+                    },
+                    {
+                        text: { en: 'Mahali pa kuuza bidhaa ni ______.', sw: 'Mahali pa kuuza bidhaa ni ______.', fr: 'Mahali pa kuuza bidhaa ni ______.' },
+                        answer: { en: 'Soko', sw: 'Soko', fr: 'Soko' }
+                    },
+                    {
+                        text: { en: 'Mtu mwenye furaha huweza ______.', sw: 'Mtu mwenye furaha huweza ______.', fr: 'Mtu mwenye furaha huweza ______.' },
+                        answer: { en: 'Kucheka', sw: 'Kucheka', fr: 'Kucheka' }
+                    },
+                    {
+                        text: { en: 'Kitenzi "kula" katika mda wa sasa ni ______.', sw: 'Kitenzi "kula" katika mda wa sasa ni ______.', fr: 'Kitenzi "kula" katika mda wa sasa ni ______.' },
+                        answer: { en: 'Ninakula', sw: 'Ninakula', fr: 'Ninakula' }
+                    },
+                    {
+                        text: { en: 'Kitenzi "soma" katika mda wa ujao ni ______.', sw: 'Kitenzi "soma" katika mda wa ujao ni ______.', fr: 'Kitenzi "soma" katika mda wa ujao ni ______.' },
+                        answer: { en: 'Nitasoma', sw: 'Nitasoma', fr: 'Nitasoma' }
+                    }
+                ]
+            }
+        ],
+        instructions: {
+            en: 'CHARLES ACADEMY – KISWAHILI TEST ONE\n\nINSTRUCTIONS\n• Answer ALL questions.\n• Section A: Write KWELI or SI KWELI.\n• Section B: Choose the correct answer (A, B, C or D).\n• Section C: Write ONE word only.\n• Time: 60 minutes\n• Total Marks: 50\n• Passing score: 60%',
+            sw: 'CHARLES ACADEMY – MTIHANI WA KISWAHILI WA KWANZA\n\nMAELEKEZO\n• Jibu maswali YOTE.\n• Sehemu A: Andika KWELI au SI KWELI.\n• Sehemu B: Chagua jibu sahihi (A, B, C au D).\n• Sehemu C: Andika neno MOJA tu.\n• Muda: dakika 60\n• Jumla ya Alama: 50\n• Alama ya kupita: 60%',
+            fr: 'CHARLES ACADEMY – TEST DE KISWAHILI NUMÉRO UN\n\nINSTRUCTIONS\n• Répondez à TOUTES les questions.\n• Section A: Écrivez KWELI ou SI KWELI.\n• Section B: Choisissez la bonne réponse (A, B, C ou D).\n• Section C: Écrivez UN mot seulement.\n• Temps: 60 minutes\n• Total des points: 50\n• Score de passage: 60%'
+        },
+        markingGuide: {
+            en: {
+                sectionA: ['KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['B','A','A','A','B','A','B','C','A','A','B','C','A','C','A'],
+                sectionC: ['Kwaheri','Kumi','Maktaba','Simba','Kabla','Mwalimu','Soko','Kucheka','Ninakula','Nitasoma']
+            },
+            sw: {
+                sectionA: ['KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['B','A','A','A','B','A','B','C','A','A','B','C','A','C','A'],
+                sectionC: ['Kwaheri','Kumi','Maktaba','Simba','Kabla','Mwalimu','Soko','Kucheka','Ninakula','Nitasoma']
+            },
+            fr: {
+                sectionA: ['KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['B','A','A','A','B','A','B','C','A','A','B','C','A','C','A'],
+                sectionC: ['Kwaheri','Kumi','Maktaba','Simba','Kabla','Mwalimu','Soko','Kucheka','Ninakula','Nitasoma']
+            }
+        }
+    },
+
+    // ==================== TEST 7: KISWAHILI SARUFI ====================
+    '7': {
+        id: 'kiswahili_sarufi',
+        title: {
+            en: 'KISWAHILI TEST 2 (SARUFI)',
+            sw: 'MTIHANI WA KISWAHILI 2 (SARUFI)',
+            fr: 'TEST DE KISWAHILI 2 (SARUFI)'
+        },
+        time: '60 minutes',
+        totalMarks: 50,
+        questions: [
+            {
+                number: 1,
+                text: {
+                    en: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nAndika KWELI au SI KWELI.',
+                    sw: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nAndika KWELI au SI KWELI.',
+                    fr: 'SEHEMU A – KWELI AU SI KWELI (15 Alama)\nAndika KWELI au SI KWELI.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Nomino ni jina la mtu, mahali au kitu.', sw: 'Nomino ni jina la mtu, mahali au kitu.', fr: 'Nomino ni jina la mtu, mahali au kitu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "mwalimu" ni nomino.', sw: 'Neno "mwalimu" ni nomino.', fr: 'Neno "mwalimu" ni nomino.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "soma" ni nomino.', sw: 'Neno "soma" ni nomino.', fr: 'Neno "soma" ni nomino.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Vitenzi vinaonyesha kitendo.', sw: 'Vitenzi vinaonyesha kitendo.', fr: 'Vitenzi vinaonyesha kitendo.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Ninakula" ni kitenzi cha mda wa sasa.', sw: '"Ninakula" ni kitenzi cha mda wa sasa.', fr: '"Ninakula" ni kitenzi cha mda wa sasa.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Nilikula" ni kitenzi cha mda uliopita.', sw: '"Nilikula" ni kitenzi cha mda uliopita.', fr: '"Nilikula" ni kitenzi cha mda uliopita.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Nitakula" ni kitenzi cha mda wa ujao.', sw: '"Nitakula" ni kitenzi cha mda wa ujao.', fr: '"Nitakula" ni kitenzi cha mda wa ujao.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi hutumika kuunganisha sentensi.', sw: 'Kiunganishi hutumika kuunganisha sentensi.', fr: 'Kiunganishi hutumika kuunganisha sentensi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "na" ni kiunganishi.', sw: 'Neno "na" ni kiunganishi.', fr: 'Neno "na" ni kiunganishi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Sentensi lazima iwe na kitenzi.', sw: 'Sentensi lazima iwe na kitenzi.', fr: 'Sentensi lazima iwe na kitenzi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "wanafunzi" linaonyesha wingi.', sw: 'Neno "wanafunzi" linaonyesha wingi.', fr: 'Neno "wanafunzi" linaonyesha wingi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "rafiki yangu" linaonyesha umiliki.', sw: 'Neno "rafiki yangu" linaonyesha umiliki.', fr: 'Neno "rafiki yangu" linaonyesha umiliki.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Neno "baada" linaonyesha wakati.', sw: 'Neno "baada" linaonyesha wakati.', fr: 'Neno "baada" linaonyesha wakati.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: '"Wakati" hutumika kuonyesha tukio linalotokea.', sw: '"Wakati" hutumika kuonyesha tukio linalotokea.', fr: '"Wakati" hutumika kuonyesha tukio linalotokea.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Sentensi inaweza kuwa na nomino na kitenzi.', sw: 'Sentensi inaweza kuwa na nomino na kitenzi.', fr: 'Sentensi inaweza kuwa na nomino na kitenzi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 2,
+                text: {
+                    en: 'SEHEMU B – MULTIPLE CHOICE (20 Alama)\nChagua jibu sahihi A, B, C, au D.',
+                    sw: 'SEHEMU B – MULTIPLE CHOICE (20 Alama)\nChagua jibu sahihi A, B, C, au D.',
+                    fr: 'SEHEMU B – MULTIPLE CHOICE (20 Alama)\nChagua jibu sahihi A, B, C, au D.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Nomino ni:\nA. jina la mtu, kitu au mahali\nB. kitendo\nC. kivumishi\nD. kiwakilishi', sw: 'Nomino ni:\nA. jina la mtu, kitu au mahali\nB. kitendo\nC. kivumishi\nD. kiwakilishi', fr: 'Nomino ni:\nA. jina la mtu, kitu au mahali\nB. kitendo\nC. kivumishi\nD. kiwakilishi' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Neno lipi ni nomino?\nA. soma\nB. rafiki\nC. kula\nD. cheka', sw: 'Neno lipi ni nomino?\nA. soma\nB. rafiki\nC. kula\nD. cheka', fr: 'Neno lipi ni nomino?\nA. soma\nB. rafiki\nC. kula\nD. cheka' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Kitenzi kinaonyesha:\nA. rangi\nB. kitendo\nC. jina\nD. wakati', sw: 'Kitenzi kinaonyesha:\nA. rangi\nB. kitendo\nC. jina\nD. wakati', fr: 'Kitenzi kinaonyesha:\nA. rangi\nB. kitendo\nC. jina\nD. wakati' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi ina kitenzi cha sasa?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nimekula', sw: 'Sentensi ipi ina kitenzi cha sasa?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nimekula', fr: 'Sentensi ipi ina kitenzi cha sasa?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nimekula' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi ina kitenzi cha uliopita?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nakula', sw: 'Sentensi ipi ina kitenzi cha uliopita?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nakula', fr: 'Sentensi ipi ina kitenzi cha uliopita?\nA. Nilikula\nB. Ninakula\nC. Nitakula\nD. Nakula' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi ipi ina kitenzi cha ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma', sw: 'Sentensi ipi ina kitenzi cha ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma', fr: 'Sentensi ipi ina kitenzi cha ujao?\nA. Nilisoma\nB. Ninasoma\nC. Nitasoma\nD. Nimesoma' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Neno lipi ni kiunganishi?\nA. na\nB. kitabu\nC. mtoto\nD. mwalimu', sw: 'Neno lipi ni kiunganishi?\nA. na\nB. kitabu\nC. mtoto\nD. mwalimu', fr: 'Neno lipi ni kiunganishi?\nA. na\nB. kitabu\nC. mtoto\nD. mwalimu' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Neno "wanafunzi" linaonyesha:\nA. umoja\nB. wingi\nC. umiliki\nD. wakati', sw: 'Neno "wanafunzi" linaonyesha:\nA. umoja\nB. wingi\nC. umiliki\nD. wakati', fr: 'Neno "wanafunzi" linaonyesha:\nA. umoja\nB. wingi\nC. umiliki\nD. wakati' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno "yangu" linaonyesha:\nA. wingi\nB. umiliki\nC. wakati\nD. rangi', sw: 'Neno "yangu" linaonyesha:\nA. wingi\nB. umiliki\nC. wakati\nD. rangi', fr: 'Neno "yangu" linaonyesha:\nA. wingi\nB. umiliki\nC. wakati\nD. rangi' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno linaloonyesha wakati ni:\nA. baada\nB. mtoto\nC. nyumba\nD. meza', sw: 'Neno linaloonyesha wakati ni:\nA. baada\nB. mtoto\nC. nyumba\nD. meza', fr: 'Neno linaloonyesha wakati ni:\nA. baada\nB. mtoto\nC. nyumba\nD. meza' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi sahihi ni:\nA. Rafiki kuja kesho\nB. Rafiki yangu atakuja kesho\nC. Kuja rafiki kesho\nD. Kesho rafiki', sw: 'Sentensi sahihi ni:\nA. Rafiki kuja kesho\nB. Rafiki yangu atakuja kesho\nC. Kuja rafiki kesho\nD. Kesho rafiki', fr: 'Sentensi sahihi ni:\nA. Rafiki kuja kesho\nB. Rafiki yangu atakuja kesho\nC. Kuja rafiki kesho\nD. Kesho rafiki' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Sentensi sahihi ya sasa ni:\nA. Mwalimu anasoma\nB. Mwalimu alisoma\nC. Mwalimu atasoma\nD. Mwalimu amesoma', sw: 'Sentensi sahihi ya sasa ni:\nA. Mwalimu anasoma\nB. Mwalimu alisoma\nC. Mwalimu atasoma\nD. Mwalimu amesoma', fr: 'Sentensi sahihi ya sasa ni:\nA. Mwalimu anasoma\nB. Mwalimu alisoma\nC. Mwalimu atasoma\nD. Mwalimu amesoma' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi sahihi ya ujao ni:\nA. Wanafunzi walicheza\nB. Wanafunzi wanacheza\nC. Wanafunzi watacheza\nD. Wanafunzi wamecheza', sw: 'Sentensi sahihi ya ujao ni:\nA. Wanafunzi walicheza\nB. Wanafunzi wanacheza\nC. Wanafunzi watacheza\nD. Wanafunzi wamecheza', fr: 'Sentensi sahihi ya ujao ni:\nA. Wanafunzi walicheza\nB. Wanafunzi wanacheza\nC. Wanafunzi watacheza\nD. Wanafunzi wamecheza' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Kiunganishi hutumika:\nA. kuonyesha kitendo\nB. kuunganisha sentensi\nC. kuonyesha rangi\nD. kuonyesha jina', sw: 'Kiunganishi hutumika:\nA. kuonyesha kitendo\nB. kuunganisha sentensi\nC. kuonyesha rangi\nD. kuonyesha jina', fr: 'Kiunganishi hutumika:\nA. kuonyesha kitendo\nB. kuunganisha sentensi\nC. kuonyesha rangi\nD. kuonyesha jina' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno lipi linaonyesha umiliki?\nA. yangu\nB. wao\nC. sisi\nD. wote', sw: 'Neno lipi linaonyesha umiliki?\nA. yangu\nB. wao\nC. sisi\nD. wote', fr: 'Neno lipi linaonyesha umiliki?\nA. yangu\nB. wao\nC. sisi\nD. wote' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    }
+                ]
+            },
+            {
+                number: 3,
+                text: {
+                    en: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nAndika neno moja tu.',
+                    sw: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nAndika neno moja tu.',
+                    fr: 'SEHEMU C – ANDIKA NENO MOJA (15 Alama)\nAndika neno moja tu.'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Jina la mtu, kitu au mahali huitwa ______.', sw: 'Jina la mtu, kitu au mahali huitwa ______.', fr: 'Jina la mtu, kitu au mahali huitwa ______.' },
+                        answer: { en: 'Nomino', sw: 'Nomino', fr: 'Nomino' }
+                    },
+                    {
+                        text: { en: 'Neno linaloonyesha kitendo huitwa ______.', sw: 'Neno linaloonyesha kitendo huitwa ______.', fr: 'Neno linaloonyesha kitendo huitwa ______.' },
+                        answer: { en: 'Kitenzi', sw: 'Kitenzi', fr: 'Kitenzi' }
+                    },
+                    {
+                        text: { en: 'Neno la kuunganisha sentensi huitwa ______.', sw: 'Neno la kuunganisha sentensi huitwa ______.', fr: 'Neno la kuunganisha sentensi huitwa ______.' },
+                        answer: { en: 'Kiunganishi', sw: 'Kiunganishi', fr: 'Kiunganishi' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha sasa cha "kula" ni ______.', sw: 'Kitenzi cha sasa cha "kula" ni ______.', fr: 'Kitenzi cha sasa cha "kula" ni ______.' },
+                        answer: { en: 'Ninakula', sw: 'Ninakula', fr: 'Ninakula' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha uliopita cha "kula" ni ______.', sw: 'Kitenzi cha uliopita cha "kula" ni ______.', fr: 'Kitenzi cha uliopita cha "kula" ni ______.' },
+                        answer: { en: 'Nilikula', sw: 'Nilikula', fr: 'Nilikula' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha ujao cha "kula" ni ______.', sw: 'Kitenzi cha ujao cha "kula" ni ______.', fr: 'Kitenzi cha ujao cha "kula" ni ______.' },
+                        answer: { en: 'Nitakula', sw: 'Nitakula', fr: 'Nitakula' }
+                    },
+                    {
+                        text: { en: 'Neno "wanafunzi" linaonyesha ______.', sw: 'Neno "wanafunzi" linaonyesha ______.', fr: 'Neno "wanafunzi" linaonyesha ______.' },
+                        answer: { en: 'Wingi', sw: 'Wingi', fr: 'Wingi' }
+                    },
+                    {
+                        text: { en: 'Neno linaloonyesha umiliki ni ______.', sw: 'Neno linaloonyesha umiliki ni ______.', fr: 'Neno linaloonyesha umiliki ni ______.' },
+                        answer: { en: 'Umiliki', sw: 'Umiliki', fr: 'Umiliki' }
+                    },
+                    {
+                        text: { en: 'Neno la kuonyesha wakati ni ______.', sw: 'Neno la kuonyesha wakati ni ______.', fr: 'Neno la kuonyesha wakati ni ______.' },
+                        answer: { en: 'Wakati', sw: 'Wakati', fr: 'Wakati' }
+                    },
+                    {
+                        text: { en: 'Mtu anayefundisha shuleni ni ______.', sw: 'Mtu anayefundisha shuleni ni ______.', fr: 'Mtu anayefundisha shuleni ni ______.' },
+                        answer: { en: 'Mwalimu', sw: 'Mwalimu', fr: 'Mwalimu' }
+                    }
+                ]
+            }
+        ],
+        instructions: {
+            en: 'CHARLES ACADEMY – KISWAHILI TEST 2 (SARUFI)\n\nINSTRUCTIONS\n• Answer ALL questions.\n• Section A: Write KWELI or SI KWELI.\n• Section B: Choose the correct answer (A, B, C or D).\n• Section C: Write ONE word only.\n• Time: 60 minutes\n• Total Marks: 50\n• Passing score: 60%',
+            sw: 'CHARLES ACADEMY – MTIHANI WA KISWAHILI 2 (SARUFI)\n\nMAELEKEZO\n• Jibu maswali YOTE.\n• Sehemu A: Andika KWELI au SI KWELI.\n• Sehemu B: Chagua jibu sahihi (A, B, C au D).\n• Sehemu C: Andika neno MOJA tu.\n• Muda: dakika 60\n• Jumla ya Alama: 50\n• Alama ya kupita: 60%',
+            fr: 'CHARLES ACADEMY – TEST DE KISWAHILI 2 (SARUFI)\n\nINSTRUCTIONS\n• Répondez à TOUTES les questions.\n• Section A: Écrivez KWELI ou SI KWELI.\n• Section B: Choisissez la bonne réponse (A, B, C ou D).\n• Section C: Écrivez UN mot seulement.\n• Temps: 60 minutes\n• Total des points: 50\n• Score de passage: 60%'
+        },
+        markingGuide: {
+            en: {
+                sectionA: ['KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['A','B','B','B','A','C','A','B','B','A','B','A','C','B','A'],
+                sectionC: ['Nomino','Kitenzi','Kiunganishi','Ninakula','Nilikula','Nitakula','Wingi','Umiliki','Wakati','Mwalimu']
+            },
+            sw: {
+                sectionA: ['KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['A','B','B','B','A','C','A','B','B','A','B','A','C','B','A'],
+                sectionC: ['Nomino','Kitenzi','Kiunganishi','Ninakula','Nilikula','Nitakula','Wingi','Umiliki','Wakati','Mwalimu']
+            },
+            fr: {
+                sectionA: ['KWELI','KWELI','SI KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionB: ['A','B','B','B','A','C','A','B','B','A','B','A','C','B','A'],
+                sectionC: ['Nomino','Kitenzi','Kiunganishi','Ninakula','Nilikula','Nitakula','Wingi','Umiliki','Wakati','Mwalimu']
+            }
+        }
+    },
+
+    // ==================== TEST 8: KISWAHILI KUSOMA ====================
+    '8': {
+        id: 'kiswahili_kusoma',
+        title: {
+            en: 'KISWAHILI TEST 3 (KUSOMA)',
+            sw: 'MTIHANI WA KISWAHILI 3 (KUSOMA)',
+            fr: 'TEST DE KISWAHILI 3 (KUSOMA)'
+        },
+        time: '60 minutes',
+        totalMarks: 50,
+        questions: [
+            {
+                number: 1,
+                text: {
+                    en: 'SEHEMU A – MSOMO WA KIFUPI (25 Alama)\n\nSoma maandishi yafuatayo:\n"Amani ni jambo muhimu katika jamii. Watu wanaposhirikiana na kuheshimiana, maisha yao yanakuwa bora. Kila mtu anapaswa kusaidia wengine na kutunza mazingira yake. Familia pia inachangia maendeleo ya jamii kwa kutoa malezi bora kwa watoto."\n\nA. Andika KWELI au SI KWELI:',
+                    sw: 'SEHEMU A – MSOMO WA KIFUPI (25 Alama)\n\nSoma maandishi yafuatayo:\n"Amani ni jambo muhimu katika jamii. Watu wanaposhirikiana na kuheshimiana, maisha yao yanakuwa bora. Kila mtu anapaswa kusaidia wengine na kutunza mazingira yake. Familia pia inachangia maendeleo ya jamii kwa kutoa malezi bora kwa watoto."\n\nA. Andika KWELI au SI KWELI:',
+                    fr: 'SEHEMU A – MSOMO WA KIFUPI (25 Alama)\n\nSoma maandishi yafuatayo:\n"Amani ni jambo muhimu katika jamii. Watu wanaposhirikiana na kuheshimiana, maisha yao yanakuwa bora. Kila mtu anapaswa kusaidia wengine na kutunza mazingira yake. Familia pia inachangia maendeleo ya jamii kwa kutoa malezi bora kwa watoto."\n\nA. Andika KWELI au SI KWELI:'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Amani ni jambo muhimu kwa jamii.', sw: 'Amani ni jambo muhimu kwa jamii.', fr: 'Amani ni jambo muhimu kwa jamii.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Watu wanaposhirikiana, maisha yao yanakuwa mabaya.', sw: 'Watu wanaposhirikiana, maisha yao yanakuwa mabaya.', fr: 'Watu wanaposhirikiana, maisha yao yanakuwa mabaya.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Kila mtu anapaswa kusaidia wengine.', sw: 'Kila mtu anapaswa kusaidia wengine.', fr: 'Kila mtu anapaswa kusaidia wengine.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Familia haina mchango katika malezi ya watoto.', sw: 'Familia haina mchango katika malezi ya watoto.', fr: 'Familia haina mchango katika malezi ya watoto.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Kutunza mazingira ni muhimu.', sw: 'Kutunza mazingira ni muhimu.', fr: 'Kutunza mazingira ni muhimu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 2,
+                text: {
+                    en: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):',
+                    sw: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):',
+                    fr: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Familia inachangia _____ kwa jamii:\nA. Michezo pekee\nB. Shughuli za biashara\nC. Maendeleo ya jamii', sw: 'Familia inachangia _____ kwa jamii:\nA. Michezo pekee\nB. Shughuli za biashara\nC. Maendeleo ya jamii', fr: 'Familia inachangia _____ kwa jamii:\nA. Michezo pekee\nB. Shughuli za biashara\nC. Maendeleo ya jamii' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Neno linalohusiana na kusaidia wengine ni:\nA. Kucheka\nB. Kutoa msaada\nC. Kucheza', sw: 'Neno linalohusiana na kusaidia wengine ni:\nA. Kucheka\nB. Kutoa msaada\nC. Kucheza', fr: 'Neno linalohusiana na kusaidia wengine ni:\nA. Kucheka\nB. Kutoa msaada\nC. Kucheza' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Maisha bora yanatokana na:\nA. Kuheshimiana\nB. Kukimbizana\nC. Kusahau majukumu', sw: 'Maisha bora yanatokana na:\nA. Kuheshimiana\nB. Kukimbizana\nC. Kusahau majukumu', fr: 'Maisha bora yanatokana na:\nA. Kuheshimiana\nB. Kukimbizana\nC. Kusahau majukumu' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Neno linalohusiana na utunzaji wa mazingira ni:\nA. Kuandika\nB. Kutunza\nC. Kukimbia', sw: 'Neno linalohusiana na utunzaji wa mazingira ni:\nA. Kuandika\nB. Kutunza\nC. Kukimbia', fr: 'Neno linalohusiana na utunzaji wa mazingira ni:\nA. Kuandika\nB. Kutunza\nC. Kukimbia' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno linalohusiana na malezi bora ya watoto ni:\nA. Familia\nB. Mchezo\nC. Shule', sw: 'Neno linalohusiana na malezi bora ya watoto ni:\nA. Familia\nB. Mchezo\nC. Shule', fr: 'Neno linalohusiana na malezi bora ya watoto ni:\nA. Familia\nB. Mchezo\nC. Shule' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    }
+                ]
+            },
+            {
+                number: 3,
+                text: {
+                    en: 'SEHEMU B – MSOMO WA KIREFU (25 Alama)\n\nSoma hadithi:\n"Juma alikuwa mtoto mwenye shauku ya kusoma. Kila asubuhi, alikusanya vitabu vyake na kwenda maktaba ya shule. Alipokuwa akisoma, alijifunza mambo mapya kuhusu wanyama, mimea, na historia ya nchi yake. Rafiki zake walimkaribisha pia maktaba ili wanasome pamoja. Juma alijua elimu ni ufunguo wa maisha bora."\n\nA. Andika KWELI au SI KWELI:',
+                    sw: 'SEHEMU B – MSOMO WA KIREFU (25 Alama)\n\nSoma hadithi:\n"Juma alikuwa mtoto mwenye shauku ya kusoma. Kila asubuhi, alikusanya vitabu vyake na kwenda maktaba ya shule. Alipokuwa akisoma, alijifunza mambo mapya kuhusu wanyama, mimea, na historia ya nchi yake. Rafiki zake walimkaribisha pia maktaba ili wanasome pamoja. Juma alijua elimu ni ufunguo wa maisha bora."\n\nA. Andika KWELI au SI KWELI:',
+                    fr: 'SEHEMU B – MSOMO WA KIREFU (25 Alama)\n\nSoma hadithi:\n"Juma alikuwa mtoto mwenye shauku ya kusoma. Kila asubuhi, alikusanya vitabu vyake na kwenda maktaba ya shule. Alipokuwa akisoma, alijifunza mambo mapya kuhusu wanyama, mimea, na historia ya nchi yake. Rafiki zake walimkaribisha pia maktaba ili wanasome pamoja. Juma alijua elimu ni ufunguo wa maisha bora."\n\nA. Andika KWELI au SI KWELI:'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Juma alikuwa na shauku ya kusoma.', sw: 'Juma alikuwa na shauku ya kusoma.', fr: 'Juma alikuwa na shauku ya kusoma.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Alikosa kwenda maktaba kila asubuhi.', sw: 'Alikosa kwenda maktaba kila asubuhi.', fr: 'Alikosa kwenda maktaba kila asubuhi.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Alijifunza kuhusu wanyama, mimea, na historia.', sw: 'Alijifunza kuhusu wanyama, mimea, na historia.', fr: 'Alijifunza kuhusu wanyama, mimea, na historia.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Rafiki zake hawakuenda maktaba.', sw: 'Rafiki zake hawakuenda maktaba.', fr: 'Rafiki zake hawakuenda maktaba.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Juma alijua elimu ni muhimu.', sw: 'Juma alijua elimu ni muhimu.', fr: 'Juma alijua elimu ni muhimu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 4,
+                text: {
+                    en: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):',
+                    sw: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):',
+                    fr: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Juma alijua elimu ni _____ wa maisha bora.\nA. Kifaa\nB. Ufunguo\nC. Zawadi', sw: 'Juma alijua elimu ni _____ wa maisha bora.\nA. Kifaa\nB. Ufunguo\nC. Zawadi', fr: 'Juma alijua elimu ni _____ wa maisha bora.\nA. Kifaa\nB. Ufunguo\nC. Zawadi' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Anapenda kwenda wapi kila asubuhi?\nA. Shule ya michezo\nB. Maktaba ya shule\nC. Shule ya muziki', sw: 'Anapenda kwenda wapi kila asubuhi?\nA. Shule ya michezo\nB. Maktaba ya shule\nC. Shule ya muziki', fr: 'Anapenda kwenda wapi kila asubuhi?\nA. Shule ya michezo\nB. Maktaba ya shule\nC. Shule ya muziki' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Tabia kuu ya Juma ni:\nA. Ujasiri\nB. Shauku ya kusoma\nC. Kukimbia', sw: 'Tabia kuu ya Juma ni:\nA. Ujasiri\nB. Shauku ya kusoma\nC. Kukimbia', fr: 'Tabia kuu ya Juma ni:\nA. Ujasiri\nB. Shauku ya kusoma\nC. Kukimbia' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Ni nani aliyeenda naye maktaba?\nA. Wazazi wake\nB. Rafiki zake\nC. Jirani', sw: 'Ni nani aliyeenda naye maktaba?\nA. Wazazi wake\nB. Rafiki zake\nC. Jirani', fr: 'Ni nani aliyeenda naye maktaba?\nA. Wazazi wake\nB. Rafiki zake\nC. Jirani' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno lingine linalomaanisha "shauku" ni:\nA. Hamasa\nB. Furaha\nC. Mapenzi', sw: 'Neno lingine linalomaanisha "shauku" ni:\nA. Hamasa\nB. Furaha\nC. Mapenzi', fr: 'Neno lingine linalomaanisha "shauku" ni:\nA. Hamasa\nB. Furaha\nC. Mapenzi' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    }
+                ]
+            }
+        ],
+        instructions: {
+            en: 'CHARLES ACADEMY – KISWAHILI TEST 3 (KUSOMA)\n\nINSTRUCTIONS\n• Read the passages carefully.\n• Answer ALL questions.\n• Write KWELI or SI KWELI for True/False sections.\n• Choose the correct answer for Multiple Choice sections.\n• Time: 60 minutes\n• Total Marks: 50\n• Passing score: 60%',
+            sw: 'CHARLES ACADEMY – MTIHANI WA KISWAHILI 3 (KUSOMA)\n\nMAELEKEZO\n• Soma maandishi kwa makini.\n• Jibu maswali YOTE.\n• Andika KWELI au SI KWELI kwa sehemu za True/False.\n• Chagua jibu sahihi kwa sehemu za Multiple Choice.\n• Muda: dakika 60\n• Jumla ya Alama: 50\n• Alama ya kupita: 60%',
+            fr: 'CHARLES ACADEMY – TEST DE KISWAHILI 3 (KUSOMA)\n\nINSTRUCTIONS\n• Lisez les passages attentivement.\n• Répondez à TOUTES les questions.\n• Écrivez KWELI ou SI KWELI pour les sections Vrai/Faux.\n• Choisissez la bonne réponse pour les sections à choix multiples.\n• Temps: 60 minutes\n• Total des points: 50\n• Score de passage: 60%'
+        },
+        markingGuide: {
+            en: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['C','B','A','B','A'],
+                sectionC: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionD: ['B','B','B','B','A']
+            },
+            sw: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['C','B','A','B','A'],
+                sectionC: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionD: ['B','B','B','B','A']
+            },
+            fr: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['C','B','A','B','A'],
+                sectionC: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionD: ['B','B','B','B','A']
+            }
+        }
+    },
+
+    // ==================== TEST 9: KISWAHILI MAANDISHI ====================
+    '9': {
+        id: 'kiswahili_maandishi',
+        title: {
+            en: 'KISWAHILI TEST 4 (MAANDISHI)',
+            sw: 'MTIHANI WA KISWAHILI 4 (MAANDISHI)',
+            fr: 'TEST DE KISWAHILI 4 (MAANDISHI)'
+        },
+        time: '60 minutes',
+        totalMarks: 50,
+        questions: [
+            {
+                number: 1,
+                text: {
+                    en: 'SEHEMU A – MSINGI WA HISIA NA MAELEZO (25 Alama)\nA. Andika KWELI au SI KWELI:',
+                    sw: 'SEHEMU A – MSINGI WA HISIA NA MAELEZO (25 Alama)\nA. Andika KWELI au SI KWELI:',
+                    fr: 'SEHEMU A – MSINGI WA HISIA NA MAELEZO (25 Alama)\nA. Andika KWELI au SI KWELI:'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Furaha ni hisia nzuri inayojitokeza wakati mtu anafurahia jambo.', sw: 'Furaha ni hisia nzuri inayojitokeza wakati mtu anafurahia jambo.', fr: 'Furaha ni hisia nzuri inayojitokeza wakati mtu anafurahia jambo.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Hasira ni hisia ya furaha na amani.', sw: 'Hasira ni hisia ya furaha na amani.', fr: 'Hasira ni hisia ya furaha na amani.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Familia ni kundi la watu wanaohusiana na kukaa pamoja.', sw: 'Familia ni kundi la watu wanaohusiana na kukaa pamoja.', fr: 'Familia ni kundi la watu wanaohusiana na kukaa pamoja.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Rafiki ni mtu ambaye hatusaidii au kushirikiana naye.', sw: 'Rafiki ni mtu ambaye hatusaidii au kushirikiana naye.', fr: 'Rafiki ni mtu ambaye hatusaidii au kushirikiana naye.' },
+                        answer: { en: 'SI KWELI', sw: 'SI KWELI', fr: 'SI KWELI' }
+                    },
+                    {
+                        text: { en: 'Shule ni mahali pa kujifunzia na kupata elimu.', sw: 'Shule ni mahali pa kujifunzia na kupata elimu.', fr: 'Shule ni mahali pa kujifunzia na kupata elimu.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 2,
+                text: {
+                    en: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):',
+                    sw: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):',
+                    fr: 'SEHEMU A – B. Chagua jibu sahihi (Multiple Choice):'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Neno linalohusiana na furaha ni:\nA. Uchungu\nB. Furaha\nC. Hasira', sw: 'Neno linalohusiana na furaha ni:\nA. Uchungu\nB. Furaha\nC. Hasira', fr: 'Neno linalohusiana na furaha ni:\nA. Uchungu\nB. Furaha\nC. Hasira' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Neno linalohusiana na hasira ni:\nA. Hasira\nB. Amani\nC. Furaha', sw: 'Neno linalohusiana na hasira ni:\nA. Hasira\nB. Amani\nC. Furaha', fr: 'Neno linalohusiana na hasira ni:\nA. Hasira\nB. Amani\nC. Furaha' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Familia inahusiana na:\nA. Rafiki tu\nB. Watu wanaohusiana na mnyumba\nC. Shule pekee', sw: 'Familia inahusiana na:\nA. Rafiki tu\nB. Watu wanaohusiana na mnyumba\nC. Shule pekee', fr: 'Familia inahusiana na:\nA. Rafiki tu\nB. Watu wanaohusiana na mnyumba\nC. Shule pekee' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Rafiki ni mtu:\nA. Anayecheza peke yake\nB. Anayecheza na kushirikiana nawe\nC. Anayecheka tu', sw: 'Rafiki ni mtu:\nA. Anayecheza peke yake\nB. Anayecheza na kushirikiana nawe\nC. Anayecheka tu', fr: 'Rafiki ni mtu:\nA. Anayecheza peke yake\nB. Anayecheza na kushirikiana nawe\nC. Anayecheka tu' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Shule ni mahali pa:\nA. Kula chakula tu\nB. Kujifunza na kupata elimu\nC. Kukimbia tu', sw: 'Shule ni mahali pa:\nA. Kula chakula tu\nB. Kujifunza na kupata elimu\nC. Kukimbia tu', fr: 'Shule ni mahali pa:\nA. Kula chakula tu\nB. Kujifunza na kupata elimu\nC. Kukimbia tu' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    }
+                ]
+            },
+            {
+                number: 3,
+                text: {
+                    en: 'SEHEMU B – MUDA WA KITENDO (25 Alama)\nA. Andika KWELI au SI KWELI:',
+                    sw: 'SEHEMU B – MUDA WA KITENDO (25 Alama)\nA. Andika KWELI au SI KWELI:',
+                    fr: 'SEHEMU B – MUDA WA KITENDO (25 Alama)\nA. Andika KWELI au SI KWELI:'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Kitenzi cha sasa kinaonyesha kitendo kinachoendelea sasa.', sw: 'Kitenzi cha sasa kinaonyesha kitendo kinachoendelea sasa.', fr: 'Kitenzi cha sasa kinaonyesha kitendo kinachoendelea sasa.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha uliopita kinaonyesha kitendo kilichotokea jana au zamani.', sw: 'Kitenzi cha uliopita kinaonyesha kitendo kilichotokea jana au zamani.', fr: 'Kitenzi cha uliopita kinaonyesha kitendo kilichotokea jana au zamani.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha ujao kinaonyesha kitendo kitakachotokea baadaye.', sw: 'Kitenzi cha ujao kinaonyesha kitendo kitakachotokea baadaye.', fr: 'Kitenzi cha ujao kinaonyesha kitendo kitakachotokea baadaye.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kila sentensi lazima iwe na kitenzi.', sw: 'Kila sentensi lazima iwe na kitenzi.', fr: 'Kila sentensi lazima iwe na kitenzi.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    },
+                    {
+                        text: { en: 'Kutumia vitenzi kwa muda tofauti kunasaidia kueleza mpangilio wa matukio.', sw: 'Kutumia vitenzi kwa muda tofauti kunasaidia kueleza mpangilio wa matukio.', fr: 'Kutumia vitenzi kwa muda tofauti kunasaidia kueleza mpangilio wa matukio.' },
+                        answer: { en: 'KWELI', sw: 'KWELI', fr: 'KWELI' }
+                    }
+                ]
+            },
+            {
+                number: 4,
+                text: {
+                    en: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):',
+                    sw: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):',
+                    fr: 'SEHEMU B – B. Chagua jibu sahihi (Multiple Choice):'
+                },
+                subQuestions: [
+                    {
+                        text: { en: 'Sentensi inayotumia kitenzi cha sasa ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', sw: 'Sentensi inayotumia kitenzi cha sasa ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', fr: 'Sentensi inayotumia kitenzi cha sasa ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Sentensi inayotumia kitenzi cha uliopita ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', sw: 'Sentensi inayotumia kitenzi cha uliopita ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', fr: 'Sentensi inayotumia kitenzi cha uliopita ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu' },
+                        answer: { en: 'A', sw: 'A', fr: 'A' }
+                    },
+                    {
+                        text: { en: 'Sentensi inayotumia kitenzi cha ujao ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', sw: 'Sentensi inayotumia kitenzi cha ujao ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu', fr: 'Sentensi inayotumia kitenzi cha ujao ni:\nA. Nilisoma kitabu\nB. Ninasoma kitabu\nC. Nitasoma kitabu' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha sasa cha "kula" ni:\nA. Nilikuwa nakula\nB. Nakula\nC. Nitakula', sw: 'Kitenzi cha sasa cha "kula" ni:\nA. Nilikuwa nakula\nB. Nakula\nC. Nitakula', fr: 'Kitenzi cha sasa cha "kula" ni:\nA. Nilikuwa nakula\nB. Nakula\nC. Nitakula' },
+                        answer: { en: 'B', sw: 'B', fr: 'B' }
+                    },
+                    {
+                        text: { en: 'Kitenzi cha ujao cha "andika" ni:\nA. Ninaandika\nB. Niliandika\nC. Nitaandika', sw: 'Kitenzi cha ujao cha "andika" ni:\nA. Ninaandika\nB. Niliandika\nC. Nitaandika', fr: 'Kitenzi cha ujao cha "andika" ni:\nA. Ninaandika\nB. Niliandika\nC. Nitaandika' },
+                        answer: { en: 'C', sw: 'C', fr: 'C' }
+                    }
+                ]
+            }
+        ],
+        instructions: {
+            en: 'CHARLES ACADEMY – KISWAHILI TEST 4 (MAANDISHI)\n\nINSTRUCTIONS\n• Answer ALL questions in Kiswahili.\n• Write KWELI or SI KWELI for True/False sections.\n• Choose the correct answer for Multiple Choice sections.\n• Time: 60 minutes\n• Total Marks: 50\n• Passing score: 60%',
+            sw: 'CHARLES ACADEMY – MTIHANI WA KISWAHILI 4 (MAANDISHI)\n\nMAELEKEZO\n• Jibu maswali YOTE kwa Kiswahili fasaha.\n• Andika KWELI au SI KWELI kwa sehemu za True/False.\n• Chagua jibu sahihi kwa sehemu za Multiple Choice.\n• Muda: dakika 60\n• Jumla ya Alama: 50\n• Alama ya kupita: 60%',
+            fr: 'CHARLES ACADEMY – TEST DE KISWAHILI 4 (MAANDISHI)\n\nINSTRUCTIONS\n• Répondez à TOUTES les questions en Kiswahili.\n• Écrivez KWELI ou SI KWELI pour les sections Vrai/Faux.\n• Choisissez la bonne réponse pour les sections à choix multiples.\n• Temps: 60 minutes\n• Total des points: 50\n• Score de passage: 60%'
+        },
+        markingGuide: {
+            en: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['B','A','B','B','B'],
+                sectionC: ['KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionD: ['B','A','C','B','C']
+            },
+            sw: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['B','A','B','B','B'],
+                sectionC: ['KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionD: ['B','A','C','B','C']
+            },
+            fr: {
+                sectionA: ['KWELI','SI KWELI','KWELI','SI KWELI','KWELI'],
+                sectionB: ['B','A','B','B','B'],
+                sectionC: ['KWELI','KWELI','KWELI','KWELI','KWELI'],
+                sectionD: ['B','A','C','B','C']
+            }
+        }
     }
 };
 

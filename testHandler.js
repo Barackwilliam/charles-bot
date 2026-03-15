@@ -29,22 +29,32 @@ class TestHandler {
     getTestMenu(language = 'en') {
         const menuTexts = {
             en: `📝 *TEST SELECTION*\n\n` +
-                `Select a test level by typing:\n\n` +
-                `🧠 TEST 1 - English Test one\n` +
-                `📘 TEST 2 - English Test two\n` +
-                `🎓 TEST 3 - ENGLISH TEST 3 (CONJUNCTIONS)\n` +
-                `🏆 TEST 4 - ENGLISH TEST 4 (READING SKILLS)\n\n` +
+                `🇬🇧 *ENGLISH TESTS:*\n` +
+                `🧠 TEST 1 - English Test One (Greetings & Tenses)\n` +
+                `📘 TEST 2 - English Test Two (Nouns & Grammar)\n` +
+                `🎓 TEST 3 - English Test Three (Conjunctions)\n` +
+                `🏆 TEST 4 - English Test Four (Reading Skills)\n\n` +
+                `🇹🇿 *KISWAHILI TESTS:*\n` +
+                `📗 TEST 6 - Kiswahili Test One (Msingi)\n` +
+                `📙 TEST 7 - Kiswahili Test Two (Sarufi)\n` +
+                `📕 TEST 8 - Kiswahili Test Three (Kusoma)\n` +
+                `📒 TEST 9 - Kiswahili Test Four (Maandishi)\n\n` +
                 `*Type the test number in CAPITAL LETTERS*\n` +
-                `Example: Type "TEST 1" for Beginner test`,
+                `Example: "TEST 1" or "TEST 6"`,
                 
             sw: `📝 *UCHAGUZI WA MTIHANI*\n\n` +
-                `Chagua kiwango cha mtihani kwa kuandika:\n\n` +
-                `🧠 TEST 1 - Kiwango cha Mwanzo\n` +
-                `📘 TEST 2 - Kiwango cha Kati\n` +
-                `🎓 TEST 3 - MTIHANI WA KIINGEREZA WA TATU (VIUNGANISHI)\n` +
-                `🏆 TEST 4 - MTIHANI WA KIINGEREZA WA FOUR (UJUMBE WA KUSOMA)\n\n` +
+                `🇬🇧 *MITIHANI YA KIINGEREZA:*\n` +
+                `🧠 TEST 1 - Mtihani wa Kwanza (Salamu & Nyakati)\n` +
+                `📘 TEST 2 - Mtihani wa Pili (Nomino & Sarufi)\n` +
+                `🎓 TEST 3 - Mtihani wa Tatu (Viunganishi)\n` +
+                `🏆 TEST 4 - Mtihani wa Nne (Kusoma)\n\n` +
+                `🇹🇿 *MITIHANI YA KISWAHILI:*\n` +
+                `📗 TEST 6 - Kiswahili Test One (Msingi)\n` +
+                `📙 TEST 7 - Kiswahili Test Two (Sarufi)\n` +
+                `📕 TEST 8 - Kiswahili Test Three (Kusoma)\n` +
+                `📒 TEST 9 - Kiswahili Test Four (Maandishi)\n\n` +
                 `*Andika nambari ya mtihani kwa HERUFI KUBWA*\n` +
-                `Mfano: Andika "TEST 1" kwa mtihani wa mwanzo`,
+                `Mfano: "TEST 1" au "TEST 6"`,
                 
             fr: `📝 *SÉLECTION DE TEST*\n\n` +
                 `Sélectionnez un niveau de test en tapant:\n\n` +
@@ -97,13 +107,21 @@ class TestHandler {
         // Handle TEST 1, TEST 2, etc directly
         const testMap = {
             'TEST 1': '1',
-            'TEST 2': '2', 
+            'TEST 2': '2',
             'TEST 3': '3',
             'TEST 4': '4',
             'TEST BEGINNER': '1',
             'ENGLISH TEST TWO': '2',
             'ENGLISH TEST 3': '3',
-            'TEST EXPERT': '4'
+            'TEST EXPERT': '4',
+            'TEST 6': '6',
+            'TEST 7': '7',
+            'TEST 8': '8',
+            'TEST 9': '9',
+            'KISWAHILI 1': '6',
+            'KISWAHILI 2': '7',
+            'KISWAHILI 3': '8',
+            'KISWAHILI 4': '9'
         };
         
         if (testMap[upperText]) {
@@ -125,7 +143,15 @@ class TestHandler {
             'TEST BEGINNER': '1',
             'ENGLISH TEST TWO': '2',
             'ENGLISH TEST 3': '3',
-            'TEST EXPERT': '4'
+            'TEST EXPERT': '4',
+            'TEST 6': '6',
+            'TEST 7': '7',
+            'TEST 8': '8',
+            'TEST 9': '9',
+            'KISWAHILI 1': '6',
+            'KISWAHILI 2': '7',
+            'KISWAHILI 3': '8',
+            'KISWAHILI 4': '9'
         };
         
         if (testMap[input]) {
@@ -376,21 +402,31 @@ class TestHandler {
     // Get level name
     getLevelName(testId, language) {
         const levelNames = {
-            '1': { en: 'English test one', sw: 'Mwanzo', fr: 'Débutant' },
-            '2': { en: 'Intermediate', sw: 'Kati', fr: 'Intermédiaire' },
-            '3': { en: 'Advanced', sw: 'Juu', fr: 'Avancé' },
-            '4': { en: 'Expert', sw: 'Mtaalamu', fr: 'Expert' }
+            '1': { en: 'English Test One', sw: 'Kiingereza - Kwanza', fr: 'Anglais - Premier' },
+            '2': { en: 'English Test Two', sw: 'Kiingereza - Pili', fr: 'Anglais - Deuxieme' },
+            '3': { en: 'English Test Three', sw: 'Kiingereza - Tatu', fr: 'Anglais - Troisieme' },
+            '4': { en: 'English Test Four', sw: 'Kiingereza - Nne', fr: 'Anglais - Quatrieme' },
+            '6': { en: 'Kiswahili Test One', sw: 'Kiswahili - Msingi', fr: 'Kiswahili - Premier' },
+            '7': { en: 'Kiswahili Test Two', sw: 'Kiswahili - Sarufi', fr: 'Kiswahili - Deuxieme' },
+            '8': { en: 'Kiswahili Test Three', sw: 'Kiswahili - Kusoma', fr: 'Kiswahili - Troisieme' },
+            '9': { en: 'Kiswahili Test Four', sw: 'Kiswahili - Maandishi', fr: 'Kiswahili - Quatrieme' }
         };
-        return levelNames[testId][language] || levelNames[testId].en;
+        const entry = levelNames[testId];
+        if (!entry) return testId;
+        return entry[language] || entry.en;
     }
 
     // Check if passing score
     isPassingScore(testId, score) {
         const passingScores = {
-            '1': 60, // Beginner: 60%
-            '2': 70, // Intermediate: 70%
-            '3': 75, // Advanced: 75%
-            '4': 80  // Expert: 80%
+            '1': 60,
+            '2': 70,
+            '3': 75,
+            '4': 80,
+            '6': 60,
+            '7': 60,
+            '8': 60,
+            '9': 60
         };
         return score >= (passingScores[testId] || 60);
     }

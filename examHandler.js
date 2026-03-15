@@ -30,30 +30,78 @@ class ExamHandler {
         const menuTexts = {
             en: `🎓 *EXAM SELECTION*\n\n` +
                 `Select a course by typing:\n\n` +
-                `📚 ENGLISH ONE - English Language Exams\n` +
-                `🇹🇿 KISWAHILI ONE - Kiswahili Exams\n` +
+                `📚 ENGLISH - English Language Exams\n` +
+                `🇹🇿 KISWAHILI - Kiswahili Exams\n` +
                 `🎨 GRAPHICS - Graphics Design Exams\n` +
                 `💻 WEBSITE - Website Design Exams\n\n` +
-                `*Type the word in CAPITAL LETTERS*\n` +
-                `Example: Type "ENGLISH_1" for English exams`,
-                
+                `─────────────────────\n` +
+                `⚡ *QUICK SHORTCUTS (type directly):*\n\n` +
+                `🎨 *GRAPHICS:*\n` +
+                `• BRANDING\n` +
+                `• PIXELLAB (also: CANVA)\n` +
+                `• DESIGN PRINCIPLES\n` +
+                `• PRACTICAL FINAL\n\n` +
+                `💻 *WEBSITE:*\n` +
+                `• FINAL THEORY\n\n` +
+                `📚 *ENGLISH EXAMS:*\n` +
+                `• WRITING SKILLS\n` +
+                `• READING SKILLS\n` +
+                `• ENGLISH GRAMMAR\n\n` +
+                `🇹🇿 *KISWAHILI EXAMS:*\n` +
+                `• KUSOMA\n` +
+                `• MAANDISHI\n` +
+                `• SARUFI\n\n` +
+                `*Type any word above in CAPITAL LETTERS*`,
+
             sw: `🎓 *UCHAGUZI WA MTIHANI*\n\n` +
                 `Chagua kozi kwa kuandika:\n\n` +
-                `📚 ENGLISH ONE - Mitihani ya Lugha ya Kiingereza\n` +
-                `🇹🇿 KISWAHILI ONE - Mitihani ya Kiswahili\n` +
+                `📚 ENGLISH - Mitihani ya Lugha ya Kiingereza\n` +
+                `🇹🇿 KISWAHILI - Mitihani ya Kiswahili\n` +
                 `🎨 GRAPHICS - Mitihani ya Ubunifu wa Michoro\n` +
                 `💻 WEBSITE - Mitihani ya Ubunifu wa Tovuti\n\n` +
-                `*Andika neno kwa HERUFI KUBWA*\n` +
-                `Mfano: Andika "ENGLISH_1" kwa mitihani ya Kiingereza`,
-                
-            fr: `🎓 *SÉLECTION D'EXAMEN*\n\n` +
+                `─────────────────────\n` +
+                `⚡ *NJIA ZA HARAKA (andika moja kwa moja):*\n\n` +
+                `🎨 *GRAPHICS:*\n` +
+                `• BRANDING\n` +
+                `• PIXELLAB (pia: CANVA)\n` +
+                `• DESIGN PRINCIPLES\n` +
+                `• PRACTICAL FINAL\n\n` +
+                `💻 *WEBSITE:*\n` +
+                `• FINAL THEORY\n\n` +
+                `📚 *ENGLISH EXAMS:*\n` +
+                `• WRITING SKILLS\n` +
+                `• READING SKILLS\n` +
+                `• ENGLISH GRAMMAR\n\n` +
+                `🇹🇿 *KISWAHILI EXAMS:*\n` +
+                `• KUSOMA\n` +
+                `• MAANDISHI\n` +
+                `• SARUFI\n\n` +
+                `*Andika neno lolote hapo juu kwa HERUFI KUBWA*`,
+
+            fr: `🎓 *SÉLECTION D\'EXAMEN*\n\n` +
                 `Sélectionnez un cours en tapant:\n\n` +
-                `📚 ENGLISH ONE - Examens de Langue Anglaise\n` +
-                `🇹🇿 KISWAHILI ONE - Examens de Kiswahili\n` +
+                `📚 ENGLISH - Examens de Langue Anglaise\n` +
+                `🇹🇿 KISWAHILI - Examens de Kiswahili\n` +
                 `🎨 GRAPHICS - Examens de Conception Graphique\n` +
                 `💻 WEBSITE - Examens de Conception de Sites Web\n\n` +
-                `*Tapez le mot en MAJUSCULES*\n` +
-                `Exemple: Tapez "ENGLISH_1" pour les examens d'anglais`
+                `─────────────────────\n` +
+                `⚡ *RACCOURCIS RAPIDES (tapez directement):*\n\n` +
+                `🎨 *GRAPHICS:*\n` +
+                `• BRANDING\n` +
+                `• PIXELLAB (aussi: CANVA)\n` +
+                `• DESIGN PRINCIPLES\n` +
+                `• PRACTICAL FINAL\n\n` +
+                `💻 *WEBSITE:*\n` +
+                `• FINAL THEORY\n\n` +
+                `📚 *EXAMENS ANGLAIS:*\n` +
+                `• WRITING SKILLS\n` +
+                `• READING SKILLS\n` +
+                `• ENGLISH GRAMMAR\n\n` +
+                `🇹🇿 *EXAMENS KISWAHILI:*\n` +
+                `• KUSOMA\n` +
+                `• MAANDISHI\n` +
+                `• SARUFI\n\n` +
+                `*Tapez n\'importe quel mot ci-dessus en MAJUSCULES*`
         };
         
         return menuTexts[language] || menuTexts.en;
@@ -115,49 +163,49 @@ class ExamHandler {
             'graphics': {
                 en: `🎨 *GRAPHICS DESIGN EXAMS*\n\n` +
                     `Available exams:\n\n` +
-                    `🏷️ BRANDING\n` +
-                    `🎨 CANVA\n` +
-                    `📐 DESIGN PRINCIPLES\n` +
-                    `📱 PIXELLAB\n` +
-                    `🛠️ PRACTICAL FINAL\n\n` +
+                    `🏷️ BRANDING - Graphics Branding Examination\n` +
+                    `🖥️ PIXELLAB & CANVA - Canva & PixelLab Examination\n` +
+                    `📐 DESIGN PRINCIPLES - Design Principles Exam\n` +
+                    `🛠️ PRACTICAL FINAL - Practical Final Exam\n\n` +
                     `*Type the exam name in CAPITAL LETTERS*\n` +
-                    `Example: Type "BRANDING"`,
-                    
+                    `Example: Type "BRANDING" or "PIXELLAB"`,
+
                 sw: `🎨 *MITIHANI YA UBUNIFU WA MICHORO*\n\n` +
                     `Mitihani inayopatikana:\n\n` +
-                    `🏷️ BRANDING\n` +
-                    `🎨 CANVA\n` +
-                    `📐 DESIGN PRINCIPLES\n` +
-                    `📱 PIXELLAB\n` +
-                    `🛠️ PRACTICAL FINAL\n\n` +
+                    `🏷️ BRANDING - Mtihani wa Branding\n` +
+                    `🖥️ PIXELLAB & CANVA - Mtihani wa Canva & PixelLab\n` +
+                    `📐 DESIGN PRINCIPLES - Mtihani wa Kanuni za Muundo\n` +
+                    `🛠️ PRACTICAL FINAL - Mtihani wa Vitendo wa Mwisho\n\n` +
                     `*Andika jina la mtihani kwa HERUFI KUBWA*\n` +
-                    `Mfano: Andika "BRANDING"`,
-                    
+                    `Mfano: Andika "BRANDING" au "PIXELLAB"`,
+
                 fr: `🎨 *EXAMENS DE CONCEPTION GRAPHIQUE*\n\n` +
                     `Examens disponibles:\n\n` +
-                    `🏷️ BRANDING\n` +
-                    `🎨 CANVA\n` +
-                    `📐 DESIGN PRINCIPLES\n` +
-                    `📱 PIXELLAB\n` +
-                    `🛠️ PRACTICAL FINAL\n\n` +
+                    `🏷️ BRANDING - Examen de Branding Graphique\n` +
+                    `🖥️ PIXELLAB & CANVA - Examen Canva & PixelLab\n` +
+                    `📐 DESIGN PRINCIPLES - Examen des Principes de Design\n` +
+                    `🛠️ PRACTICAL FINAL - Examen Pratique Final\n\n` +
                     `*Tapez le nom de l'examen en MAJUSCULES*\n` +
-                    `Exemple: Tapez "BRANDING"`
+                    `Exemple: Tapez "BRANDING" ou "PIXELLAB"`
             },
             'website': {
                 en: `💻 *WEBSITE DESIGN EXAMS*\n\n` +
                     `Available exams:\n\n` +
-                    `💻 FINAL THEORY\n\n` +
-                    `*Type: FINAL THEORY*`,
-                    
+                    `💻 FINAL THEORY - Website Design Final Theory Exam\n\n` +
+                    `Type: FINAL THEORY\n` +
+                    `Example: Type "FINAL THEORY"`,
+
                 sw: `💻 *MITIHANI YA UBUNIFU WA TOVUTI*\n\n` +
                     `Mitihani inayopatikana:\n\n` +
-                    `💻 FINAL THEORY\n\n` +
-                    `*Andika: FINAL THEORY*`,
-                    
+                    `💻 FINAL THEORY - Mtihani wa Mwisho wa Nadharia\n\n` +
+                    `Andika: FINAL THEORY\n` +
+                    `Mfano: Andika "FINAL THEORY"`,
+
                 fr: `💻 *EXAMENS DE CONCEPTION DE SITES WEB*\n\n` +
                     `Examens disponibles:\n\n` +
-                    `💻 FINAL THEORY\n\n` +
-                    `*Tapez: FINAL THEORY*`
+                    `💻 FINAL THEORY - Examen Théorique Final de Conception Web\n\n` +
+                    `Tapez: FINAL THEORY\n` +
+                    `Exemple: Tapez "FINAL THEORY"`
             }
         };
         
@@ -269,7 +317,10 @@ class ExamHandler {
             'graphics': {
                 'BRANDING': 'branding',
                 'BRAND': 'branding',
-                'CANVA': 'canva',
+                'CANVA': 'pixellab',
+                'CANVA PIXELLAB': 'pixellab',
+                'PIXELLAB CANVA': 'pixellab',
+                'PIXELLAB & CANVA': 'pixellab',
                 'DESIGN PRINCIPLES': 'principles',
                 'PRINCIPLES': 'principles',
                 'PIXELLAB': 'pixellab',
